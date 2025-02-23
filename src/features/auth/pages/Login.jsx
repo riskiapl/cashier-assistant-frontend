@@ -1,6 +1,6 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../../../stores/authStore";
+import { useAuth } from "@stores/authStore";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);
