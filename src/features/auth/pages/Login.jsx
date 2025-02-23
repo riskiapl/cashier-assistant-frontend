@@ -2,7 +2,7 @@ import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "@stores/authStore";
 import config from "@config/api";
-import { alert } from "@utils/alert";
+import { alert } from "@lib/alert";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);

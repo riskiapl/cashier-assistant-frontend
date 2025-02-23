@@ -1,7 +1,7 @@
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../stores/authStore";
 import { onMount } from "solid-js";
-import { alert } from "@utils/alert";
+import { alert } from "@lib/alert";
 
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
