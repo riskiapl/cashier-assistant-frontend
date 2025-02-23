@@ -1,5 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../stores/authStore";
+import { onMount } from "solid-js";
 
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
@@ -9,6 +10,13 @@ export default function DashboardLayout(props) {
     logout();
     navigate("/auth/login");
   };
+
+  onMount(() => {
+    const auth = localStorage.getItem("auth");
+    if (!auth) {
+      navigate("/auth/login", { replace: true });
+    }
+  });
 
   return (
     <div class="h-screen bg-gray-50">
