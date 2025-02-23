@@ -1,10 +1,13 @@
 import { Router } from "@solidjs/router";
-import AppRoutes from "./routes";
+import { AuthRoutes, DashboardRoutes } from "./routes";
 
 function App() {
   return (
     <Router>
-      <AppRoutes />
+      {/* Auth route */}
+      <AuthRoutes />
+      {/* Dashboard route */}
+      <DashboardRoutes />
     </Router>
   );
 }

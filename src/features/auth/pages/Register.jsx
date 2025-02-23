@@ -2,7 +2,7 @@ import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../../../stores/authStore";
 
-export default function Login() {
+export default function Register() {
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -14,15 +14,9 @@ export default function Login() {
     try {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      login({
-        token: "dummy-token",
-        user: "test-user",
-      });
-
-      navigate("/", { replace: true });
+      navigate("/login", { replace: true });
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error("Registration failed:", error);
     } finally {
       setLoading(false);
     }
@@ -33,9 +27,9 @@ export default function Login() {
       {/* Welcome Section */}
       <div class="text-center">
         <h1 class="text-4xl font-extrabold text-gray-900 mb-2">
-          Welcome Back!
+          Create Account
         </h1>
-        <p class="text-gray-600">Please sign in to your account</p>
+        <p class="text-gray-600">Join us today and get started</p>
       </div>
 
       <form
@@ -45,12 +39,24 @@ export default function Login() {
         <div class="space-y-5">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              required
+              class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
+              placeholder="Enter your email"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
               Username
             </label>
             <input
               type="text"
+              required
               class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
-              placeholder="Enter your username"
+              placeholder="Choose a username"
             />
           </div>
           <div>
@@ -59,29 +65,22 @@ export default function Login() {
             </label>
             <input
               type="password"
+              required
               class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
-              placeholder="Enter your password"
+              placeholder="Create a password"
             />
           </div>
-        </div>
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input
-              id="remember-me"
-              type="checkbox"
-              class="h-4 w-4 text-blue-600 rounded border-gray-300"
-            />
-            <label for="remember-me" class="ml-2 text-sm text-gray-600">
-              Remember me
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
             </label>
+            <input
+              type="password"
+              required
+              class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
+              placeholder="Confirm your password"
+            />
           </div>
-          <a
-            href="/auth/forgot-password"
-            class="text-sm text-blue-600 hover:text-blue-500"
-          >
-            Forgot password?
-          </a>
         </div>
 
         <button
@@ -89,17 +88,17 @@ export default function Login() {
           class="w-full flex justify-center py-3 px-4 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
           disabled={loading()}
         >
-          {loading() ? "Signing in..." : "Sign in"}
+          {loading() ? "Creating Account..." : "Create Account"}
         </button>
 
         <div class="text-center mt-4">
           <p class="text-sm text-gray-600">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <a
-              href="/auth/register"
+              href="/auth/login"
               class="font-medium text-blue-600 hover:text-blue-500"
             >
-              Register here
+              Sign in here
             </a>
           </p>
         </div>
