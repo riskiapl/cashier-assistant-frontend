@@ -10,6 +10,21 @@ const api = axios.create({
   },
 });
 
+// Request interceptor for adding auth token
+api.interceptors.request.use(
+  (config) => {
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      const { token } = JSON.parse(auth);
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Interceptor untuk handling errors
 api.interceptors.response.use(
   (response) => response,
