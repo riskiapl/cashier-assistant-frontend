@@ -1,6 +1,8 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "@stores/authStore";
+import config from "@config/api";
+import { alert } from "@utils/alert";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);
@@ -12,6 +14,13 @@ export default function Login() {
     setLoading(true);
 
     try {
+      // Contoh penggunaan API URL
+      // const response = await fetch(`${config.apiUrl}/auth/login`, {
+      //   // ... konfigurasi fetch
+      // });
+
+      console.log(config.apiUrl, "masuk apiUrl");
+
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -20,9 +29,10 @@ export default function Login() {
         user: "test-user",
       });
 
-      navigate("/", { replace: true });
+      alert.success("Login successful!");
+      // navigate("/", { replace: true });
     } catch (error) {
-      console.error("Login failed:", error);
+      alert.error("Login failed: " + error.message);
     } finally {
       setLoading(false);
     }

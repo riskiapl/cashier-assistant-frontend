@@ -1,14 +1,24 @@
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../stores/authStore";
 import { onMount } from "solid-js";
+import { alert } from "@utils/alert";
 
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/auth/login");
+  const handleLogout = async () => {
+    const confirmed = await alert.confirm({
+      title: "Logout",
+      text: "Are you sure you want to logout?",
+      confirmText: "Yes, logout",
+    });
+
+    if (confirmed) {
+      logout();
+      alert.success("Logged out successfully");
+      navigate("/auth/login");
+    }
   };
 
   onMount(() => {
