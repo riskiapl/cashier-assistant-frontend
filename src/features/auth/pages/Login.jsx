@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "@stores/authStore";
-import config from "@config/api";
 import { alert } from "@lib/alert";
+import { authService } from "@services/authService";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);
@@ -14,25 +14,34 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Contoh penggunaan API URL
-      // const response = await fetch(`${config.apiUrl}/auth/login`, {
-      //   // ... konfigurasi fetch
-      // });
+      const formData = new FormData(e.target);
+      const userormail = formData.get("userormail");
+      const password = formData.get("password");
 
-      console.log(config.apiUrl, "masuk apiUrl");
+      // Validasi input
+      if (!userormail || !password) {
+        alert.warning("Username/email and password are required");
+        setLoading(false);
+        return;
+      }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Using login service instead of direct fetch
+      const result = await authService.login({ userormail, password });
+
+      console.log(userormail, password, result, "masuk login response");
 
       login({
-        token: "dummy-token",
-        user: "test-user",
+        token: result.data.token,
+        user: result.data.user,
       });
 
       alert.success("Login successful!");
-      // navigate("/", { replace: true });
+      navigate("/", { replace: true });
     } catch (error) {
-      alert.error("Login failed: " + error.message);
+      console.log(error, "masuk error login");
+      alert.error(
+        "Login failed: " + (error.response?.data?.message || error.message)
+      );
     } finally {
       setLoading(false);
     }
@@ -55,12 +64,13 @@ export default function Login() {
         <div class="space-y-5">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
-              Username
+              Username or Email
             </label>
             <input
+              name="userormail"
               type="text"
               class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
-              placeholder="Enter your username"
+              placeholder="Enter your username or email"
             />
           </div>
           <div>
@@ -68,6 +78,7 @@ export default function Login() {
               Password
             </label>
             <input
+              name="password"
               type="password"
               class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
               placeholder="Enter your password"

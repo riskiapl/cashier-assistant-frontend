@@ -4,10 +4,12 @@ import { alert } from "./alert";
 
 const api = axios.create({
   baseURL: config.apiUrl,
-  withCredentials: true,
+  withCredentials: false, // Ubah ke false untuk mengatasi masalah CORS pada tahap development
   headers: {
     "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
   },
+  timeout: 30000,
 });
 
 // Request interceptor for adding auth token
@@ -29,9 +31,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (!error.response && error.message === "Network Error") {
+      alert.error(
+        "Network error. Please check your internet connection or the API server might be down."
+      );
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401) {
       // Handle unauthorized
       window.location.href = "/auth/login";
+      alert.error("Your session has expired. Please login again");
     } else if (error.response?.status === 403) {
       alert.error("You don't have permission to access this resource");
     } else if (error.response?.status === 404) {
