@@ -8,7 +8,7 @@ import {
   validateForm,
   createInputHandler,
   createBlurHandler,
-} from "@utils/authUtil";
+} from "@utils/authValidation";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);

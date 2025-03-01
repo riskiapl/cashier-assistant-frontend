@@ -11,6 +11,11 @@ export const authService = {
     return response.data;
   },
 
+  async checkUsername(username) {
+    const response = await api.get(`/auth/check-username?username=${username}`);
+    return response.data;
+  },
+
   async forgotPassword(email) {
     const response = await api.post("/auth/forgot-password", { email });
     return response.data;
