@@ -37,6 +37,32 @@ export default function Register() {
 
   // Create a debounced function to check username availability
   const checkUsername = debounce(async (username) => {
+    // First check if username contains only alphanumeric characters
+    const isValidFormat = /^[a-zA-Z0-9]+$/.test(username);
+
+    if (!isValidFormat) {
+      setUsernameStatus({
+        checking: false,
+        available: false,
+      });
+
+      setErrors((prev) => ({
+        ...prev,
+        username: "No spaces or symbols allowed",
+      }));
+      return; // Stop here, don't check with backend
+    }
+
+    // Clear format errors if format is valid
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      if (newErrors.username === "No spaces or symbols allowed") {
+        delete newErrors.username;
+      }
+      return newErrors;
+    });
+
+    // Now proceed with backend check
     try {
       const response = await authService.checkUsername(username);
 
@@ -46,26 +72,12 @@ export default function Register() {
           checking: false,
           available: response.available,
         });
-
-        // Update errors if needed
-        if (response.available === false) {
-          setErrors((prev) => ({
-            ...prev,
-            username: "Username is already taken",
-          }));
-        } else if (response.available === true) {
-          // Clear the username error if it was set due to availability
-          setErrors((prev) => {
-            const newErrors = { ...prev };
-            if (newErrors.username === "Username is already taken") {
-              delete newErrors.username;
-            }
-            return newErrors;
-          });
-        }
       }
     } catch (error) {
-      console.error("Username check error:", error);
+      alert.error(
+        "Username check error: " +
+          (error.message || "Failed to verify username availability")
+      );
 
       if (formValues().username === username) {
         setUsernameStatus({
@@ -118,7 +130,7 @@ export default function Register() {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      alert.warning("Please fix the errors in the form");
+      alert.warning("Please fill all required fields");
       return;
     }
 
