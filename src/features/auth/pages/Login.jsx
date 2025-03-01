@@ -1,58 +1,56 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
+import { createForm } from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
-import { authService } from "@services/authService";
 import FormField from "@components/FormField";
-import {
-  validateForm,
-  createInputHandler,
-  createBlurHandler,
-} from "@utils/authValidation";
+import { loginSchema } from "@utils/zodSchemas";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);
-  const [errors, setErrors] = createSignal({});
-  const [formValues, setFormValues] = createSignal({
-    userormail: "",
-    password: "",
-  });
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleChange = createInputHandler(setFormValues, setErrors);
-  const handleBlur = createBlurHandler(setFormValues, setErrors, "login", () =>
-    formValues()
-  );
+  // Create form with Zod validation - simplified approach
+  const [loginForm, { Form, Field }] = createForm({
+    initialValues: {
+      userormail: "",
+      password: "",
+    },
+    validate: (values) => {
+      try {
+        loginSchema.parse(values);
+        return {}; // No errors
+      } catch (error) {
+        // Convert Zod errors to the format expected by @modular-forms/solid
+        const errors = {};
+        if (error.errors) {
+          error.errors.forEach((err) => {
+            const field = err.path[0];
+            errors[field] = err.message;
+          });
+        }
+        return errors;
+      }
+    },
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const values = formValues();
-    const validationErrors = validateForm(values, "login");
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      alert.warning("Please fill in all required fields");
-      return;
-    }
-
+  const handleSubmit = async (values) => {
     setLoading(true);
 
     try {
-      const result = await authService.login(values);
-      login(result);
-
-      alert.success("Login successful!");
-      navigate("/", { replace: true });
+      await login(values.userormail, values.password);
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       alert.error(
         "Login failed: " + (error.response?.data?.message || error.message)
       );
 
-      // Handle validation errors from server
-      if (error.response?.status === 422 && error.response?.data?.errors) {
-        setErrors(error.response.data.errors);
+      // Handle invalid credentials
+      if (error.response?.status === 401) {
+        loginForm.setError("password", {
+          message: "Invalid username/email or password",
+        });
       }
     } finally {
       setLoading(false);
@@ -61,59 +59,66 @@ export default function Login() {
 
   return (
     <div class="max-w-md w-full space-y-8">
-      {/* Welcome Section */}
       <div class="text-center">
-        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">
-          Welcome Back!
-        </h1>
-        <p class="text-gray-600">Please sign in to your account</p>
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Welcome Back</h1>
+        <p class="text-gray-600">Sign in to continue</p>
       </div>
 
-      <form
+      <Form
         onSubmit={handleSubmit}
         class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
       >
         <div class="space-y-5">
-          <FormField
-            label="Username or Email"
-            name="userormail"
-            type="text"
-            value={formValues().userormail}
-            error={errors().userormail}
-            onBlur={handleBlur}
-            onInput={handleChange}
-            placeholder="Enter your username or email"
-          />
+          <Field name="userormail">
+            {(field, props) => (
+              <FormField
+                label="Username or Email"
+                type="text"
+                error={field.error}
+                placeholder="Enter your username or email"
+                value={field.value || ""}
+                onInput={(e) => field.setValue(e.target.value)}
+                {...props}
+              />
+            )}
+          </Field>
 
-          <FormField
-            label="Password"
-            name="password"
-            type="password"
-            value={formValues().password}
-            error={errors().password}
-            onBlur={handleBlur}
-            onInput={handleChange}
-            placeholder="Enter your password"
-          />
-        </div>
+          <Field name="password">
+            {(field, props) => (
+              <FormField
+                label="Password"
+                type="password"
+                error={field.error}
+                placeholder="Enter your password"
+                value={field.value || ""}
+                onInput={(e) => field.setValue(e.target.value)}
+                {...props}
+              />
+            )}
+          </Field>
 
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input
-              id="remember-me"
-              type="checkbox"
-              class="h-4 w-4 text-blue-600 rounded border-gray-300"
-            />
-            <label for="remember-me" class="ml-2 text-sm text-gray-600">
-              Remember me
-            </label>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label for="remember-me" class="ml-2 block text-sm text-gray-900">
+                Remember me
+              </label>
+            </div>
+
+            <div class="text-sm">
+              <a
+                href="/auth/forgot-password"
+                class="font-medium text-blue-600 hover:text-blue-500"
+              >
+                Forgot password?
+              </a>
+            </div>
           </div>
-          <a
-            href="/auth/forgot-password"
-            class="text-sm text-blue-600 hover:text-blue-500"
-          >
-            Forgot password?
-          </a>
         </div>
 
         <button
@@ -131,11 +136,11 @@ export default function Login() {
               href="/auth/register"
               class="font-medium text-blue-600 hover:text-blue-500"
             >
-              Register here
+              Sign up here
             </a>
           </p>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }

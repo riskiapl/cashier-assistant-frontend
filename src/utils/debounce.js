@@ -1,10 +1,3 @@
-/**
- * Simple debounce function that delays invoking a function until after a specified wait time
- *
- * @param {Function} func The function to debounce
- * @param {number} wait The number of milliseconds to delay
- * @return {Function} The debounced function
- */
 export function debounce(func, wait = 500) {
   let timeout;
 
@@ -33,14 +26,6 @@ export function debounce(func, wait = 500) {
   };
 }
 
-/**
- * Creates a debounced function that returns a promise that resolves with the result
- * of the function after the specified wait time
- *
- * @param {Function} func The async function to debounce
- * @param {number} wait The number of milliseconds to delay
- * @return {Function} The debounced async function that returns a promise
- */
 export function debounceAsync(func, wait = 500) {
   let timeout;
 

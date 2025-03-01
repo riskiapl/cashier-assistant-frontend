@@ -1,39 +1,51 @@
 import { createSignal, createEffect, onCleanup } from "solid-js";
 import { useNavigate } from "@solidjs/router";
+import { createForm } from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import { authService } from "@services/authService";
 import FormField from "@components/FormField";
-import {
-  validateForm,
-  createInputHandler,
-  createBlurHandler,
-} from "@utils/authValidation";
+import { registerSchema } from "@utils/zodSchemas";
 import { debounce } from "@utils/debounce";
+// Import solid-icons
+import { BiRegularLoader } from "solid-icons/bi";
+import { IoCheckmarkCircleSharp, IoCloseCircleSharp } from "solid-icons/io";
 
 export default function Register() {
   const [loading, setLoading] = createSignal(false);
-  const [errors, setErrors] = createSignal({});
-  const [formValues, setFormValues] = createSignal({
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
+  const navigate = useNavigate();
+  const { register } = useAuth();
+
+  // Create form with Zod validation
+  const [registerForm, { Form, Field }] = createForm({
+    initialValues: {
+      email: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validate: (values) => {
+      try {
+        registerSchema.parse(values);
+        return {}; // No errors
+      } catch (error) {
+        // Convert Zod errors to the format expected by @modular-forms/solid
+        const errors = {};
+        if (error.errors) {
+          error.errors.forEach((err) => {
+            const field = err.path[0];
+            errors[field] = err.message;
+          });
+        }
+        return errors;
+      }
+    },
   });
+
   const [usernameStatus, setUsernameStatus] = createSignal({
     checking: false,
     available: null,
   });
-  const navigate = useNavigate();
-  const { register } = useAuth();
-
-  const handleChange = createInputHandler(setFormValues, setErrors);
-  const handleBlur = createBlurHandler(
-    setFormValues,
-    setErrors,
-    "register",
-    () => formValues()
-  );
 
   // Create a debounced function to check username availability
   const checkUsername = debounce(async (username) => {
@@ -46,32 +58,36 @@ export default function Register() {
         available: false,
       });
 
-      setErrors((prev) => ({
-        ...prev,
-        username: "No spaces or symbols allowed",
-      }));
+      registerForm.setError("username", {
+        message: "No spaces or symbols allowed",
+      });
       return; // Stop here, don't check with backend
     }
 
-    // Clear format errors if format is valid
-    setErrors((prev) => {
-      const newErrors = { ...prev };
-      if (newErrors.username === "No spaces or symbols allowed") {
-        delete newErrors.username;
-      }
-      return newErrors;
-    });
+    // Clear format errors
+    if (registerForm.errors?.username === "No spaces or symbols allowed") {
+      registerForm.clearError("username");
+    }
 
     // Now proceed with backend check
     try {
+      setUsernameStatus({ checking: true, available: null });
       const response = await authService.checkUsername(username);
 
-      // Only update if this is still the current username
-      if (formValues().username === username) {
-        setUsernameStatus({
-          checking: false,
-          available: response.available,
+      setUsernameStatus({
+        checking: false,
+        available: response.available,
+      });
+
+      // Set error if username is not available
+      if (!response.available) {
+        registerForm.setError("username", {
+          message: "Username is already taken",
         });
+      } else if (
+        registerForm.errors?.username === "Username is already taken"
+      ) {
+        registerForm.clearError("username");
       }
     } catch (error) {
       alert.error(
@@ -79,19 +95,16 @@ export default function Register() {
           (error.message || "Failed to verify username availability")
       );
 
-      if (formValues().username === username) {
-        setUsernameStatus({
-          checking: false,
-          available: null,
-        });
-      }
+      setUsernameStatus({
+        checking: false,
+        available: null,
+      });
     }
   }, 1000); // 1 second debounce
 
-  // Track username changes for availability check
-  const handleUsernameChange = (e) => {
+  const handleUsernameInput = (e, setValue) => {
     const username = e.target.value;
-    handleChange(e);
+    setValue(username);
 
     // Clear status immediately when typing or if username is too short
     if (username.length < 3) {
@@ -102,41 +115,13 @@ export default function Register() {
       return;
     }
 
-    // Set to checking state
-    setUsernameStatus({
-      checking: true,
-      available: null,
-    });
-
     // Use the debounced function
     checkUsername(username);
   };
 
-  // Make sure to clean up the timer when component unmounts
-  createEffect(() => {
-    return () => {
-      if (usernameCheckTimer) {
-        clearTimeout(usernameCheckTimer);
-      }
-    };
-  });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validate form
-    const values = formValues();
-    const validationErrors = validateForm(values, "register");
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      alert.warning("Please fill all required fields");
-      return;
-    }
-
+  const handleSubmit = async (values) => {
     // Check if username is already taken
     if (usernameStatus().available === false) {
-      setErrors((prev) => ({ ...prev, username: "Username is already taken" }));
       alert.warning("Please choose a different username");
       return;
     }
@@ -161,12 +146,23 @@ export default function Register() {
 
       // Handle validation errors from server
       if (error.response?.status === 422 && error.response?.data?.errors) {
-        setErrors(error.response.data.errors);
+        // Set server validation errors
+        const serverErrors = error.response.data.errors;
+        Object.keys(serverErrors).forEach((key) => {
+          registerForm.setError(key, { message: serverErrors[key] });
+        });
       }
     } finally {
       setLoading(false);
     }
   };
+
+  // Clean up debounce on component unmount
+  onCleanup(() => {
+    if (checkUsername.cancel) {
+      checkUsername.cancel();
+    }
+  });
 
   return (
     <div class="max-w-md w-full space-y-8">
@@ -178,112 +174,83 @@ export default function Register() {
         <p class="text-gray-600">Join us today and get started</p>
       </div>
 
-      <form
+      <Form
         onSubmit={handleSubmit}
         class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
       >
         <div class="space-y-5">
-          <FormField
-            label="Email"
-            name="email"
-            type="email"
-            value={formValues().email}
-            error={errors().email}
-            onBlur={handleBlur}
-            onInput={handleChange}
-            placeholder="Enter your email"
-          />
-
-          <div>
-            <div class="relative">
+          <Field name="email">
+            {(field, props) => (
               <FormField
-                label="Username"
-                name="username"
-                type="text"
-                value={formValues().username}
-                error={errors().username}
-                onBlur={handleBlur}
-                onInput={handleUsernameChange}
-                placeholder="Choose a username"
+                label="Email"
+                type="email"
+                error={field.error}
+                placeholder="Enter your email"
+                value={field.value || ""}
+                onInput={(e) => field.setValue(e.target.value)}
+                {...props}
               />
+            )}
+          </Field>
 
-              {/* Status indicator icon with improved rendering logic */}
-              {formValues().username.length >= 3 && (
-                <div class="absolute right-3 top-[38px]">
-                  {usernameStatus().checking ? (
-                    <svg
-                      class="animate-spin h-5 w-5 text-gray-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        class="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        stroke-width="4"
-                      ></circle>
-                      <path
-                        class="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                  ) : usernameStatus().available === true ? (
-                    <svg
-                      class="h-5 w-5 text-green-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  ) : usernameStatus().available === false ? (
-                    <svg
-                      class="h-5 w-5 text-red-500"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  ) : null}
+          <div class="relative">
+            <Field name="username">
+              {(field, props) => (
+                <div>
+                  <FormField
+                    label="Username"
+                    type="text"
+                    error={field.error}
+                    placeholder="Choose a username"
+                    value={field.value || ""}
+                    onInput={(e) => handleUsernameInput(e, field.setValue)}
+                    {...props}
+                  />
+
+                  {/* Status indicator icon with solid-icons */}
+                  {field.value?.length >= 3 && (
+                    <div class="absolute right-3 top-[38px]">
+                      {usernameStatus().checking ? (
+                        <BiRegularLoader class="animate-spin h-5 w-5 text-gray-500" />
+                      ) : usernameStatus().available === true ? (
+                        <IoCheckmarkCircleSharp class="h-5 w-5 text-green-500" />
+                      ) : usernameStatus().available === false ? (
+                        <IoCloseCircleSharp class="h-5 w-5 text-red-500" />
+                      ) : null}
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
+            </Field>
           </div>
 
-          <FormField
-            label="Password"
-            name="password"
-            type="password"
-            value={formValues().password}
-            error={errors().password}
-            onBlur={handleBlur}
-            onInput={handleChange}
-            placeholder="Create a password"
-          />
+          <Field name="password">
+            {(field, props) => (
+              <FormField
+                label="Password"
+                type="password"
+                error={field.error}
+                placeholder="Create a password"
+                value={field.value || ""}
+                onInput={(e) => field.setValue(e.target.value)}
+                {...props}
+              />
+            )}
+          </Field>
 
-          <FormField
-            label="Confirm Password"
-            name="confirmPassword"
-            type="password"
-            value={formValues().confirmPassword}
-            error={errors().confirmPassword}
-            onBlur={handleBlur}
-            onInput={handleChange}
-            placeholder="Confirm your password"
-          />
+          <Field name="confirmPassword">
+            {(field, props) => (
+              <FormField
+                label="Confirm Password"
+                type="password"
+                error={field.error}
+                placeholder="Confirm your password"
+                value={field.value || ""}
+                onInput={(e) => field.setValue(e.target.value)}
+                {...props}
+              />
+            )}
+          </Field>
         </div>
 
         <button
@@ -305,7 +272,7 @@ export default function Register() {
             </a>
           </p>
         </div>
-      </form>
+      </Form>
     </div>
   );
 }
