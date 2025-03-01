@@ -1,22 +1,70 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "@stores/authStore";
+import { alert } from "@lib/alert";
+import { authService } from "@services/authService";
+import FormField from "@components/FormField";
+import {
+  validateForm,
+  createInputHandler,
+  createBlurHandler,
+} from "@utils/authUtil";
 
 export default function Register() {
   const [loading, setLoading] = createSignal(false);
+  const [errors, setErrors] = createSignal({});
+  const [formValues, setFormValues] = createSignal({
+    email: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
+
+  const handleChange = createInputHandler(setFormValues, setErrors);
+  const handleBlur = createBlurHandler(
+    setFormValues,
+    setErrors,
+    "register",
+    () => formValues()
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form
+    const values = formValues();
+    const validationErrors = validateForm(values, "register");
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      alert.warning("Please fix the errors in the form");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigate("/login", { replace: true });
+      // Call register API
+      await authService.register({
+        email: values.email,
+        username: values.username,
+        password: values.password,
+      });
+
+      alert.success("Registration successful! Please log in");
+      navigate("/auth/login", { replace: true });
     } catch (error) {
-      console.error("Registration failed:", error);
+      alert.error(
+        "Registration failed: " +
+          (error.response?.data?.message || error.message)
+      );
+
+      // Handle validation errors from server
+      if (error.response?.status === 422 && error.response?.data?.errors) {
+        setErrors(error.response.data.errors);
+      }
     } finally {
       setLoading(false);
     }
@@ -37,50 +85,49 @@ export default function Register() {
         class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
       >
         <div class="space-y-5">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              required
-              class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
-              placeholder="Enter your email"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Username
-            </label>
-            <input
-              type="text"
-              required
-              class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
-              placeholder="Choose a username"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
-              placeholder="Create a password"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              required
-              class="block w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:border-blue-500 focus:outline-none transition-colors"
-              placeholder="Confirm your password"
-            />
-          </div>
+          <FormField
+            label="Email"
+            name="email"
+            type="email"
+            value={formValues().email}
+            error={errors().email}
+            onBlur={handleBlur}
+            onInput={handleChange}
+            placeholder="Enter your email"
+          />
+
+          <FormField
+            label="Username"
+            name="username"
+            type="text"
+            value={formValues().username}
+            error={errors().username}
+            onBlur={handleBlur}
+            onInput={handleChange}
+            placeholder="Choose a username"
+          />
+
+          <FormField
+            label="Password"
+            name="password"
+            type="password"
+            value={formValues().password}
+            error={errors().password}
+            onBlur={handleBlur}
+            onInput={handleChange}
+            placeholder="Create a password"
+          />
+
+          <FormField
+            label="Confirm Password"
+            name="confirmPassword"
+            type="password"
+            value={formValues().confirmPassword}
+            error={errors().confirmPassword}
+            onBlur={handleBlur}
+            onInput={handleChange}
+            placeholder="Confirm your password"
+          />
         </div>
 
         <button

@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import solidPlugin from "vite-plugin-solid";
+import devtools from "solid-devtools/vite";
 import UnoCSS from "unocss/vite";
 import path from "path";
 
@@ -8,7 +9,7 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
-    plugins: [UnoCSS(), solidPlugin()],
+    plugins: [UnoCSS(), devtools({ autoname: true }), solidPlugin()],
     server: {
       port: 3000,
     },
