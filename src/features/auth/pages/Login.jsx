@@ -1,39 +1,17 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { createForm } from "@modular-forms/solid";
+import { createForm, required, minLength } from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import FormField from "@components/FormField";
-import { loginSchema } from "@utils/zodSchemas";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Create form with Zod validation - simplified approach
-  const [loginForm, { Form, Field }] = createForm({
-    initialValues: {
-      userormail: "",
-      password: "",
-    },
-    validate: (values) => {
-      try {
-        loginSchema.parse(values);
-        return {}; // No errors
-      } catch (error) {
-        // Convert Zod errors to the format expected by @modular-forms/solid
-        const errors = {};
-        if (error.errors) {
-          error.errors.forEach((err) => {
-            const field = err.path[0];
-            errors[field] = err.message;
-          });
-        }
-        return errors;
-      }
-    },
-  });
+  // Create form with validation - javascript version
+  const [loginForm, { Form, Field }] = createForm();
 
   const handleSubmit = async (values) => {
     setLoading(true);
@@ -46,11 +24,9 @@ export default function Login() {
         "Login failed: " + (error.response?.data?.message || error.message)
       );
 
-      // Handle invalid credentials
+      // Handle invalid credentials directly in the component
       if (error.response?.status === 401) {
-        loginForm.setError("password", {
-          message: "Invalid username/email or password",
-        });
+        loginForm.setError("password", "Invalid username/email or password");
       }
     } finally {
       setLoading(false);
@@ -69,30 +45,37 @@ export default function Login() {
         class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
       >
         <div class="space-y-5">
-          <Field name="userormail">
+          <Field
+            name="userormail"
+            validate={required("Please enter your username or email.")}
+          >
             {(field, props) => (
               <FormField
+                {...props}
+                value={field.value}
+                error={field.error}
                 label="Username or Email"
                 type="text"
-                error={field.error}
                 placeholder="Enter your username or email"
-                value={field.value || ""}
-                onInput={(e) => field.setValue(e.target.value)}
-                {...props}
               />
             )}
           </Field>
 
-          <Field name="password">
+          <Field
+            name="password"
+            validate={[
+              required("Please enter your password."),
+              minLength(8, "Password must be at least 8 characters."),
+            ]}
+          >
             {(field, props) => (
               <FormField
+                {...props}
+                value={field.value}
+                error={field.error}
                 label="Password"
                 type="password"
-                error={field.error}
                 placeholder="Enter your password"
-                value={field.value || ""}
-                onInput={(e) => field.setValue(e.target.value)}
-                {...props}
               />
             )}
           </Field>

@@ -1,11 +1,16 @@
-import { createSignal, createEffect, onCleanup } from "solid-js";
+import { createSignal, onCleanup } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { createForm } from "@modular-forms/solid";
+import {
+  createForm,
+  required,
+  email,
+  minLength,
+  pattern,
+} from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import { authService } from "@services/authService";
 import FormField from "@components/FormField";
-import { registerSchema } from "@utils/zodSchemas";
 import { debounce } from "@utils/debounce";
 // Import solid-icons
 import { BiRegularLoader } from "solid-icons/bi";
@@ -16,31 +21,8 @@ export default function Register() {
   const navigate = useNavigate();
   const { register } = useAuth();
 
-  // Create form with Zod validation
-  const [registerForm, { Form, Field }] = createForm({
-    initialValues: {
-      email: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-    },
-    validate: (values) => {
-      try {
-        registerSchema.parse(values);
-        return {}; // No errors
-      } catch (error) {
-        // Convert Zod errors to the format expected by @modular-forms/solid
-        const errors = {};
-        if (error.errors) {
-          error.errors.forEach((err) => {
-            const field = err.path[0];
-            errors[field] = err.message;
-          });
-        }
-        return errors;
-      }
-    },
-  });
+  // Create form with validation - javascript version
+  const [registerForm, { Form, Field }] = createForm();
 
   const [usernameStatus, setUsernameStatus] = createSignal({
     checking: false,
@@ -49,6 +31,9 @@ export default function Register() {
 
   // Create a debounced function to check username availability
   const checkUsername = debounce(async (username) => {
+    // Skip validation for empty usernames
+    if (!username || username.length < 3) return;
+
     // First check if username contains only alphanumeric characters
     const isValidFormat = /^[a-zA-Z0-9]+$/.test(username);
 
@@ -57,16 +42,7 @@ export default function Register() {
         checking: false,
         available: false,
       });
-
-      registerForm.setError("username", {
-        message: "No spaces or symbols allowed",
-      });
       return; // Stop here, don't check with backend
-    }
-
-    // Clear format errors
-    if (registerForm.errors?.username === "No spaces or symbols allowed") {
-      registerForm.clearError("username");
     }
 
     // Now proceed with backend check
@@ -78,17 +54,6 @@ export default function Register() {
         checking: false,
         available: response.available,
       });
-
-      // Set error if username is not available
-      if (!response.available) {
-        registerForm.setError("username", {
-          message: "Username is already taken",
-        });
-      } else if (
-        registerForm.errors?.username === "Username is already taken"
-      ) {
-        registerForm.clearError("username");
-      }
     } catch (error) {
       alert.error(
         "Username check error: " +
@@ -102,9 +67,9 @@ export default function Register() {
     }
   }, 1000); // 1 second debounce
 
-  const handleUsernameInput = (e, setValue) => {
+  // Custom handler for username field to check availability
+  const handleUsernameInput = (e) => {
     const username = e.target.value;
-    setValue(username);
 
     // Clear status immediately when typing or if username is too short
     if (username.length < 3) {
@@ -144,12 +109,12 @@ export default function Register() {
           (error.response?.data?.message || error.message)
       );
 
-      // Handle validation errors from server
+      // Handle specific errors if needed
       if (error.response?.status === 422 && error.response?.data?.errors) {
-        // Set server validation errors
         const serverErrors = error.response.data.errors;
+        // Handle server errors
         Object.keys(serverErrors).forEach((key) => {
-          registerForm.setError(key, { message: serverErrors[key] });
+          registerForm.setError(key, serverErrors[key]);
         });
       }
     } finally {
@@ -163,6 +128,16 @@ export default function Register() {
       checkUsername.cancel();
     }
   });
+
+  // Custom validation for username availability
+  const validateUsername = (value) => {
+    if (!value) return "Please enter a username";
+    if (value.length < 3) return "Username must be at least 3 characters";
+    if (!/^[a-zA-Z0-9]+$/.test(value)) return "No spaces or symbols allowed";
+    if (usernameStatus().available === false)
+      return "Username is already taken";
+    return null;
+  };
 
   return (
     <div class="max-w-md w-full space-y-8">
@@ -179,35 +154,43 @@ export default function Register() {
         class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
       >
         <div class="space-y-5">
-          <Field name="email">
+          <Field
+            name="email"
+            validate={[
+              required("Please enter your email."),
+              email("Please enter a valid email address."),
+            ]}
+          >
             {(field, props) => (
               <FormField
+                {...props}
+                value={field.value}
+                error={field.error}
                 label="Email"
                 type="email"
-                error={field.error}
                 placeholder="Enter your email"
-                value={field.value || ""}
-                onInput={(e) => field.setValue(e.target.value)}
-                {...props}
               />
             )}
           </Field>
 
           <div class="relative">
-            <Field name="username">
+            <Field
+              name="username"
+              validate={validateUsername}
+              onInput={handleUsernameInput}
+            >
               {(field, props) => (
                 <div>
                   <FormField
+                    {...props}
+                    value={field.value}
+                    error={field.error}
                     label="Username"
                     type="text"
-                    error={field.error}
                     placeholder="Choose a username"
-                    value={field.value || ""}
-                    onInput={(e) => handleUsernameInput(e, field.setValue)}
-                    {...props}
                   />
 
-                  {/* Status indicator icon with solid-icons */}
+                  {/* Username status indicator */}
                   {field.value?.length >= 3 && (
                     <div class="absolute right-3 top-[38px]">
                       {usernameStatus().checking ? (
@@ -224,30 +207,41 @@ export default function Register() {
             </Field>
           </div>
 
-          <Field name="password">
+          <Field
+            name="password"
+            validate={[
+              required("Please enter a password."),
+              minLength(8, "Password must be at least 8 characters."),
+            ]}
+          >
             {(field, props) => (
               <FormField
+                {...props}
+                value={field.value}
+                error={field.error}
                 label="Password"
                 type="password"
-                error={field.error}
                 placeholder="Create a password"
-                value={field.value || ""}
-                onInput={(e) => field.setValue(e.target.value)}
-                {...props}
               />
             )}
           </Field>
 
-          <Field name="confirmPassword">
+          <Field
+            name="confirmPassword"
+            validate={(value, values) => {
+              if (!value) return "Please confirm your password.";
+              if (value !== values.password) return "Passwords do not match.";
+              return null;
+            }}
+          >
             {(field, props) => (
               <FormField
+                {...props}
+                value={field.value}
+                error={field.error}
                 label="Confirm Password"
                 type="password"
-                error={field.error}
                 placeholder="Confirm your password"
-                value={field.value || ""}
-                onInput={(e) => field.setValue(e.target.value)}
-                {...props}
               />
             )}
           </Field>
