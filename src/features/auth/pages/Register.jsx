@@ -83,7 +83,7 @@ export default function Register() {
       });
 
       alert.success("Registration successful! Please log in");
-      navigate("/auth/login", { replace: true });
+      navigate("/auth/otp", { replace: true });
     } finally {
       setLoading(false);
     }
