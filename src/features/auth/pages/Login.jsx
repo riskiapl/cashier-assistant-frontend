@@ -4,6 +4,7 @@ import { createForm, valiForm } from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
 import FormField from "@components/FormField";
 import { loginSchema } from "@utils/ValidationSchema";
+import { authService } from "@services/authService";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);
@@ -19,8 +20,9 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await login(values.userormail, values.password);
-      navigate("/dashboard", { replace: true });
+      const response = await authService.login(values);
+      await login(response);
+      navigate("/", { replace: true });
     } finally {
       setLoading(false);
     }

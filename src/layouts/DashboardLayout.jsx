@@ -5,7 +5,7 @@ import { alert } from "@lib/alert";
 
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
 
   const handleLogout = async () => {
     const confirmed = await alert.confirm({
@@ -22,8 +22,7 @@ export default function DashboardLayout(props) {
   };
 
   onMount(() => {
-    const auth = localStorage.getItem("auth");
-    if (!auth) {
+    if (!isAuthenticated()) {
       navigate("/auth/login", { replace: true });
     }
   });

@@ -1,10 +1,7 @@
 import * as v from "valibot";
 
-/**
- * User registration form schema
- */
-export const registerSchema = v.object(
-  {
+export const registerSchema = v.pipe(
+  v.object({
     email: v.pipe(
       v.string(),
       v.nonEmpty("Email is required"),
@@ -23,34 +20,23 @@ export const registerSchema = v.object(
       v.string(),
       v.nonEmpty("Password is required"),
       v.minLength(8, "Password must be at least 8 characters")
-      // v.regex(
-      //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/,
-      //   "Password must include at least one uppercase letter, one lowercase letter, and one number"
-      // )
     ),
 
     confirmPassword: v.pipe(
       v.string(),
       v.nonEmpty("Please confirm your password")
     ),
-  },
-  [
-    // Custom validation for password matching
-    (input) => {
-      if (input.password !== input.confirmPassword) {
-        return v.issues({
-          path: ["confirmPassword"],
-          message: "Passwords do not match",
-        });
-      }
-      return input;
-    },
-  ]
+  }),
+  v.forward(
+    v.partialCheck(
+      [["password"], ["confirmPassword"]],
+      (input) => input.password === input.confirmPassword,
+      "Passwords do not match."
+    ),
+    ["confirmPassword"]
+  )
 );
 
-/**
- * Login form schema
- */
 export const loginSchema = v.object({
   userormail: v.pipe(
     v.string(),
@@ -61,6 +47,6 @@ export const loginSchema = v.object({
   password: v.pipe(
     v.string(),
     v.nonEmpty("Password is required"),
-    v.minLength(8, "Password must be at least 8 characters")
+    v.minLength(4, "Password must be at least 4 characters")
   ),
 });
