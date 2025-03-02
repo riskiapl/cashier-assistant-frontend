@@ -2,7 +2,6 @@ import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { createForm, valiForm } from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
-import { alert } from "@lib/alert";
 import FormField from "@components/FormField";
 import { loginSchema } from "@utils/ValidationSchema";
 
@@ -22,15 +21,6 @@ export default function Login() {
     try {
       await login(values.userormail, values.password);
       navigate("/dashboard", { replace: true });
-    } catch (error) {
-      alert.error(
-        "Login failed: " + (error.response?.data?.message || error.message)
-      );
-
-      // Handle invalid credentials directly in the component
-      if (error.response?.status === 401) {
-        loginForm.setError("password", "Invalid username/email or password");
-      }
     } finally {
       setLoading(false);
     }

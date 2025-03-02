@@ -6,7 +6,6 @@ export default function FormField(props) {
     "value",
     "error",
     "label",
-    "hint",
     "containerClass",
     "inputClass",
   ]);
@@ -17,7 +16,6 @@ export default function FormField(props) {
         <label class="block text-sm font-medium text-gray-700">
           {fieldProps.label}
         </label>
-        {/* Error message moved to the right side of the title */}
         {fieldProps.error && (
           <p class="text-xs text-red-600">{fieldProps.error}</p>
         )}
@@ -34,10 +32,6 @@ export default function FormField(props) {
           value={fieldProps.value || ""}
         />
       </div>
-
-      {fieldProps.hint && (
-        <p class="mt-1 text-xs text-gray-500">{fieldProps.hint}</p>
-      )}
     </div>
   );
 }

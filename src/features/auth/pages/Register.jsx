@@ -40,15 +40,6 @@ export default function Register() {
         checking: false,
         available: response.available,
       });
-
-      // Set form error if username is not available
-      if (!response.available) {
-        registerForm.setError("username", "Username is already taken");
-      } else if (
-        registerForm.errors?.username === "Username is already taken"
-      ) {
-        registerForm.clearError("username");
-      }
     } catch (error) {
       setUsernameStatus({
         checking: false,
@@ -134,32 +125,38 @@ export default function Register() {
           </Field>
 
           <div class="relative">
-            <Field name="username" onInput={handleUsernameInput}>
-              {(field, props) => (
-                <div>
-                  <FormField
-                    {...props}
-                    value={field.value}
-                    error={field.error}
-                    label="Username"
-                    type="text"
-                    placeholder="Choose a username"
-                  />
+            <Field name="username">
+              {(field, props) => {
+                return (
+                  <div>
+                    <FormField
+                      {...props}
+                      value={field.value}
+                      error={field.error}
+                      label="Username"
+                      type="text"
+                      placeholder="Choose a username"
+                      onInput={(e) => {
+                        props.onInput(e);
+                        handleUsernameInput(e);
+                      }}
+                    />
 
-                  {/* Username status indicator */}
-                  {field.value?.length >= 3 && (
-                    <div class="absolute right-3 top-[38px]">
-                      {usernameStatus().checking ? (
-                        <BiRegularLoader class="animate-spin h-5 w-5 text-gray-500" />
-                      ) : usernameStatus().available === true ? (
-                        <IoCheckmarkCircleSharp class="h-5 w-5 text-green-500" />
-                      ) : usernameStatus().available === false ? (
-                        <IoCloseCircleSharp class="h-5 w-5 text-red-500" />
-                      ) : null}
-                    </div>
-                  )}
-                </div>
-              )}
+                    {/* Username status indicator */}
+                    {field.value?.length >= 3 && (
+                      <div class="absolute right-3 top-[38px]">
+                        {usernameStatus().checking ? (
+                          <BiRegularLoader class="animate-spin h-5 w-5 text-gray-500" />
+                        ) : usernameStatus().available === true ? (
+                          <IoCheckmarkCircleSharp class="h-5 w-5 text-green-500" />
+                        ) : usernameStatus().available === false ? (
+                          <IoCloseCircleSharp class="h-5 w-5 text-red-500" />
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
+                );
+              }}
             </Field>
           </div>
 
