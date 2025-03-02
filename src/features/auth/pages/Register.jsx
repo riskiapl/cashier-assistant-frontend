@@ -1,16 +1,11 @@
 import { createSignal, onCleanup } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import {
-  createForm,
-  required,
-  email,
-  minLength,
-  pattern,
-} from "@modular-forms/solid";
+import { createForm, valiForm } from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import { authService } from "@services/authService";
 import FormField from "@components/FormField";
+import { registerSchema } from "@utils/ValidationSchema";
 import { debounce } from "@utils/debounce";
 // Import solid-icons
 import { BiRegularLoader } from "solid-icons/bi";
@@ -21,8 +16,10 @@ export default function Register() {
   const navigate = useNavigate();
   const { register } = useAuth();
 
-  // Create form with validation - javascript version
-  const [registerForm, { Form, Field }] = createForm();
+  // Create form with Valibot validation
+  const [registerForm, { Form, Field }] = createForm({
+    validate: valiForm(registerSchema),
+  });
 
   const [usernameStatus, setUsernameStatus] = createSignal({
     checking: false,
@@ -34,17 +31,6 @@ export default function Register() {
     // Skip validation for empty usernames
     if (!username || username.length < 3) return;
 
-    // First check if username contains only alphanumeric characters
-    const isValidFormat = /^[a-zA-Z0-9]+$/.test(username);
-
-    if (!isValidFormat) {
-      setUsernameStatus({
-        checking: false,
-        available: false,
-      });
-      return; // Stop here, don't check with backend
-    }
-
     // Now proceed with backend check
     try {
       setUsernameStatus({ checking: true, available: null });
@@ -54,6 +40,15 @@ export default function Register() {
         checking: false,
         available: response.available,
       });
+
+      // Set form error if username is not available
+      if (!response.available) {
+        registerForm.setError("username", "Username is already taken");
+      } else if (
+        registerForm.errors?.username === "Username is already taken"
+      ) {
+        registerForm.clearError("username");
+      }
     } catch (error) {
       alert.error(
         "Username check error: " +
@@ -109,10 +104,9 @@ export default function Register() {
           (error.response?.data?.message || error.message)
       );
 
-      // Handle specific errors if needed
+      // Handle server validation errors
       if (error.response?.status === 422 && error.response?.data?.errors) {
         const serverErrors = error.response.data.errors;
-        // Handle server errors
         Object.keys(serverErrors).forEach((key) => {
           registerForm.setError(key, serverErrors[key]);
         });
@@ -129,16 +123,6 @@ export default function Register() {
     }
   });
 
-  // Custom validation for username availability
-  const validateUsername = (value) => {
-    if (!value) return "Please enter a username";
-    if (value.length < 3) return "Username must be at least 3 characters";
-    if (!/^[a-zA-Z0-9]+$/.test(value)) return "No spaces or symbols allowed";
-    if (usernameStatus().available === false)
-      return "Username is already taken";
-    return null;
-  };
-
   return (
     <div class="max-w-md w-full space-y-8">
       {/* Welcome Section */}
@@ -154,13 +138,7 @@ export default function Register() {
         class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
       >
         <div class="space-y-5">
-          <Field
-            name="email"
-            validate={[
-              required("Please enter your email."),
-              email("Please enter a valid email address."),
-            ]}
-          >
+          <Field name="email">
             {(field, props) => (
               <FormField
                 {...props}
@@ -174,11 +152,7 @@ export default function Register() {
           </Field>
 
           <div class="relative">
-            <Field
-              name="username"
-              validate={validateUsername}
-              onInput={handleUsernameInput}
-            >
+            <Field name="username" onInput={handleUsernameInput}>
               {(field, props) => (
                 <div>
                   <FormField
@@ -207,13 +181,7 @@ export default function Register() {
             </Field>
           </div>
 
-          <Field
-            name="password"
-            validate={[
-              required("Please enter a password."),
-              minLength(8, "Password must be at least 8 characters."),
-            ]}
-          >
+          <Field name="password">
             {(field, props) => (
               <FormField
                 {...props}
@@ -226,14 +194,7 @@ export default function Register() {
             )}
           </Field>
 
-          <Field
-            name="confirmPassword"
-            validate={(value, values) => {
-              if (!value) return "Please confirm your password.";
-              if (value !== values.password) return "Passwords do not match.";
-              return null;
-            }}
-          >
+          <Field name="confirmPassword">
             {(field, props) => (
               <FormField
                 {...props}

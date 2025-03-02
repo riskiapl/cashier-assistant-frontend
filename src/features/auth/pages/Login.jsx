@@ -1,17 +1,20 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { createForm, required, minLength } from "@modular-forms/solid";
+import { createForm, valiForm } from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import FormField from "@components/FormField";
+import { loginSchema } from "@utils/ValidationSchema";
 
 export default function Login() {
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Create form with validation - javascript version
-  const [loginForm, { Form, Field }] = createForm();
+  // Create form with Valibot validation
+  const [loginForm, { Form, Field }] = createForm({
+    validate: valiForm(loginSchema),
+  });
 
   const handleSubmit = async (values) => {
     setLoading(true);
@@ -45,10 +48,7 @@ export default function Login() {
         class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
       >
         <div class="space-y-5">
-          <Field
-            name="userormail"
-            validate={required("Please enter your username or email.")}
-          >
+          <Field name="userormail">
             {(field, props) => (
               <FormField
                 {...props}
@@ -61,13 +61,7 @@ export default function Login() {
             )}
           </Field>
 
-          <Field
-            name="password"
-            validate={[
-              required("Please enter your password."),
-              minLength(8, "Password must be at least 8 characters."),
-            ]}
-          >
+          <Field name="password">
             {(field, props) => (
               <FormField
                 {...props}
