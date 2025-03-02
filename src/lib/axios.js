@@ -46,8 +46,13 @@ api.interceptors.response.use(
       alert.error("You don't have permission to access this resource");
     } else if (error.response?.status === 404) {
       alert.error("Resource not found");
+    } else if (error.response?.status === 409) {
+      alert.error(
+        error.response?.data?.error ||
+          "Conflict occurred. The request couldn't be completed due to a conflict with the current state of the resource"
+      );
     } else if (error.response?.status === 422) {
-      alert.error(error.response?.data?.message || "Validation error occurred");
+      alert.error(error.response?.data?.error || "Validation error occurred");
     } else if (error.response?.status >= 500) {
       alert.error("Server error occurred. Please try again later");
     } else {

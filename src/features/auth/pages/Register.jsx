@@ -50,11 +50,6 @@ export default function Register() {
         registerForm.clearError("username");
       }
     } catch (error) {
-      alert.error(
-        "Username check error: " +
-          (error.message || "Failed to verify username availability")
-      );
-
       setUsernameStatus({
         checking: false,
         available: null,
@@ -98,19 +93,6 @@ export default function Register() {
 
       alert.success("Registration successful! Please log in");
       navigate("/auth/login", { replace: true });
-    } catch (error) {
-      alert.error(
-        "Registration failed: " +
-          (error.response?.data?.message || error.message)
-      );
-
-      // Handle server validation errors
-      if (error.response?.status === 422 && error.response?.data?.errors) {
-        const serverErrors = error.response.data.errors;
-        Object.keys(serverErrors).forEach((key) => {
-          registerForm.setError(key, serverErrors[key]);
-        });
-      }
     } finally {
       setLoading(false);
     }
