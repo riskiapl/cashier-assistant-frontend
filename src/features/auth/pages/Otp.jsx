@@ -11,9 +11,18 @@ export default function Otp() {
 
   const [otpForm, { Form }] = createForm();
 
-  // Register input refs
   createEffect(() => {
-    setOtpInputs(Array(6).fill(null));
+    const inputs = otpInputs();
+    if (inputs.length > 0) {
+      console.log("OTP inputs updated:", inputs);
+    }
+  });
+
+  createEffect(() => {
+    const values = otpValues();
+    if (values.length > 0) {
+      console.log("OTP values updated:", values);
+    }
   });
 
   const handleChange = (e, index) => {
@@ -21,18 +30,28 @@ export default function Otp() {
 
     // Allow only numbers
     if (!/^\d*$/.test(value)) {
-      e.preventDefault();
       return;
     }
 
     // Update OTP values
     const newOtpValues = [...otpValues()];
-    newOtpValues[index] = value.slice(-1); // Take only the last character
+
+    // Get only the last entered digit if multiple characters are entered
+    const lastChar = value.slice(-1);
+    newOtpValues[index] = lastChar;
+
     setOtpValues(newOtpValues);
 
-    // Auto focus next input
-    if (value && index < 5) {
-      otpInputs()[index + 1].focus();
+    // Move focus to next input if a digit was entered
+    if (lastChar && index < 5) {
+      // Use setTimeout to ensure DOM updates before focusing
+      setTimeout(() => {
+        const nextInput = otpInputs()[index + 1];
+        console.log(nextInput, "masuk nextInput");
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }, 0);
     }
   };
 
@@ -144,7 +163,10 @@ export default function Otp() {
                   value={otpValues()[index]}
                   onInput={(e) => handleChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
+                  onFocus={(e) => e.target.select()}
+                  autocomplete="off"
                   ref={(el) => {
+                    console.log(otpInputs(), "masuk ref");
                     const inputs = otpInputs();
                     inputs[index] = el;
                     setOtpInputs(inputs);
