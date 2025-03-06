@@ -1,10 +1,10 @@
 import axios from "axios";
-import config from "@config/api";
+// import config from "@config/api";
 import { alert } from "./alert";
 
 const api = axios.create({
-  baseURL: config.apiUrl,
-  withCredentials: false, // Ubah ke false untuk mengatasi masalah CORS pada tahap development
+  baseURL: "/api", // config.apiUrl,
+  withCredentials: true, // Ubah ke false untuk mengatasi masalah CORS pada tahap development
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",

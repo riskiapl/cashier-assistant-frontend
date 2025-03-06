@@ -12,6 +12,13 @@ export default defineConfig(({ command, mode }) => {
     plugins: [UnoCSS(), devtools({ autoname: true }), solidPlugin()],
     server: {
       port: 3000,
+      proxy: {
+        "/api": {
+          target: env.VITE_API_URL,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
     },
     build: {
       target: "esnext",
