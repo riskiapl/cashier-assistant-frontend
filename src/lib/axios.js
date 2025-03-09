@@ -1,9 +1,9 @@
 import axios from "axios";
-// import config from "@config/api";
+import config from "@config/api";
 import { alert } from "./alert";
 
 const api = axios.create({
-  baseURL: "/api", // config.apiUrl,
+  baseURL: config.apiUrl,
   withCredentials: true, // Ubah ke false untuk mengatasi masalah CORS pada tahap development
   headers: {
     "Content-Type": "application/json",
@@ -40,12 +40,22 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401) {
       // Handle unauthorized
-      window.location.href = "/auth/login";
-      alert.error("Your session has expired. Please login again");
+      const isLoginPage = window.location.pathname === "/auth/login";
+      const errorMsg =
+        error.response?.data?.error ||
+        (isLoginPage
+          ? "Authentication failed. Please login again."
+          : "Your session has expired. Please login again");
+
+      if (!isLoginPage) {
+        window.location.href = "/auth/login";
+      }
+
+      alert.error(errorMsg);
     } else if (error.response?.status === 403) {
       alert.error("You don't have permission to access this resource");
     } else if (error.response?.status === 404) {
-      alert.error("Resource not found");
+      alert.error(error.response?.data?.error || "Resource not found");
     } else if (error.response?.status === 409) {
       alert.error(
         error.response?.data?.error ||

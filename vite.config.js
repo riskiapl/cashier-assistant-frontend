@@ -5,25 +5,27 @@ import UnoCSS from "unocss/vite";
 import path from "path";
 
 export default defineConfig(({ command, mode }) => {
-  // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), "");
+  const isDev = mode === "development";
 
   return {
     plugins: [UnoCSS(), devtools({ autoname: true }), solidPlugin()],
     server: {
       port: 3000,
-      proxy: {
-        "/api": {
-          target: env.VITE_API_URL,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ""),
-        },
-      },
+      proxy: isDev
+        ? {
+            // Only apply proxy in development
+            "/api": {
+              target: "http://localhost:8000",
+              changeOrigin: true,
+              rewrite: (path) => path.replace(/^\/api/, ""),
+            },
+          }
+        : undefined,
     },
     build: {
       target: "esnext",
     },
-    // Expose env to your app
     define: {
       "process.env.VITE_API_URL": JSON.stringify(env.VITE_API_URL),
       "process.env.VITE_APP_ENV": JSON.stringify(env.VITE_APP_ENV),
