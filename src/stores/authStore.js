@@ -1,19 +1,32 @@
-import { createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
 
-const [isAuthenticated, setIsAuthenticated] = createSignal(
-  !!localStorage.getItem("auth")
-);
+// Initialize auth state from localStorage
+const initialState = {
+  user: JSON.parse(localStorage.getItem("user") || "null"),
+  token: localStorage.getItem("token") || null,
+};
+
+// Create store
+const [auth, setAuth] = createStore(initialState);
 
 export function useAuth() {
   const login = (userData) => {
-    localStorage.setItem("auth", JSON.stringify(userData));
-    setIsAuthenticated(true);
+    const { token, user } = userData;
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
+    setAuth({ user, token });
   };
 
   const logout = () => {
-    localStorage.removeItem("auth");
-    setIsAuthenticated(false);
+    // localStorage.removeItem("user");
+    // localStorage.removeItem("token");
+    localStorage.clear();
+    setAuth({ user: null, token: null });
   };
 
-  return { isAuthenticated, login, logout };
+  const isAuthenticated = () => Boolean(auth.user);
+
+  return { auth, isAuthenticated, login, logout };
 }
+
+export { auth, setAuth };

@@ -1,12 +1,13 @@
 import { onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
+import { useAuth } from "@stores/authStore";
 
 function AuthLayout(props) {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   onMount(() => {
-    const auth = localStorage.getItem("auth");
-    if (auth) {
+    if (isAuthenticated()) {
       navigate("/", { replace: true });
     }
   });

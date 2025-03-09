@@ -1,5 +1,6 @@
 import { defineConfig, loadEnv } from "vite";
 import solidPlugin from "vite-plugin-solid";
+import devtools from "solid-devtools/vite";
 import UnoCSS from "unocss/vite";
 import path from "path";
 
@@ -8,9 +9,16 @@ export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
-    plugins: [UnoCSS(), solidPlugin()],
+    plugins: [UnoCSS(), devtools({ autoname: true }), solidPlugin()],
     server: {
       port: 3000,
+      proxy: {
+        "/api": {
+          target: env.VITE_API_URL,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
     },
     build: {
       target: "esnext",
@@ -31,6 +39,7 @@ export default defineConfig(({ command, mode }) => {
         "@layouts": path.resolve(__dirname, "./src/layouts"),
         "@lib": path.resolve(__dirname, "./src/lib"),
         "@routes": path.resolve(__dirname, "./src/routes"),
+        "@services": path.resolve(__dirname, "./src/services"),
         "@stores": path.resolve(__dirname, "./src/stores"),
         "@styles": path.resolve(__dirname, "./src/styles"),
         "@utils": path.resolve(__dirname, "./src/utils"),
