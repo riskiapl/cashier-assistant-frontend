@@ -25,6 +25,18 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       target: "esnext",
+      // build: {
+      //   babel: {
+      //     parserOpts: {
+      //       plugins: ["importAssertions"],
+      //     },
+      //     generatorOpts: {
+      //       compact: true,
+      //       retainLines: false,
+      //       maxLength: 1000000, // Increase max length
+      //     },
+      //   },
+      // },
     },
     define: {
       "process.env.VITE_API_URL": JSON.stringify(env.VITE_API_URL),

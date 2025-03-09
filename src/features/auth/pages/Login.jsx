@@ -5,6 +5,7 @@ import { useAuth } from "@stores/authStore";
 import FormField from "@components/FormField";
 import { loginSchema } from "@utils/validationSchema";
 import { authService } from "@services/authService";
+import Spinner from "@components/Spinner";
 
 const Login = () => {
   const [loading, setLoading] = createSignal(false);
@@ -85,7 +86,10 @@ const Login = () => {
         </div>
 
         <button type="submit" class={submitButtonClass} disabled={loading()}>
-          {loading() ? "Signing in..." : "Sign in"}
+          <div class="flex items-center gap-2">
+            {loading() && <Spinner />}
+            {loading() ? "Signing in..." : "Sign in"}
+          </div>
         </button>
 
         <div class="text-center mt-4">

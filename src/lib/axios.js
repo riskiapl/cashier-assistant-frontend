@@ -1,6 +1,7 @@
 import axios from "axios";
 import config from "@config/api";
 import { alert } from "./alert";
+import { startProgress, completeProgress } from "@components/ProgressBar";
 
 const api = axios.create({
   baseURL: config.apiUrl,
@@ -15,6 +16,7 @@ const api = axios.create({
 // Request interceptor for adding auth token
 api.interceptors.request.use(
   (config) => {
+    startProgress();
     const auth = localStorage.getItem("auth");
     if (auth) {
       const { token } = JSON.parse(auth);
@@ -23,14 +25,19 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    completeProgress();
     return Promise.reject(error);
   }
 );
 
 // Interceptor untuk handling errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    completeProgress();
+    return response;
+  },
   (error) => {
+    completeProgress();
     if (!error.response && error.message === "Network Error") {
       alert.error(
         "Network error. Please check your internet connection or the API server might be down."

@@ -8,8 +8,8 @@ import FormField from "@components/FormField";
 import { registerSchema } from "@utils/validationSchema";
 import { debounce } from "@utils/debounce";
 // Import solid-icons
-import { BiRegularLoader } from "solid-icons/bi";
 import { IoCheckmarkCircleSharp, IoCloseCircleSharp } from "solid-icons/io";
+import Spinner from "@components/Spinner";
 
 const Register = () => {
   const [loading, setLoading] = createSignal(false);
@@ -29,6 +29,7 @@ const Register = () => {
   // Create a debounced function to check username availability
   const checkUsername = debounce(async (username) => {
     // Skip validation for empty usernames
+    console.log(username, "masuk username");
     if (!username || username.length < 3) return;
 
     // Now proceed with backend check
@@ -58,7 +59,6 @@ const Register = () => {
         checking: false,
         available: null,
       });
-      return;
     }
 
     // Use the debounced function
@@ -140,7 +140,7 @@ const Register = () => {
                     {field.value?.length >= 3 && (
                       <div class="absolute right-3 top-[38px]">
                         {usernameStatus().checking ? (
-                          <BiRegularLoader class="animate-spin h-5 w-5 text-gray-500" />
+                          <Spinner color="primary-500" />
                         ) : usernameStatus().available === true ? (
                           <IoCheckmarkCircleSharp class="h-5 w-5 text-green-500" />
                         ) : usernameStatus().available === false ? (
@@ -186,7 +186,10 @@ const Register = () => {
           class={submitButtonClass}
           disabled={loading() || usernameStatus().checking}
         >
-          {loading() ? "Creating Account..." : "Create Account"}
+          <div class="flex items-center gap-2">
+            {loading() && <Spinner />}
+            {loading() ? "Creating Account..." : "Create Account"}
+          </div>
         </button>
 
         <div class="text-center mt-4">
