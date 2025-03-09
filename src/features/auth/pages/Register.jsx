@@ -5,7 +5,7 @@ import { useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import { authService } from "@services/authService";
 import FormField from "@components/FormField";
-import { registerSchema } from "@utils/ValidationSchema";
+import { registerSchema } from "@utils/validationSchema";
 import { debounce } from "@utils/debounce";
 // Import solid-icons
 import { BiRegularLoader } from "solid-icons/bi";

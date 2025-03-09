@@ -3,7 +3,7 @@ import { useNavigate } from "@solidjs/router";
 import { createForm, valiForm } from "@modular-forms/solid";
 import { useAuth } from "@stores/authStore";
 import FormField from "@components/FormField";
-import { loginSchema } from "@utils/ValidationSchema";
+import { loginSchema } from "@utils/validationSchema";
 import { authService } from "@services/authService";
 
 export default function Login() {
