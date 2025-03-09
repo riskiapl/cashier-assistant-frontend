@@ -11,7 +11,7 @@ import { debounce } from "@utils/debounce";
 import { BiRegularLoader } from "solid-icons/bi";
 import { IoCheckmarkCircleSharp, IoCloseCircleSharp } from "solid-icons/io";
 
-export default function Register() {
+const Register = () => {
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const { register } = useAuth();
@@ -98,18 +98,12 @@ export default function Register() {
 
   return (
     <div class="max-w-md w-full space-y-8">
-      {/* Welcome Section */}
       <div class="text-center">
-        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">
-          Create Account
-        </h1>
+        <h1 class={titleClass}>Create Account</h1>
         <p class="text-gray-600">Join us today and get started</p>
       </div>
 
-      <Form
-        onSubmit={handleSubmit}
-        class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
-      >
+      <Form onSubmit={handleSubmit} class={formContainerClass}>
         <div class="space-y-5">
           <Field name="email">
             {(field, props) => (
@@ -189,7 +183,7 @@ export default function Register() {
 
         <button
           type="submit"
-          class="w-full flex justify-center py-3 px-4 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+          class={submitButtonClass}
           disabled={loading() || usernameStatus().checking}
         >
           {loading() ? "Creating Account..." : "Create Account"}
@@ -198,10 +192,7 @@ export default function Register() {
         <div class="text-center mt-4">
           <p class="text-sm text-gray-600">
             Already have an account?{" "}
-            <a
-              href="/auth/login"
-              class="font-medium text-blue-600 hover:text-blue-500"
-            >
+            <a href="/auth/login" class={linkClass}>
               Sign in here
             </a>
           </p>
@@ -209,4 +200,30 @@ export default function Register() {
       </Form>
     </div>
   );
-}
+};
+
+export default Register;
+
+// Add these constants at the bottom of the file
+const titleClass = "text-4xl font-extrabold text-gray-900 mb-2";
+
+const formContainerClass = [
+  "mt-8 space-y-6",
+  "bg-white p-8",
+  "rounded-2xl shadow-lg",
+].join(" ");
+
+const submitButtonClass = [
+  "w-full flex justify-center",
+  "py-3 px-4 rounded-xl",
+  "shadow-sm text-sm font-medium",
+  "text-white bg-blue-600",
+  "hover:bg-blue-700",
+  "focus:outline-none focus:ring-2",
+  "focus:ring-offset-2 focus:ring-blue-500",
+  "transition-colors",
+].join(" ");
+
+const linkClass = ["font-medium", "text-blue-600", "hover:text-blue-500"].join(
+  " "
+);

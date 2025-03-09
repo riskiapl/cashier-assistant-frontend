@@ -3,7 +3,7 @@ import { useNavigate } from "@solidjs/router";
 import { createForm } from "@modular-forms/solid";
 import { authService } from "@services/authService";
 
-export default function Otp() {
+const Otp = () => {
   const [loading, setLoading] = createSignal(false);
   const [otpValues, setOtpValues] = createSignal(Array(6).fill(""));
   const [otpInputs, setOtpInputs] = createSignal([]);
@@ -47,7 +47,7 @@ export default function Otp() {
       // Use setTimeout to ensure DOM updates before focusing
       setTimeout(() => {
         const nextInput = otpInputs()[index + 1];
-        console.log(nextInput, "masuk nextInput");
+
         if (nextInput) {
           nextInput.focus();
         }
@@ -136,19 +136,14 @@ export default function Otp() {
 
   return (
     <div class="max-w-md w-full space-y-8">
-      <div class="text-center">
-        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Verify OTP</h1>
+      <div class={titleContainerClass}>
+        <h1 class={titleClass}>Verify OTP</h1>
         <p class="text-gray-600">Enter the code sent to email</p>
       </div>
 
-      <Form
-        onSubmit={handleSubmit}
-        class="mt-8 space-y-6 bg-white p-8 rounded-2xl shadow-lg"
-      >
+      <Form onSubmit={handleSubmit} class={formContainerClass}>
         <div class="space-y-5">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            OTP Code
-          </label>
+          <label class={labelClass}>OTP Code</label>
 
           <div class="flex justify-between gap-2" onPaste={handlePaste}>
             {Array(6)
@@ -159,7 +154,7 @@ export default function Otp() {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   maxLength={1}
-                  class="w-12 h-12 text-center text-xl font-semibold border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
+                  class={inputClass}
                   value={otpValues()[index]}
                   onInput={(e) => handleChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
@@ -178,7 +173,7 @@ export default function Otp() {
 
         <button
           type="submit"
-          class="w-full flex justify-center py-3 px-4 rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+          class={submitButtonClass}
           disabled={loading() || otpValues().join("").length !== 6}
         >
           {loading() ? "Verifying..." : "Verify OTP"}
@@ -190,7 +185,7 @@ export default function Otp() {
             <button
               type="button"
               onClick={handleResendOtp}
-              class="font-medium text-blue-600 hover:text-blue-500"
+              class={resendButtonClass}
             >
               Resend OTP
             </button>
@@ -198,14 +193,54 @@ export default function Otp() {
         </div>
 
         <div class="text-center mt-2">
-          <a
-            href="/auth/login"
-            class="text-sm font-medium text-blue-600 hover:text-blue-500"
-          >
+          <a href="/auth/login" class={linkClass}>
             Back to login
           </a>
         </div>
       </Form>
     </div>
   );
-}
+};
+
+export default Otp;
+
+const titleContainerClass = "text-center";
+
+const titleClass = "text-4xl font-extrabold text-gray-900 mb-2";
+
+const formContainerClass = [
+  "mt-8 space-y-6",
+  "bg-white p-8",
+  "rounded-2xl shadow-lg",
+].join(" ");
+
+const labelClass = "block text-sm font-medium text-gray-700 mb-2";
+
+const inputClass = [
+  "w-12 h-12",
+  "text-center text-xl font-semibold",
+  "border border-gray-300 rounded-md",
+  "focus:border-blue-500 focus:outline-none",
+].join(" ");
+
+const submitButtonClass = [
+  "w-full flex justify-center",
+  "py-3 px-4 rounded-xl",
+  "shadow-sm text-sm font-medium",
+  "text-white bg-blue-600",
+  "hover:bg-blue-700",
+  "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+  "transition-colors cursor-pointer",
+].join(" ");
+
+const resendButtonClass = [
+  "font-medium",
+  "text-blue-600",
+  "hover:text-blue-500",
+].join(" ");
+
+const linkClass = [
+  "text-sm font-medium",
+  "text-blue-600",
+  "hover:text-blue-500",
+].join(" ");
