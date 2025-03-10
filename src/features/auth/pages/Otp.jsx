@@ -11,20 +11,6 @@ const Otp = () => {
 
   const [otpForm, { Form }] = createForm();
 
-  createEffect(() => {
-    const inputs = otpInputs();
-    if (inputs.length > 0) {
-      console.log("OTP inputs updated:", inputs);
-    }
-  });
-
-  createEffect(() => {
-    const values = otpValues();
-    if (values.length > 0) {
-      console.log("OTP values updated:", values);
-    }
-  });
-
   const handleChange = (e, index) => {
     const value = e.target.value;
 
@@ -161,7 +147,6 @@ const Otp = () => {
                   onFocus={(e) => e.target.select()}
                   autocomplete="off"
                   ref={(el) => {
-                    console.log(otpInputs(), "masuk ref");
                     const inputs = otpInputs();
                     inputs[index] = el;
                     setOtpInputs(inputs);
@@ -193,7 +178,11 @@ const Otp = () => {
         </div>
 
         <div class="text-center mt-2">
-          <a href="/auth/login" class={linkClass}>
+          <a
+            href="/auth/login"
+            class={linkClass}
+            onClick={() => localStorage.removeItem("otp-expired")}
+          >
             Back to login
           </a>
         </div>
