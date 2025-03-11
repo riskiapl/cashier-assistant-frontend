@@ -1,22 +1,55 @@
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, createEffect, onCleanup } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { createForm } from "@modular-forms/solid";
 import { authService } from "@services/authService";
+import { alert } from "@lib/alert";
 
 const Otp = () => {
   const [loading, setLoading] = createSignal(false);
   const [otpValues, setOtpValues] = createSignal(Array(6).fill(""));
   const [otpInputs, setOtpInputs] = createSignal([]);
+  const [expiredAt, setExpiredAt] = createSignal(null);
+  const [countdown, setCountdown] = createSignal({ minutes: 0, seconds: 0 });
+  const [isExpired, setIsExpired] = createSignal(false);
   const navigate = useNavigate();
 
   const [otpForm, { Form }] = createForm();
 
   onMount(() => {
     // Check if otpRequest exists in localStorage
-    const otpRequest = localStorage.getItem("otpRequest");
-    if (!otpRequest) {
+    const otpRequest = JSON.parse(localStorage.getItem("otpRequest") || null);
+    if (otpRequest) {
+      setExpiredAt(new Date(otpRequest.expired_at).getTime());
+    } else {
       // No OTP request data found, redirect to login
       navigate("/auth/login", { replace: true });
+    }
+  });
+
+  createEffect(() => {
+    const expiredTime = expiredAt();
+
+    if (expiredTime) {
+      const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const timeLeft = expiredTime - now;
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          setIsExpired(true);
+          setCountdown({ minutes: 0, seconds: 0 });
+        } else {
+          const minutes = Math.floor(
+            (timeLeft % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+          setCountdown({ minutes, seconds });
+          setIsExpired(false);
+        }
+      }, 1000);
+
+      // Clean up the interval when component unmounts
+      onCleanup(() => clearInterval(interval));
     }
   });
 
@@ -72,7 +105,6 @@ const Otp = () => {
   };
 
   const handlePaste = (e) => {
-    e.preventDefault();
     const pastedData = e.clipboardData.getData("text").trim();
     if (!/^\d+$/.test(pastedData)) return; // Only numbers
 
@@ -97,8 +129,13 @@ const Otp = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     const otp = otpValues().join("");
+
+    // If OTP is expired, call resend function instead
+    if (isExpired()) {
+      handleResendOtp();
+      return;
+    }
 
     // Validate if OTP is complete
     if (otp.length !== 6) {
@@ -119,13 +156,20 @@ const Otp = () => {
   };
 
   const handleResendOtp = async () => {
-    try {
-      // Call resend OTP API
-      await authService.resendOtp();
-      // Show success message (add toast notification if available)
-      console.log("OTP resent successfully");
-    } catch (error) {
-      console.error("Failed to resend OTP:", error);
+    // Call resend OTP API
+    const otpEmail = JSON.parse(
+      localStorage.getItem("otpRequest") || null
+    )?.email;
+
+    const res = await authService.resendOtp({ email: otpEmail });
+
+    if (res?.success) {
+      alert.success(res.success);
+      localStorage.setItem(
+        "otpRequest",
+        JSON.stringify({ email: otpEmail, expired_at: res.expired_at })
+      );
+      setExpiredAt(new Date(res.expired_at).getTime());
     }
   };
 
@@ -183,12 +227,30 @@ const Otp = () => {
           </div>
         </div>
 
+        {/* OTP Countdown Timer */}
+        <div class={countdownContainerClass}>
+          <p class={isExpired() ? countdownExpiredClass : countdownActiveClass}>
+            {isExpired()
+              ? "OTP expired. Please request a new one."
+              : `OTP expires in: ${String(countdown().minutes).padStart(
+                  2,
+                  "0"
+                )}:${String(countdown().seconds).padStart(2, "0")}`}
+          </p>
+        </div>
+
         <button
           type="submit"
           class={submitButtonClass}
-          disabled={loading() || otpValues().join("").length !== 6}
+          disabled={
+            loading() || (!isExpired() && otpValues().join("").length !== 6)
+          }
         >
-          {loading() ? "Verifying..." : "Verify OTP"}
+          {isExpired()
+            ? "Get new OTP"
+            : loading()
+            ? "Verifying..."
+            : "Verify OTP"}
         </button>
 
         <div class="text-center mt-4">
@@ -254,4 +316,22 @@ const backToLoginClass = [
   "text-center mt-2 text-sm",
   "font-medium text-blue-600",
   "hover:text-blue-500 cursor-pointer",
+].join(" ");
+
+const countdownContainerClass = ["text-center my-4"].join(" ");
+
+const countdownActiveClass = [
+  "text-sm font-medium",
+  "py-2 px-4",
+  "bg-blue-50",
+  "text-blue-700",
+  "rounded-lg",
+].join(" ");
+
+const countdownExpiredClass = [
+  "text-sm font-medium",
+  "py-2 px-4",
+  "bg-red-50",
+  "text-red-700",
+  "rounded-lg",
 ].join(" ");

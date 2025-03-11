@@ -23,6 +23,11 @@ export const authService = {
     return response.data;
   },
 
+  async resendOtp(payload) {
+    const response = await api.put("/auth/resend-otp", payload);
+    return response.data;
+  },
+
   //   async resetPassword(token, newPassword) {
   //     const response = await api.post("/auth/reset-password", {
   //       token,
