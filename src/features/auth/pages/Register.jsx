@@ -85,7 +85,7 @@ const Register = () => {
         "otpRequest",
         JSON.stringify({ email: values.email, expired_at: res.expired_at })
       );
-      alert.success(res.message);
+      alert.success(res?.success);
       navigate("/auth/otp", { replace: true });
     } finally {
       setLoading(false);

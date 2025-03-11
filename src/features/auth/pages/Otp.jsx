@@ -1,4 +1,4 @@
-import { createSignal, createEffect } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { createForm } from "@modular-forms/solid";
 import { authService } from "@services/authService";
@@ -10,6 +10,15 @@ const Otp = () => {
   const navigate = useNavigate();
 
   const [otpForm, { Form }] = createForm();
+
+  onMount(() => {
+    // Check if otpRequest exists in localStorage
+    const otpRequest = localStorage.getItem("otpRequest");
+    if (!otpRequest) {
+      // No OTP request data found, redirect to login
+      navigate("/auth/login", { replace: true });
+    }
+  });
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -120,6 +129,24 @@ const Otp = () => {
     }
   };
 
+  const handleBackToLogin = async () => {
+    const otpEmail = JSON.parse(
+      localStorage.getItem("otpRequest") || null
+    )?.email;
+
+    if (otpEmail) {
+      const res = await authService.deletePendingMember(otpEmail);
+
+      if (res?.success) {
+        // Redirect to login page
+        navigate("/auth/login", { replace: true });
+        localStorage.removeItem("otpRequest");
+      }
+    } else {
+      localStorage.removeItem("otpRequest");
+    }
+  };
+
   return (
     <div class="max-w-md w-full space-y-8">
       <div class={titleContainerClass}>
@@ -177,14 +204,8 @@ const Otp = () => {
           </p>
         </div>
 
-        <div class="text-center mt-2">
-          <a
-            href="/auth/login"
-            class={linkClass}
-            onClick={() => localStorage.removeItem("otp-expired")}
-          >
-            Back to login
-          </a>
+        <div class={backToLoginClass} onClick={handleBackToLogin}>
+          Back to login
         </div>
       </Form>
     </div>
@@ -218,7 +239,8 @@ const submitButtonClass = [
   "shadow-sm text-sm font-medium",
   "text-white bg-blue-600",
   "hover:bg-blue-700",
-  "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+  "focus:outline-none focus:ring-2",
+  "focus:ring-offset-2 focus:ring-blue-500",
   "transition-colors cursor-pointer",
 ].join(" ");
 
@@ -228,8 +250,8 @@ const resendButtonClass = [
   "hover:text-blue-500",
 ].join(" ");
 
-const linkClass = [
-  "text-sm font-medium",
-  "text-blue-600",
-  "hover:text-blue-500",
+const backToLoginClass = [
+  "text-center mt-2 text-sm",
+  "font-medium text-blue-600",
+  "hover:text-blue-500 cursor-pointer",
 ].join(" ");
