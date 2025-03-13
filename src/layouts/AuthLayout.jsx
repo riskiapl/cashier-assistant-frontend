@@ -7,8 +7,15 @@ function AuthLayout(props) {
   const { isAuthenticated } = useAuth();
 
   onMount(() => {
+    const otpRequest = JSON.parse(localStorage.getItem("otpRequest") || null);
     if (isAuthenticated()) {
       navigate("/", { replace: true });
+    } else if (otpRequest) {
+      // Check if OTP expiration hasn't passed yet
+      const expirationTime = new Date(otpRequest.expired_at).getTime();
+      if (expirationTime) {
+        navigate("/auth/otp", { replace: true });
+      }
     }
   });
 

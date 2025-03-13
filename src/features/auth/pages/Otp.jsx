@@ -1,27 +1,57 @@
-import { createSignal, createEffect } from "solid-js";
+import { createSignal, onMount, createEffect, onCleanup } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { createForm } from "@modular-forms/solid";
 import { authService } from "@services/authService";
+import { alert } from "@lib/alert";
 
 const Otp = () => {
   const [loading, setLoading] = createSignal(false);
   const [otpValues, setOtpValues] = createSignal(Array(6).fill(""));
   const [otpInputs, setOtpInputs] = createSignal([]);
+  const [expiredAt, setExpiredAt] = createSignal(null);
+  const [countdown, setCountdown] = createSignal({ minutes: 0, seconds: 0 });
+  const [isExpired, setIsExpired] = createSignal(false);
+  const [email, setEmail] = createSignal("");
   const navigate = useNavigate();
 
   const [otpForm, { Form }] = createForm();
 
-  createEffect(() => {
-    const inputs = otpInputs();
-    if (inputs.length > 0) {
-      console.log("OTP inputs updated:", inputs);
+  onMount(() => {
+    // Check if otpRequest exists in localStorage
+    const otpRequest = JSON.parse(localStorage.getItem("otpRequest") || null);
+    if (otpRequest) {
+      setExpiredAt(new Date(otpRequest.expired_at).getTime());
+      setEmail(otpRequest.email);
+    } else {
+      // No OTP request data found, redirect to login
+      navigate("/auth/login", { replace: true });
     }
   });
 
   createEffect(() => {
-    const values = otpValues();
-    if (values.length > 0) {
-      console.log("OTP values updated:", values);
+    const expiredTime = expiredAt();
+
+    if (expiredTime) {
+      const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const timeLeft = expiredTime - now;
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          setIsExpired(true);
+          setCountdown({ minutes: 0, seconds: 0 });
+        } else {
+          const minutes = Math.floor(
+            (timeLeft % (1000 * 60 * 60)) / (1000 * 60)
+          );
+          const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+          setCountdown({ minutes, seconds });
+          setIsExpired(false);
+        }
+      }, 1000);
+
+      // Clean up the interval when component unmounts
+      onCleanup(() => clearInterval(interval));
     }
   });
 
@@ -76,34 +106,38 @@ const Otp = () => {
     }
   };
 
-  const handlePaste = (e) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData.getData("text").trim();
-    if (!/^\d+$/.test(pastedData)) return; // Only numbers
+  // const handlePaste = (e) => {
+  //   const pastedData = e.clipboardData.getData("text").trim();
+  //   if (!/^\d+$/.test(pastedData)) return; // Only numbers
 
-    const digits = pastedData.slice(0, 6).split("");
+  //   const digits = pastedData.slice(0, 6).split("");
 
-    // Fill available fields with pasted digits
-    const newOtpValues = [...otpValues()];
-    digits.forEach((digit, idx) => {
-      if (idx < 6) newOtpValues[idx] = digit;
-    });
+  //   // Fill available fields with pasted digits
+  //   const newOtpValues = [...otpValues()];
+  //   digits.forEach((digit, idx) => {
+  //     if (idx < 6) newOtpValues[idx] = digit;
+  //   });
 
-    setOtpValues(newOtpValues);
+  //   setOtpValues(newOtpValues);
 
-    // Focus the next empty field or the last field
-    const nextEmptyIndex = newOtpValues.findIndex((val) => val === "");
-    if (nextEmptyIndex !== -1) {
-      otpInputs()[nextEmptyIndex].focus();
-    } else if (digits.length > 0) {
-      // Focus last field if all filled
-      otpInputs()[Math.min(digits.length - 1, 5)].focus();
-    }
-  };
+  //   // Focus the next empty field or the last field
+  //   const nextEmptyIndex = newOtpValues.findIndex((val) => val === "");
+  //   if (nextEmptyIndex !== -1) {
+  //     otpInputs()[nextEmptyIndex].focus();
+  //   } else if (digits.length > 0) {
+  //     // Focus last field if all filled
+  //     otpInputs()[Math.min(digits.length - 1, 5)].focus();
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     const otp = otpValues().join("");
+
+    // If OTP is expired, call resend function instead
+    if (isExpired()) {
+      handleResendOtp();
+      return;
+    }
 
     // Validate if OTP is complete
     if (otp.length !== 6) {
@@ -114,8 +148,11 @@ const Otp = () => {
 
     try {
       // Call OTP verification API
-      await authService.verifyOtp(otp);
-      navigate("/", { replace: true });
+      const payload = { email: email(), otp_code: otp };
+      const res = await authService.verifyOtp(payload);
+      alert.success(res?.success);
+      localStorage.removeItem("otpRequest");
+      navigate("/auth/login", { replace: true });
     } catch (error) {
       console.error("OTP verification failed:", error);
     } finally {
@@ -124,13 +161,29 @@ const Otp = () => {
   };
 
   const handleResendOtp = async () => {
+    // Call resend OTP API
     try {
-      // Call resend OTP API
-      await authService.resendOtp();
-      // Show success message (add toast notification if available)
-      console.log("OTP resent successfully");
-    } catch (error) {
-      console.error("Failed to resend OTP:", error);
+      const res = await authService.resendOtp({ email: email() });
+      alert.success(res.success);
+      localStorage.setItem(
+        "otpRequest",
+        JSON.stringify({ email: email(), expired_at: res.expired_at })
+      );
+      setExpiredAt(new Date(res.expired_at).getTime());
+    } catch (err) {
+      handleBackToLogin();
+    }
+  };
+
+  const handleBackToLogin = async () => {
+    if (email()) {
+      await authService.deletePendingMember(email());
+
+      // Redirect to login page
+      navigate("/auth/login", { replace: true });
+      localStorage.removeItem("otpRequest");
+    } else {
+      localStorage.removeItem("otpRequest");
     }
   };
 
@@ -138,14 +191,20 @@ const Otp = () => {
     <div class="max-w-md w-full space-y-8">
       <div class={titleContainerClass}>
         <h1 class={titleClass}>Verify OTP</h1>
-        <p class="text-gray-600">Enter the code sent to email</p>
+        <p class="text-gray-600">
+          Enter the code sent to email{" "}
+          {email() &&
+            `${email()[0]}****${email().split("@")[0].at(-1)}@${
+              email().split("@")[1]
+            }`}
+        </p>
       </div>
 
       <Form onSubmit={handleSubmit} class={formContainerClass}>
         <div class="space-y-5">
           <label class={labelClass}>OTP Code</label>
 
-          <div class="flex justify-between gap-2" onPaste={handlePaste}>
+          <div class="flex justify-between gap-2">
             {Array(6)
               .fill(0)
               .map((_, index) => (
@@ -161,7 +220,6 @@ const Otp = () => {
                   onFocus={(e) => e.target.select()}
                   autocomplete="off"
                   ref={(el) => {
-                    console.log(otpInputs(), "masuk ref");
                     const inputs = otpInputs();
                     inputs[index] = el;
                     setOtpInputs(inputs);
@@ -171,12 +229,30 @@ const Otp = () => {
           </div>
         </div>
 
+        {/* OTP Countdown Timer */}
+        <div class={countdownContainerClass}>
+          <p class={isExpired() ? countdownExpiredClass : countdownActiveClass}>
+            {isExpired()
+              ? "OTP expired. Please request a new one."
+              : `OTP expires in: ${String(countdown().minutes).padStart(
+                  2,
+                  "0"
+                )}:${String(countdown().seconds).padStart(2, "0")}`}
+          </p>
+        </div>
+
         <button
           type="submit"
           class={submitButtonClass}
-          disabled={loading() || otpValues().join("").length !== 6}
+          disabled={
+            loading() || (!isExpired() && otpValues().join("").length !== 6)
+          }
         >
-          {loading() ? "Verifying..." : "Verify OTP"}
+          {isExpired()
+            ? "Get new OTP"
+            : loading()
+            ? "Verifying..."
+            : "Verify OTP"}
         </button>
 
         <div class="text-center mt-4">
@@ -192,10 +268,8 @@ const Otp = () => {
           </p>
         </div>
 
-        <div class="text-center mt-2">
-          <a href="/auth/login" class={linkClass}>
-            Back to login
-          </a>
+        <div class={backToLoginClass} onClick={handleBackToLogin}>
+          Back to login
         </div>
       </Form>
     </div>
@@ -229,7 +303,8 @@ const submitButtonClass = [
   "shadow-sm text-sm font-medium",
   "text-white bg-blue-600",
   "hover:bg-blue-700",
-  "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+  "focus:outline-none focus:ring-2",
+  "focus:ring-offset-2 focus:ring-blue-500",
   "transition-colors cursor-pointer",
 ].join(" ");
 
@@ -239,8 +314,26 @@ const resendButtonClass = [
   "hover:text-blue-500",
 ].join(" ");
 
-const linkClass = [
+const backToLoginClass = [
+  "text-center mt-2 text-sm",
+  "font-medium text-blue-600",
+  "hover:text-blue-500 cursor-pointer",
+].join(" ");
+
+const countdownContainerClass = ["text-center my-4"].join(" ");
+
+const countdownActiveClass = [
   "text-sm font-medium",
-  "text-blue-600",
-  "hover:text-blue-500",
+  "py-2 px-4",
+  "bg-blue-50",
+  "text-blue-700",
+  "rounded-lg",
+].join(" ");
+
+const countdownExpiredClass = [
+  "text-sm font-medium",
+  "py-2 px-4",
+  "bg-red-50",
+  "text-red-700",
+  "rounded-lg",
 ].join(" ");

@@ -44,8 +44,9 @@ api.interceptors.response.use(
       );
       return Promise.reject(error);
     }
-
-    if (error.response?.status === 401) {
+    if (error.response?.status === 400) {
+      alert.error(error.response?.data?.error || "Bad request");
+    } else if (error.response?.status === 401) {
       // Handle unauthorized
       const isLoginPage = window.location.pathname === "/auth/login";
       const errorMsg =

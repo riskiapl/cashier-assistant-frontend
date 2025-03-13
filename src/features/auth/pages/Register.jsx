@@ -29,7 +29,6 @@ const Register = () => {
   // Create a debounced function to check username availability
   const checkUsername = debounce(async (username) => {
     // Skip validation for empty usernames
-    console.log(username, "masuk username");
     if (!username || username.length < 3) return;
 
     // Now proceed with backend check
@@ -76,13 +75,17 @@ const Register = () => {
 
     try {
       // Call register API
-      await authService.register({
+      const res = await authService.register({
         email: values.email,
         username: values.username,
         password: values.password,
       });
 
-      alert.success("Registration successful! Please log in");
+      localStorage.setItem(
+        "otpRequest",
+        JSON.stringify({ email: values.email, expired_at: res.expired_at })
+      );
+      alert.success(res?.success);
       navigate("/auth/otp", { replace: true });
     } finally {
       setLoading(false);
