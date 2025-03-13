@@ -11,6 +11,7 @@ const Otp = () => {
   const [expiredAt, setExpiredAt] = createSignal(null);
   const [countdown, setCountdown] = createSignal({ minutes: 0, seconds: 0 });
   const [isExpired, setIsExpired] = createSignal(false);
+  const [email, setEmail] = createSignal("");
   const navigate = useNavigate();
 
   const [otpForm, { Form }] = createForm();
@@ -20,6 +21,11 @@ const Otp = () => {
     const otpRequest = JSON.parse(localStorage.getItem("otpRequest") || null);
     if (otpRequest) {
       setExpiredAt(new Date(otpRequest.expired_at).getTime());
+
+      const [localPart, domain] = otpRequest.email.split("@");
+      setEmail(
+        `${localPart[0]}****${localPart[localPart.length - 1]}@${domain}`
+      );
     } else {
       // No OTP request data found, redirect to login
       navigate("/auth/login", { replace: true });
@@ -161,15 +167,16 @@ const Otp = () => {
       localStorage.getItem("otpRequest") || null
     )?.email;
 
-    const res = await authService.resendOtp({ email: otpEmail });
-
-    if (res?.success) {
+    try {
+      const res = await authService.resendOtp({ email: otpEmail });
       alert.success(res.success);
       localStorage.setItem(
         "otpRequest",
         JSON.stringify({ email: otpEmail, expired_at: res.expired_at })
       );
       setExpiredAt(new Date(res.expired_at).getTime());
+    } catch (err) {
+      handleBackToLogin();
     }
   };
 
@@ -179,13 +186,11 @@ const Otp = () => {
     )?.email;
 
     if (otpEmail) {
-      const res = await authService.deletePendingMember(otpEmail);
+      await authService.deletePendingMember(otpEmail);
 
-      if (res?.success) {
-        // Redirect to login page
-        navigate("/auth/login", { replace: true });
-        localStorage.removeItem("otpRequest");
-      }
+      // Redirect to login page
+      navigate("/auth/login", { replace: true });
+      localStorage.removeItem("otpRequest");
     } else {
       localStorage.removeItem("otpRequest");
     }
@@ -195,14 +200,14 @@ const Otp = () => {
     <div class="max-w-md w-full space-y-8">
       <div class={titleContainerClass}>
         <h1 class={titleClass}>Verify OTP</h1>
-        <p class="text-gray-600">Enter the code sent to email</p>
+        <p class="text-gray-600">Enter the code sent to email {email()}</p>
       </div>
 
       <Form onSubmit={handleSubmit} class={formContainerClass}>
         <div class="space-y-5">
           <label class={labelClass}>OTP Code</label>
 
-          <div class="flex justify-between gap-2" onPaste={handlePaste}>
+          <div class="flex justify-between gap-2">
             {Array(6)
               .fill(0)
               .map((_, index) => (
@@ -215,6 +220,7 @@ const Otp = () => {
                   value={otpValues()[index]}
                   onInput={(e) => handleChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
+                  onPaste={handlePaste}
                   onFocus={(e) => e.target.select()}
                   autocomplete="off"
                   ref={(el) => {
