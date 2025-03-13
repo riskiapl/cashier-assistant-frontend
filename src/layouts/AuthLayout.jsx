@@ -13,9 +13,7 @@ function AuthLayout(props) {
     } else if (otpRequest) {
       // Check if OTP expiration hasn't passed yet
       const expirationTime = new Date(otpRequest.expired_at).getTime();
-      const currentTime = new Date().getTime();
-
-      if (expirationTime && expirationTime > currentTime) {
+      if (expirationTime) {
         navigate("/auth/otp", { replace: true });
       }
     }
