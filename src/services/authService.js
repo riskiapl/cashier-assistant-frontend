@@ -28,16 +28,8 @@ export const authService = {
     return response.data;
   },
 
-  //   async resetPassword(token, newPassword) {
-  //     const response = await api.post("/auth/reset-password", {
-  //       token,
-  //       password: newPassword,
-  //     });
-  //     return response.data;
-  //   },
-
-  //   async refreshToken() {
-  //     const response = await api.post("/auth/refresh");
-  //     return response.data;
-  //   },
+  async verifyOtp(payload) {
+    const response = await api.post("/auth/verify-otp", payload);
+    return response.data;
+  },
 };

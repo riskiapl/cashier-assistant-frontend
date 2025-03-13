@@ -21,11 +21,7 @@ const Otp = () => {
     const otpRequest = JSON.parse(localStorage.getItem("otpRequest") || null);
     if (otpRequest) {
       setExpiredAt(new Date(otpRequest.expired_at).getTime());
-
-      const [localPart, domain] = otpRequest.email.split("@");
-      setEmail(
-        `${localPart[0]}****${localPart[localPart.length - 1]}@${domain}`
-      );
+      setEmail(otpRequest.email);
     } else {
       // No OTP request data found, redirect to login
       navigate("/auth/login", { replace: true });
@@ -110,29 +106,29 @@ const Otp = () => {
     }
   };
 
-  const handlePaste = (e) => {
-    const pastedData = e.clipboardData.getData("text").trim();
-    if (!/^\d+$/.test(pastedData)) return; // Only numbers
+  // const handlePaste = (e) => {
+  //   const pastedData = e.clipboardData.getData("text").trim();
+  //   if (!/^\d+$/.test(pastedData)) return; // Only numbers
 
-    const digits = pastedData.slice(0, 6).split("");
+  //   const digits = pastedData.slice(0, 6).split("");
 
-    // Fill available fields with pasted digits
-    const newOtpValues = [...otpValues()];
-    digits.forEach((digit, idx) => {
-      if (idx < 6) newOtpValues[idx] = digit;
-    });
+  //   // Fill available fields with pasted digits
+  //   const newOtpValues = [...otpValues()];
+  //   digits.forEach((digit, idx) => {
+  //     if (idx < 6) newOtpValues[idx] = digit;
+  //   });
 
-    setOtpValues(newOtpValues);
+  //   setOtpValues(newOtpValues);
 
-    // Focus the next empty field or the last field
-    const nextEmptyIndex = newOtpValues.findIndex((val) => val === "");
-    if (nextEmptyIndex !== -1) {
-      otpInputs()[nextEmptyIndex].focus();
-    } else if (digits.length > 0) {
-      // Focus last field if all filled
-      otpInputs()[Math.min(digits.length - 1, 5)].focus();
-    }
-  };
+  //   // Focus the next empty field or the last field
+  //   const nextEmptyIndex = newOtpValues.findIndex((val) => val === "");
+  //   if (nextEmptyIndex !== -1) {
+  //     otpInputs()[nextEmptyIndex].focus();
+  //   } else if (digits.length > 0) {
+  //     // Focus last field if all filled
+  //     otpInputs()[Math.min(digits.length - 1, 5)].focus();
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     const otp = otpValues().join("");
@@ -152,8 +148,11 @@ const Otp = () => {
 
     try {
       // Call OTP verification API
-      await authService.verifyOtp(otp);
-      navigate("/", { replace: true });
+      const payload = { email: email(), otp_code: otp };
+      const res = await authService.verifyOtp(payload);
+      alert.success(res?.success);
+      localStorage.removeItem("otpRequest");
+      navigate("/auth/login", { replace: true });
     } catch (error) {
       console.error("OTP verification failed:", error);
     } finally {
@@ -163,16 +162,12 @@ const Otp = () => {
 
   const handleResendOtp = async () => {
     // Call resend OTP API
-    const otpEmail = JSON.parse(
-      localStorage.getItem("otpRequest") || null
-    )?.email;
-
     try {
-      const res = await authService.resendOtp({ email: otpEmail });
+      const res = await authService.resendOtp({ email: email() });
       alert.success(res.success);
       localStorage.setItem(
         "otpRequest",
-        JSON.stringify({ email: otpEmail, expired_at: res.expired_at })
+        JSON.stringify({ email: email(), expired_at: res.expired_at })
       );
       setExpiredAt(new Date(res.expired_at).getTime());
     } catch (err) {
@@ -181,12 +176,8 @@ const Otp = () => {
   };
 
   const handleBackToLogin = async () => {
-    const otpEmail = JSON.parse(
-      localStorage.getItem("otpRequest") || null
-    )?.email;
-
-    if (otpEmail) {
-      await authService.deletePendingMember(otpEmail);
+    if (email()) {
+      await authService.deletePendingMember(email());
 
       // Redirect to login page
       navigate("/auth/login", { replace: true });
@@ -200,7 +191,13 @@ const Otp = () => {
     <div class="max-w-md w-full space-y-8">
       <div class={titleContainerClass}>
         <h1 class={titleClass}>Verify OTP</h1>
-        <p class="text-gray-600">Enter the code sent to email {email()}</p>
+        <p class="text-gray-600">
+          Enter the code sent to email{" "}
+          {email() &&
+            `${email()[0]}****${email().split("@")[0].at(-1)}@${
+              email().split("@")[1]
+            }`}
+        </p>
       </div>
 
       <Form onSubmit={handleSubmit} class={formContainerClass}>
@@ -220,7 +217,6 @@ const Otp = () => {
                   value={otpValues()[index]}
                   onInput={(e) => handleChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
-                  onPaste={handlePaste}
                   onFocus={(e) => e.target.select()}
                   autocomplete="off"
                   ref={(el) => {
