@@ -52,9 +52,9 @@ export const loginSchema = v.object({
 });
 
 export const forgotPasswordSchema = v.object({
-  userormail: v.pipe(
+  email: v.pipe(
     v.string(),
     v.nonEmpty("Username or email is required"),
-    v.minLength(1, "Please enter your username or email")
+    v.email("Please enter a valid your email address")
   ),
 });

@@ -18,17 +18,18 @@ const ForgotPassword = () => {
   });
 
   const handleSubmit = async (values) => {
+    console.log(values, "masuk values");
     setLoading(true);
 
-    try {
-      // Replace with actual forgot password service call
-      await authService.forgotPassword(values);
-      setSuccess(true);
-    } catch (error) {
-      console.error("Password reset request failed:", error);
-    } finally {
-      setLoading(false);
-    }
+    // try {
+    //   // Replace with actual forgot password service call
+    //   await authService.forgotPassword(values);
+    //   setSuccess(true);
+    // } catch (error) {
+    //   console.error("Password reset request failed:", error);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -59,15 +60,15 @@ const ForgotPassword = () => {
           </p>
 
           <div class="space-y-5">
-            <Field name="userormail">
+            <Field name="email">
               {(field, props) => (
                 <FormField
                   {...props}
                   value={field.value}
                   error={field.error}
-                  label="Username or Email"
+                  label="Email"
                   type="text"
-                  placeholder="Enter your username or email"
+                  placeholder="Enter your email"
                 />
               )}
             </Field>
