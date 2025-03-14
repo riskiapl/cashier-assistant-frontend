@@ -1,17 +1,18 @@
 import { Route } from "@solidjs/router";
 import { lazy } from "solid-js";
 import { AuthLayout } from "@layouts";
+import { PageRoute } from "@components/PageRoute.";
 
-const Login = lazy(() => import("@features/auth/pages/Login"));
-const Register = lazy(() => import("@features/auth/pages/Register"));
-const Otp = lazy(() => import("@features/auth/pages/Otp"));
+const Login = lazy(() => import("@pages/auth/Login"));
+const Register = lazy(() => import("@pages/auth/Register"));
+const Otp = lazy(() => import("@pages/auth/Otp"));
 
 function AuthRoutes() {
   return (
     <Route path="/auth" component={AuthLayout}>
-      <Route path="/login" component={Login} />
-      <Route path="/register" component={Register} />
-      <Route path="/otp" component={Otp} />
+      <PageRoute path="/login" title="Login" component={Login} />
+      <PageRoute path="/register" title="Register" component={Register} />
+      <PageRoute path="/otp" title="OTP confirmation" component={Otp} />
     </Route>
   );
 }

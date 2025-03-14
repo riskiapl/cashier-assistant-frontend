@@ -6,6 +6,7 @@ import FormField from "@components/FormField";
 import { loginSchema } from "@utils/validationSchema";
 import { authService } from "@services/authService";
 import Spinner from "@components/Spinner";
+import logoCashierly from "@assets/logo_cashierly.png";
 
 const Login = () => {
   const [loading, setLoading] = createSignal(false);
@@ -30,10 +31,9 @@ const Login = () => {
   };
 
   return (
-    <div class="max-w-md w-full space-y-8">
+    <div class="max-w-md w-full space-y-4">
       <div class="text-center">
-        <h1 class={titleClass}>Welcome Back</h1>
-        <p class="text-gray-600">Sign in to continue</p>
+        <img src={logoCashierly} alt="Cashierly Logo" class="mx-auto h-48" />
       </div>
 
       <Form onSubmit={handleSubmit} class={formContainerClass}>
@@ -65,18 +65,7 @@ const Login = () => {
           </Field>
 
           <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                class={checkboxClass}
-              />
-              <label for="remember-me" class={checkboxLabelClass}>
-                Remember me
-              </label>
-            </div>
-
+            <div />
             <div class="text-sm">
               <a href="/auth/forgot-password" class={linkClass}>
                 Forgot password?
@@ -110,7 +99,7 @@ export default Login;
 const titleClass = "text-4xl font-extrabold text-gray-900 mb-2";
 
 const formContainerClass = [
-  "mt-8 space-y-6",
+  "mt-4 space-y-6",
   "bg-white p-8",
   "rounded-2xl shadow-lg",
 ].join(" ");

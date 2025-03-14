@@ -25,18 +25,6 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       target: "esnext",
-      // build: {
-      //   babel: {
-      //     parserOpts: {
-      //       plugins: ["importAssertions"],
-      //     },
-      //     generatorOpts: {
-      //       compact: true,
-      //       retainLines: false,
-      //       maxLength: 1000000, // Increase max length
-      //     },
-      //   },
-      // },
     },
     define: {
       "process.env.VITE_API_URL": JSON.stringify(env.VITE_API_URL),
@@ -48,7 +36,7 @@ export default defineConfig(({ command, mode }) => {
         "@assets": path.resolve(__dirname, "./src/assets"),
         "@components": path.resolve(__dirname, "./src/components"),
         "@config": path.resolve(__dirname, "./src/config"),
-        "@features": path.resolve(__dirname, "./src/features"),
+        "@pages": path.resolve(__dirname, "./src/pages"),
         "@hooks": path.resolve(__dirname, "./src/hooks"),
         "@layouts": path.resolve(__dirname, "./src/layouts"),
         "@lib": path.resolve(__dirname, "./src/lib"),
