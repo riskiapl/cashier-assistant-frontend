@@ -50,3 +50,11 @@ export const loginSchema = v.object({
     v.minLength(4, "Password must be at least 4 characters")
   ),
 });
+
+export const forgotPasswordSchema = v.object({
+  userormail: v.pipe(
+    v.string(),
+    v.nonEmpty("Username or email is required"),
+    v.minLength(1, "Please enter your username or email")
+  ),
+});
