@@ -58,3 +58,26 @@ export const forgotPasswordSchema = v.object({
     v.email("Please enter a valid your email address")
   ),
 });
+
+export const resetPasswordSchema = v.pipe(
+  v.object({
+    password: v.pipe(
+      v.string(),
+      v.nonEmpty("Password is required"),
+      v.minLength(8, "Password must be at least 8 characters")
+    ),
+
+    confirmPassword: v.pipe(
+      v.string(),
+      v.nonEmpty("Please confirm your password")
+    ),
+  }),
+  v.forward(
+    v.partialCheck(
+      [["password"], ["confirmPassword"]],
+      (input) => input.password === input.confirmPassword,
+      "Passwords do not match."
+    ),
+    ["confirmPassword"]
+  )
+);
