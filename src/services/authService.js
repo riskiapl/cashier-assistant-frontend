@@ -32,4 +32,14 @@ export const authService = {
     const response = await api.post("/auth/verify-otp", payload);
     return response.data;
   },
+
+  async resetPassword(payload) {
+    const response = await api.post("/auth/reset-password", payload);
+    return response.data;
+  },
+
+  async changePassword(payload) {
+    const response = await api.put("/auth/change-password", payload);
+    return response.data;
+  },
 };
