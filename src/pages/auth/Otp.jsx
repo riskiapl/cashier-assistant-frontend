@@ -3,6 +3,7 @@ import { useNavigate } from "@solidjs/router";
 import { createForm } from "@modular-forms/solid";
 import { authService } from "@services/authService";
 import { alert } from "@lib/alert";
+import { useTransContext, Trans } from "@mbarzda/solid-i18next";
 
 const Otp = () => {
   const [loading, setLoading] = createSignal(false);
@@ -13,12 +14,13 @@ const Otp = () => {
   const [isExpired, setIsExpired] = createSignal(false);
   const [email, setEmail] = createSignal("");
   const navigate = useNavigate();
+  const [t] = useTransContext();
 
   const [otpForm, { Form }] = createForm();
 
   onMount(() => {
     // Check if otpRequest exists in localStorage
-    const otpRequest = JSON.parse(localStorage.getItem("otpRequest") || null);
+    const otpRequest = JSON.parse(localStorage.getItem("otpRequest") || "null");
     if (otpRequest) {
       setExpiredAt(new Date(otpRequest.expired_at).getTime());
       setEmail(otpRequest.email);
@@ -106,30 +108,6 @@ const Otp = () => {
     }
   };
 
-  // const handlePaste = (e) => {
-  //   const pastedData = e.clipboardData.getData("text").trim();
-  //   if (!/^\d+$/.test(pastedData)) return; // Only numbers
-
-  //   const digits = pastedData.slice(0, 6).split("");
-
-  //   // Fill available fields with pasted digits
-  //   const newOtpValues = [...otpValues()];
-  //   digits.forEach((digit, idx) => {
-  //     if (idx < 6) newOtpValues[idx] = digit;
-  //   });
-
-  //   setOtpValues(newOtpValues);
-
-  //   // Focus the next empty field or the last field
-  //   const nextEmptyIndex = newOtpValues.findIndex((val) => val === "");
-  //   if (nextEmptyIndex !== -1) {
-  //     otpInputs()[nextEmptyIndex].focus();
-  //   } else if (digits.length > 0) {
-  //     // Focus last field if all filled
-  //     otpInputs()[Math.min(digits.length - 1, 5)].focus();
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     const otp = otpValues().join("");
 
@@ -190,9 +168,11 @@ const Otp = () => {
   return (
     <div class="max-w-md w-full space-y-8">
       <div class={titleContainerClass}>
-        <h1 class={titleClass}>Verify OTP</h1>
+        <h1 class={titleClass}>
+          <Trans key="otp.title">Verify OTP</Trans>
+        </h1>
         <p class="text-gray-600">
-          Enter the code sent to email{" "}
+          <Trans key="otp.enterCode">Enter the code sent to email</Trans>{" "}
           {email() &&
             `${email()[0]}****${email().split("@")[0].at(-1)}@${
               email().split("@")[1]
@@ -202,7 +182,9 @@ const Otp = () => {
 
       <Form onSubmit={handleSubmit} class={formContainerClass}>
         <div class="space-y-5">
-          <label class={labelClass}>OTP Code</label>
+          <label class={labelClass}>
+            <Trans key="otp.otpCode">OTP Code</Trans>
+          </label>
 
           <div class="flex justify-between gap-2">
             {Array(6)
@@ -232,12 +214,16 @@ const Otp = () => {
         {/* OTP Countdown Timer */}
         <div class={countdownContainerClass}>
           <p class={isExpired() ? countdownExpiredClass : countdownActiveClass}>
-            {isExpired()
-              ? "OTP expired. Please request a new one."
-              : `OTP expires in: ${String(countdown().minutes).padStart(
-                  2,
-                  "0"
-                )}:${String(countdown().seconds).padStart(2, "0")}`}
+            {isExpired() ? (
+              <Trans key="otp.otpExpired">
+                OTP expired. Please request a new one.
+              </Trans>
+            ) : (
+              t("otp.otpExpires", "OTP expires in: {{minutes}}:{{seconds}}", {
+                minutes: String(countdown().minutes).padStart(2, "0"),
+                seconds: String(countdown().seconds).padStart(2, "0"),
+              })
+            )}
           </p>
         </div>
 
@@ -248,28 +234,30 @@ const Otp = () => {
             loading() || (!isExpired() && otpValues().join("").length !== 6)
           }
         >
-          {isExpired()
-            ? "Get new OTP"
-            : loading()
-            ? "Verifying..."
-            : "Verify OTP"}
+          {isExpired() ? (
+            <Trans key="otp.getNewOtp">Get new OTP</Trans>
+          ) : loading() ? (
+            <Trans key="otp.verifying">Verifying...</Trans>
+          ) : (
+            <Trans key="otp.verify">Verify OTP</Trans>
+          )}
         </button>
 
         <div class="text-center mt-4">
           <p class="text-sm text-gray-600">
-            Didn't receive the code?{" "}
+            <Trans key="otp.didntReceive">Didn't receive the code?</Trans>{" "}
             <button
               type="button"
               onClick={handleResendOtp}
               class={resendButtonClass}
             >
-              Resend OTP
+              <Trans key="otp.resendOtp">Resend OTP</Trans>
             </button>
           </p>
         </div>
 
         <div class={backToLoginClass} onClick={handleBackToLogin}>
-          Back to login
+          <Trans key="otp.backToLogin">Back to login</Trans>
         </div>
       </Form>
     </div>

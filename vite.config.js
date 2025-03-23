@@ -40,6 +40,7 @@ export default defineConfig(({ command, mode }) => {
         "@hooks": path.resolve(__dirname, "./src/hooks"),
         "@layouts": path.resolve(__dirname, "./src/layouts"),
         "@lib": path.resolve(__dirname, "./src/lib"),
+        "@locales": path.resolve(__dirname, "./src/locales"),
         "@routes": path.resolve(__dirname, "./src/routes"),
         "@services": path.resolve(__dirname, "./src/services"),
         "@stores": path.resolve(__dirname, "./src/stores"),

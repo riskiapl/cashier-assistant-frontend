@@ -10,6 +10,7 @@ import {
   resetPasswordSchema,
 } from "@utils/validationSchema";
 import { alert } from "@lib/alert";
+import { useTransContext, Trans } from "@mbarzda/solid-i18next";
 
 const ResetPassword = () => {
   const [loading, setLoading] = createSignal(false);
@@ -18,6 +19,7 @@ const ResetPassword = () => {
   const [email, setEmail] = createSignal(null);
   const [token, setToken] = createSignal(null);
   const navigate = useNavigate();
+  const [t] = useTransContext();
 
   // Check query params for change layout
   const [searchParams] = useSearchParams();
@@ -75,26 +77,41 @@ const ResetPassword = () => {
 
       {success() ? (
         <div class={formContainerClass}>
-          <h2 class={titleClass}>Check your email</h2>
+          <h2 class={titleClass}>
+            <Trans key="resetPassword.checkEmail">Check your email</Trans>
+          </h2>
           <p class="text-center text-gray-600 mb-4">
-            We've sent password reset instructions to your email address.
+            <Trans key="resetPassword.emailSent">
+              We've sent password reset instructions to your email address.
+            </Trans>
           </p>
           <button
             onClick={() => navigate("/auth/login")}
             class={submitButtonClass}
           >
-            Return to login
+            <Trans key="resetPassword.returnToLogin">Return to login</Trans>
           </button>
         </div>
       ) : (
         <Form onSubmit={handleSubmit} class={formContainerClass}>
           <h2 class={titleClass}>
-            {layout() === "email" ? "Forgot Password" : "Reset Password"}
+            {layout() === "email" ? (
+              <Trans key="resetPassword.title">Forgot Password</Trans>
+            ) : (
+              <Trans key="resetPassword.resetTitle">Reset Password</Trans>
+            )}
           </h2>
           <p class="text-center text-gray-600 mb-4">
-            {layout() === "email"
-              ? "Enter your username or email and we'll send you a link to reset your password."
-              : "Enter your new password below."}
+            {layout() === "email" ? (
+              <Trans key="resetPassword.enterEmailInfo">
+                Enter your username or email and we'll send you a link to reset
+                your password.
+              </Trans>
+            ) : (
+              <Trans key="resetPassword.enterPasswordInfo">
+                Enter your new password below.
+              </Trans>
+            )}
           </p>
 
           <div class="space-y-5">
@@ -105,9 +122,12 @@ const ResetPassword = () => {
                     {...props}
                     value={field.value}
                     error={field.error}
-                    label="Email"
+                    label={<Trans key="resetPassword.email">Email</Trans>}
                     type="text"
-                    placeholder="Enter your email"
+                    placeholder={t(
+                      "resetPassword.emailPlaceholder",
+                      "Enter your email"
+                    )}
                   />
                 )}
               </Field>
@@ -119,9 +139,16 @@ const ResetPassword = () => {
                       {...props}
                       value={field.value}
                       error={field.error}
-                      label="New Password"
+                      label={
+                        <Trans key="resetPassword.newPassword">
+                          New Password
+                        </Trans>
+                      }
                       type="password"
-                      placeholder="Enter your new password"
+                      placeholder={t(
+                        "resetPassword.newPasswordPlaceholder",
+                        "Enter your new password"
+                      )}
                     />
                   )}
                 </Field>
@@ -131,9 +158,16 @@ const ResetPassword = () => {
                       {...props}
                       value={field.value}
                       error={field.error}
-                      label="Confirm Password"
+                      label={
+                        <Trans key="resetPassword.confirmPassword">
+                          Confirm Password
+                        </Trans>
+                      }
                       type="password"
-                      placeholder="Confirm your new password"
+                      placeholder={t(
+                        "resetPassword.confirmPasswordPlaceholder",
+                        "Confirm your new password"
+                      )}
                     />
                   )}
                 </Field>
@@ -146,19 +180,23 @@ const ResetPassword = () => {
           <button type="submit" class={submitButtonClass} disabled={loading()}>
             <div class="flex items-center gap-2">
               {loading() && <Spinner />}
-              {loading()
-                ? "Sending..."
-                : layout() === "email"
-                ? "Reset Password"
-                : "Update Password"}
+              {loading() ? (
+                <Trans key="resetPassword.sending">Sending...</Trans>
+              ) : layout() === "email" ? (
+                <Trans key="resetPassword.resetButton">Reset Password</Trans>
+              ) : (
+                <Trans key="resetPassword.updateButton">Update Password</Trans>
+              )}
             </div>
           </button>
 
           <div class="text-center mt-4">
             <p class="text-sm text-gray-600">
-              Remember your password?{" "}
+              <Trans key="resetPassword.rememberPassword">
+                Remember your password?
+              </Trans>{" "}
               <a href="/auth/login" class={linkClass}>
-                Sign in here
+                <Trans key="resetPassword.signInHere">Sign in here</Trans>
               </a>
             </p>
           </div>

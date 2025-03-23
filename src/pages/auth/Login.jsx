@@ -7,14 +7,16 @@ import { loginSchema } from "@utils/validationSchema";
 import { authService } from "@services/authService";
 import Spinner from "@components/Spinner";
 import logoCashierly from "@assets/logo_cashierly.png";
+import { useTransContext, Trans } from "@mbarzda/solid-i18next";
 
 const Login = () => {
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [t] = useTransContext();
 
   // Create form with Valibot validation
-  const [loginForm, { Form, Field }] = createForm({
+  const [_, { Form, Field }] = createForm({
     validate: valiForm(loginSchema),
   });
 
@@ -44,9 +46,12 @@ const Login = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label="Username or Email"
+                label={<Trans key="login.username">Username or Email</Trans>}
                 type="text"
-                placeholder="Enter your username or email"
+                placeholder={t(
+                  "login.usernamePlaceholder",
+                  "Enter your username or email"
+                )}
               />
             )}
           </Field>
@@ -57,9 +62,12 @@ const Login = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label="Password"
+                label={<Trans key="login.password">Password</Trans>}
                 type="password"
-                placeholder="Enter your password"
+                placeholder={t(
+                  "login.passwordPlaceholder",
+                  "Enter your password"
+                )}
               />
             )}
           </Field>
@@ -68,7 +76,7 @@ const Login = () => {
             <div />
             <div class="text-sm">
               <a href="/auth/reset-password" class={linkClass}>
-                Forgot password?
+                <Trans key="login.forgotPassword">Forgot password?</Trans>
               </a>
             </div>
           </div>
@@ -77,15 +85,19 @@ const Login = () => {
         <button type="submit" class={submitButtonClass} disabled={loading()}>
           <div class="flex items-center gap-2">
             {loading() && <Spinner />}
-            {loading() ? "Signing in..." : "Sign in"}
+            {loading() ? (
+              <Trans key="login.signingIn">Signing in...</Trans>
+            ) : (
+              <Trans key="login.signIn">Sign in</Trans>
+            )}
           </div>
         </button>
 
         <div class="text-center mt-4">
           <p class="text-sm text-gray-600">
-            Don't have an account?{" "}
+            <Trans key="login.noAccount">Don't have an account?</Trans>{" "}
             <a href="/auth/register" class={linkClass}>
-              Sign up here
+              <Trans key="login.signUp">Sign up here</Trans>
             </a>
           </p>
         </div>
@@ -96,22 +108,11 @@ const Login = () => {
 
 export default Login;
 
-const titleClass = "text-4xl font-extrabold text-gray-900 mb-2";
-
 const formContainerClass = [
   "mt-4 space-y-6",
   "bg-white p-8",
   "rounded-2xl shadow-lg",
 ].join(" ");
-
-const checkboxClass = [
-  "h-4 w-4",
-  "text-blue-600",
-  "focus:ring-blue-500",
-  "border-gray-300 rounded",
-].join(" ");
-
-const checkboxLabelClass = "ml-2 block text-sm text-gray-900";
 
 const submitButtonClass = [
   "w-full flex justify-center",
