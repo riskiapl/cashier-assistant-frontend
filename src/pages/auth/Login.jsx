@@ -46,12 +46,9 @@ const Login = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label={<Trans key="login.username">Username or Email</Trans>}
+                label={<Trans key="login.username" />}
                 type="text"
-                placeholder={t(
-                  "login.usernamePlaceholder",
-                  "Enter your username or email"
-                )}
+                placeholder={t("login.usernamePlaceholder")}
               />
             )}
           </Field>
@@ -62,12 +59,9 @@ const Login = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label={<Trans key="login.password">Password</Trans>}
+                label={<Trans key="login.password" />}
                 type="password"
-                placeholder={t(
-                  "login.passwordPlaceholder",
-                  "Enter your password"
-                )}
+                placeholder={t("login.passwordPlaceholder")}
               />
             )}
           </Field>
@@ -76,7 +70,7 @@ const Login = () => {
             <div />
             <div class="text-sm">
               <a href="/auth/reset-password" class={linkClass}>
-                <Trans key="login.forgotPassword">Forgot password?</Trans>
+                <Trans key="login.forgotPassword" />
               </a>
             </div>
           </div>
@@ -86,18 +80,18 @@ const Login = () => {
           <div class="flex items-center gap-2">
             {loading() && <Spinner />}
             {loading() ? (
-              <Trans key="login.signingIn">Signing in...</Trans>
+              <Trans key="login.signingIn" />
             ) : (
-              <Trans key="login.signIn">Sign in</Trans>
+              <Trans key="login.signIn" />
             )}
           </div>
         </button>
 
         <div class="text-center mt-4">
           <p class="text-sm text-gray-600">
-            <Trans key="login.noAccount">Don't have an account?</Trans>{" "}
+            <Trans key="login.noAccount" />{" "}
             <a href="/auth/register" class={linkClass}>
-              <Trans key="login.signUp">Sign up here</Trans>
+              <Trans key="login.signUp" />
             </a>
           </p>
         </div>

@@ -16,7 +16,7 @@ const Otp = () => {
   const navigate = useNavigate();
   const [t] = useTransContext();
 
-  const [otpForm, { Form }] = createForm();
+  const [_, { Form }] = createForm();
 
   onMount(() => {
     // Check if otpRequest exists in localStorage
@@ -169,10 +169,10 @@ const Otp = () => {
     <div class="max-w-md w-full space-y-8">
       <div class={titleContainerClass}>
         <h1 class={titleClass}>
-          <Trans key="otp.title">Verify OTP</Trans>
+          <Trans key="otp.title" />
         </h1>
         <p class="text-gray-600">
-          <Trans key="otp.enterCode">Enter the code sent to email</Trans>{" "}
+          <Trans key="otp.enterCode" />{" "}
           {email() &&
             `${email()[0]}****${email().split("@")[0].at(-1)}@${
               email().split("@")[1]
@@ -183,7 +183,7 @@ const Otp = () => {
       <Form onSubmit={handleSubmit} class={formContainerClass}>
         <div class="space-y-5">
           <label class={labelClass}>
-            <Trans key="otp.otpCode">OTP Code</Trans>
+            <Trans key="otp.otpCode" />
           </label>
 
           <div class="flex justify-between gap-2">
@@ -215,11 +215,9 @@ const Otp = () => {
         <div class={countdownContainerClass}>
           <p class={isExpired() ? countdownExpiredClass : countdownActiveClass}>
             {isExpired() ? (
-              <Trans key="otp.otpExpired">
-                OTP expired. Please request a new one.
-              </Trans>
+              <Trans key="otp.otpExpired" />
             ) : (
-              t("otp.otpExpires", "OTP expires in: {{minutes}}:{{seconds}}", {
+              t("otp.otpExpires", {
                 minutes: String(countdown().minutes).padStart(2, "0"),
                 seconds: String(countdown().seconds).padStart(2, "0"),
               })
@@ -235,29 +233,29 @@ const Otp = () => {
           }
         >
           {isExpired() ? (
-            <Trans key="otp.getNewOtp">Get new OTP</Trans>
+            <Trans key="otp.getNewOtp" />
           ) : loading() ? (
-            <Trans key="otp.verifying">Verifying...</Trans>
+            <Trans key="otp.verifying" />
           ) : (
-            <Trans key="otp.verify">Verify OTP</Trans>
+            <Trans key="otp.verify" />
           )}
         </button>
 
         <div class="text-center mt-4">
           <p class="text-sm text-gray-600">
-            <Trans key="otp.didntReceive">Didn't receive the code?</Trans>{" "}
+            <Trans key="otp.didntReceive" />{" "}
             <button
               type="button"
               onClick={handleResendOtp}
               class={resendButtonClass}
             >
-              <Trans key="otp.resendOtp">Resend OTP</Trans>
+              <Trans key="otp.resendOtp" />
             </button>
           </p>
         </div>
 
         <div class={backToLoginClass} onClick={handleBackToLogin}>
-          <Trans key="otp.backToLogin">Back to login</Trans>
+          <Trans key="otp.backToLogin" />
         </div>
       </Form>
     </div>

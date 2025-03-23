@@ -105,10 +105,10 @@ const Register = () => {
     <div class="max-w-md w-full space-y-8">
       <div class="text-center">
         <h1 class={titleClass}>
-          <Trans key="register.createAccount">Create Account</Trans>
+          <Trans key="register.createAccount" />
         </h1>
         <p class="text-gray-600">
-          <Trans key="register.joinUs">Join us today and get started</Trans>
+          <Trans key="register.joinUs" />
         </p>
       </div>
 
@@ -120,9 +120,9 @@ const Register = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label={<Trans key="register.email">Email</Trans>}
+                label={<Trans key="register.email" />}
                 type="email"
-                placeholder={t("register.emailPlaceholder", "Enter your email")}
+                placeholder={t("register.emailPlaceholder")}
               />
             )}
           </Field>
@@ -136,12 +136,9 @@ const Register = () => {
                       {...props}
                       value={field.value}
                       error={field.error}
-                      label={<Trans key="register.username">Username</Trans>}
+                      label={<Trans key="register.username" />}
                       type="text"
-                      placeholder={t(
-                        "register.usernamePlaceholder",
-                        "Choose a username"
-                      )}
+                      placeholder={t("register.usernamePlaceholder")}
                       onInput={(e) => {
                         props.onInput(e);
                         handleUsernameInput(e);
@@ -172,12 +169,9 @@ const Register = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label={<Trans key="register.password">Password</Trans>}
+                label={<Trans key="register.password" />}
                 type="password"
-                placeholder={t(
-                  "register.passwordPlaceholder",
-                  "Create a password"
-                )}
+                placeholder={t("register.passwordPlaceholder")}
               />
             )}
           </Field>
@@ -188,14 +182,9 @@ const Register = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label={
-                  <Trans key="register.confirmPassword">Confirm Password</Trans>
-                }
+                label={<Trans key="register.confirmPassword" />}
                 type="password"
-                placeholder={t(
-                  "register.confirmPasswordPlaceholder",
-                  "Confirm your password"
-                )}
+                placeholder={t("register.confirmPasswordPlaceholder")}
               />
             )}
           </Field>
@@ -209,20 +198,18 @@ const Register = () => {
           <div class="flex items-center gap-2">
             {loading() && <Spinner />}
             {loading() ? (
-              <Trans key="register.creatingAccount">Creating Account...</Trans>
+              <Trans key="register.creatingAccount" />
             ) : (
-              <Trans key="register.createAccountButton">Create Account</Trans>
+              <Trans key="register.createAccountButton" />
             )}
           </div>
         </button>
 
         <div class="text-center mt-4">
           <p class="text-sm text-gray-600">
-            <Trans key="register.alreadyHaveAccount">
-              Already have an account?
-            </Trans>{" "}
+            <Trans key="register.alreadyHaveAccount" />{" "}
             <a href="/auth/login" class={linkClass}>
-              <Trans key="register.signInHere">Sign in here</Trans>
+              <Trans key="register.signInHere" />
             </a>
           </p>
         </div>

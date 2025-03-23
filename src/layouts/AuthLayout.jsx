@@ -119,7 +119,6 @@ const languageButtonClass = [
   "transition-colors duration-200",
   "text-sm font-medium border border-gray-300",
   "flex items-center space-x-1",
-  "w-20",
 ].join(" ");
 
 const dropdownContainerClass = [
