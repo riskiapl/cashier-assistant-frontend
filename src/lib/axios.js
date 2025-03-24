@@ -17,6 +17,10 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     startProgress();
+    // Set Accept-Language dynamically on each request
+    config.headers["Accept-Language"] =
+      localStorage.getItem("language") || "en";
+
     const auth = localStorage.getItem("auth");
     if (auth) {
       const { token } = JSON.parse(auth);
