@@ -11,7 +11,8 @@
     "signIn": "Sign in",
     "signingIn": "Signing in...",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up here"
+    "signUp": "Sign up here",
+    "successMessage": "Login successful"
   },
   "register": {
     "createAccount": "Create Account",
@@ -62,5 +63,17 @@
     "didntReceive": "Didn't receive the code?",
     "resendOtp": "Resend OTP",
     "backToLogin": "Back to login"
+  },
+  "axios": {
+    "networkError": "Network error. Please check your internet connection or the API server might be down.",
+    "badRequest": "Bad request",
+    "unauthorized": "Authentication failed. Please login again.",
+    "sessionExpired": "Your session has expired. Please login again",
+    "forbidden": "You don't have permission to access this resource",
+    "notFound": "Resource not found",
+    "conflict": "Conflict occurred. The request couldn't be completed due to a conflict with the current state of the resource",
+    "validation": "Validation error occurred",
+    "serverError": "Server error occurred. Please try again later",
+    "unexpectedError": "An unexpected error occurred"
   }
 }

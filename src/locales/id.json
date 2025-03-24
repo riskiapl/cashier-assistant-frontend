@@ -11,7 +11,8 @@
     "signIn": "Masuk",
     "signingIn": "Sedang masuk...",
     "noAccount": "Belum punya akun?",
-    "signUp": "Daftar di sini"
+    "signUp": "Daftar di sini",
+    "successMessage": "Login berhasil"
   },
   "register": {
     "createAccount": "Buat Akun",
@@ -62,5 +63,17 @@
     "didntReceive": "Tidak menerima kode?",
     "resendOtp": "Kirim ulang OTP",
     "backToLogin": "Kembali ke halaman masuk"
+  },
+  "axios": {
+    "networkError": "Kesalahan jaringan. Silakan periksa koneksi internet Anda atau server API mungkin sedang tidak aktif.",
+    "badRequest": "Permintaan tidak valid",
+    "unauthorized": "Otentikasi gagal. Silakan login kembali.",
+    "sessionExpired": "Sesi Anda telah berakhir. Silakan login kembali",
+    "forbidden": "Anda tidak memiliki izin untuk mengakses sumber daya ini",
+    "notFound": "Sumber daya tidak ditemukan",
+    "conflict": "Terjadi konflik. Permintaan tidak dapat diselesaikan karena konflik dengan keadaan saat ini dari sumber daya",
+    "validation": "Terjadi kesalahan validasi",
+    "serverError": "Terjadi kesalahan server. Silakan coba lagi nanti",
+    "unexpectedError": "Terjadi kesalahan yang tidak terduga"
   }
 }

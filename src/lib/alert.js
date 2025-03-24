@@ -10,6 +10,11 @@ const createToast = (color) =>
     didOpen: (toast) => {
       toast.querySelector(".swal2-timer-progress-bar").style.backgroundColor =
         color;
+
+      // Add click event to close the toast when clicked
+      toast.addEventListener("click", () => {
+        Swal.close();
+      });
     },
   });
 

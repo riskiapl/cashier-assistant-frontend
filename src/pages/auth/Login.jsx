@@ -8,6 +8,7 @@ import { authService } from "@services/authService";
 import Spinner from "@components/Spinner";
 import logoCashierly from "@assets/logo_cashierly.png";
 import { useTransContext, Trans } from "@mbarzda/solid-i18next";
+import { alert } from "@lib/alert";
 
 const Login = () => {
   const [loading, setLoading] = createSignal(false);
@@ -27,6 +28,9 @@ const Login = () => {
       const response = await authService.login(values);
       await login(response);
       navigate("/", { replace: true });
+      // Show success login alert
+      const successMessage = t("login.successMessage");
+      alert.success(successMessage);
     } finally {
       setLoading(false);
     }
