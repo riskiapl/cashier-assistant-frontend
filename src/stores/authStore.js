@@ -18,7 +18,9 @@ export function useAuth() {
   };
 
   const logout = () => {
+    const language = localStorage.getItem("language");
     localStorage.clear();
+    localStorage.setItem("language", language || "en");
     setAuth({ user: null, token: null });
   };
 
