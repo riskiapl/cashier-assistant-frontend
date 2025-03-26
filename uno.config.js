@@ -17,9 +17,9 @@ export default defineConfig({
   theme: {
     colors: {
       primary: {
-        50: "#e6e6e6", // lighter shade
+        50: "#f0f0f0", // lighter shade
         100: "#cccccc", // light shade
-        200: "#b3b3b3", // very light gray
+        200: "#939393", // very light gray
         300: "#666666", // darker gray
         400: "#3d3d3d", // even darker gray
         500: "#262626", // main color

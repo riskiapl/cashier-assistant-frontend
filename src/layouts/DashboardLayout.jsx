@@ -15,6 +15,9 @@ import {
   FiLogOut,
 } from "solid-icons/fi";
 
+// Import the logo
+import logoImage from "@assets/logo_only_color_cashierly.png";
+
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -71,20 +74,21 @@ export default function DashboardLayout(props) {
   });
 
   return (
-    <div class="h-screen flex overflow-hidden bg-gray-50">
+    <div class="h-screen flex overflow-hidden bg-gray-100 p-2">
       {/* Sidebar */}
       <div
         class={`${
           sidebarOpen() ? "w-64" : "w-20"
-        } transition-all duration-300 flex flex-col fixed inset-y-0 bg-white text-gray-800 border-r border-gray-200 shadow-sm`}
+        } transition-all duration-300 flex flex-col fixed inset-y-4 left-4 bg-white text-gray-800 border border-gray-200 shadow-sm rounded-xl overflow-hidden`}
       >
         {/* Logo */}
         <div class="px-4 py-5 flex items-center justify-center border-b border-gray-200">
-          <div class={sidebarOpen() ? "" : "hidden"}>
+          <div class={sidebarOpen() ? "flex items-center" : "hidden"}>
+            <img src={logoImage} alt="Cashierly Logo" class="h-8 w-auto mr-2" />
             <h1 class="text-xl font-bold">Cashierly</h1>
           </div>
           <div class={sidebarOpen() ? "hidden" : ""}>
-            <h1 class="text-xl font-bold">C</h1>
+            <img src={logoImage} alt="Cashierly Logo" class="h-8 w-auto" />
           </div>
         </div>
 
@@ -130,13 +134,15 @@ export default function DashboardLayout(props) {
       {/* Main content */}
       <div
         class={`flex-1 flex flex-col ${
-          sidebarOpen() ? "ml-64" : "ml-20"
-        } transition-all duration-300`}
+          sidebarOpen() ? "ml-72" : "ml-28"
+        } transition-all duration-300 rounded-xl overflow-hidden`}
       >
         {/* Header */}
-        <header class="bg-white shadow-sm z-10">
+        <header>
           <div class="px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-semibold text-gray-800">Dashboard</h1>
+            <h1 class="text-xl font-semibold text-gray-800">
+              <span class="text-primary-200">Pages</span> / Dashboard
+            </h1>
 
             <div class="flex items-center space-x-4">
               {/* Notification button */}
@@ -197,9 +203,7 @@ export default function DashboardLayout(props) {
         </header>
 
         {/* Page content */}
-        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
-          {props.children}
-        </main>
+        <main class="flex-1 overflow-y-auto p-6">{props.children}</main>
       </div>
     </div>
   );
