@@ -280,18 +280,14 @@ const inputClass = [
   "w-12 h-12",
   "text-center text-xl font-semibold",
   "border border-gray-300 rounded-md",
-  "focus:border-primary-500 focus:outline-none",
+  "focus:border-blue-500 focus:outline-none",
 ].join(" ");
 
 const submitButtonClass = [
   "w-full flex justify-center",
   "py-3 px-4 rounded-xl",
   "shadow-sm text-sm font-medium",
-  "text-white bg-primary-500",
-  "hover:bg-primary-400",
-  "focus:outline-none focus:ring-2",
-  "focus:ring-offset-2 focus:ring-primary-500",
-  "transition-colors cursor-pointer",
+  "text-white btn-primary",
 ].join(" ");
 
 const resendButtonClass = [

@@ -196,10 +196,7 @@ const submitButtonClass = [
   "w-full flex justify-center",
   "py-3 px-4 rounded-xl",
   "shadow-sm text-sm font-medium",
-  "text-white bg-primary-500",
-  "hover:bg-primary-400",
-  "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
-  "transition-colors",
+  "text-white btn-primary",
 ].join(" ");
 
 const linkClass = ["font-medium", "text-blue-600", "hover:text-blue-500"].join(
