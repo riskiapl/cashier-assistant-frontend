@@ -21,7 +21,11 @@ import logoImage from "@assets/logo_only_color_cashierly.png";
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, isAuthenticated, user } = useAuth();
+  const {
+    logout,
+    isAuthenticated,
+    auth: { user },
+  } = useAuth();
   const [sidebarOpen, setSidebarOpen] = createSignal(true);
   const [dropdownOpen, setDropdownOpen] = createSignal(false);
   let dropdownRef;
@@ -52,6 +56,22 @@ export default function DashboardLayout(props) {
     return path !== "/" && location.pathname.startsWith(path);
   };
 
+  // Function to get current page title based on route
+  const getCurrentPageTitle = () => {
+    const path = location.pathname;
+    if (path === "/") return "Dashboard";
+    if (path.startsWith("/products")) return "Products";
+    if (path.startsWith("/transactions")) return "Transactions";
+    if (path.startsWith("/profile")) return "Profile";
+    if (path.startsWith("/settings")) return "Settings";
+
+    // Default case: capitalize first letter of path segment
+    const segment = path.split("/").filter(Boolean)[0];
+    return segment
+      ? segment.charAt(0).toUpperCase() + segment.slice(1)
+      : "Dashboard";
+  };
+
   // Handle click outside dropdown
   const handleClickOutside = (event) => {
     if (dropdownRef && !dropdownRef.contains(event.target)) {
@@ -79,7 +99,7 @@ export default function DashboardLayout(props) {
       <div
         class={`${
           sidebarOpen() ? "w-64" : "w-20"
-        } transition-all duration-300 flex flex-col fixed inset-y-4 left-4 bg-white text-gray-800 border border-gray-200 shadow-sm rounded-xl overflow-hidden`}
+        } transition-all duration-300 flex flex-col fixed inset-y-2 left-2 bg-white text-gray-800 border border-gray-200 shadow-sm rounded-xl overflow-hidden`}
       >
         {/* Logo */}
         <div class="px-4 py-5 flex items-center justify-center border-b border-gray-200">
@@ -134,14 +154,15 @@ export default function DashboardLayout(props) {
       {/* Main content */}
       <div
         class={`flex-1 flex flex-col ${
-          sidebarOpen() ? "ml-72" : "ml-28"
+          sidebarOpen() ? "ml-64" : "ml-20"
         } transition-all duration-300 rounded-xl overflow-hidden`}
       >
         {/* Header */}
         <header>
-          <div class="px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-semibold text-gray-800">
-              <span class="text-primary-200">Pages</span> / Dashboard
+          <div class="px-4 py-3 flex justify-between items-center">
+            <h1 class="text-lg font-semibold text-gray-800 ml-4">
+              <span class="text-primary-200">Pages</span> /{" "}
+              {getCurrentPageTitle()}
             </h1>
 
             <div class="flex items-center space-x-4">
@@ -160,12 +181,12 @@ export default function DashboardLayout(props) {
                   class="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 py-2 px-3 rounded-md"
                 >
                   <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white">
-                    {user?.name?.charAt(0) || "U"}
+                    {user?.username?.charAt(0) || "U"}
                   </div>
                   <div class="text-sm text-left">
-                    <p class="font-medium">{user?.name || "User"}</p>
+                    <p class="font-medium">{user?.username || "User"}</p>
                     <p class="text-xs text-gray-500">
-                      {user?.role || "Cashier"}
+                      {user?.status || "Cashier"}
                     </p>
                   </div>
                   <FiChevronDown class="w-4 h-4" />
