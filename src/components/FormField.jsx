@@ -26,7 +26,7 @@ export default function FormField(props) {
           {...inputProps}
           class={`mt-1 block w-full px-4 py-3 rounded-xl border ${
             fieldProps.error ? "border-red-500" : "border-gray-300"
-          } shadow-sm focus:border-blue-500 focus:outline-none transition-colors ${
+          } shadow-sm focus:border-primary-500 focus:outline-none transition-colors ${
             fieldProps.inputClass || ""
           }`}
           value={fieldProps.value || ""}
