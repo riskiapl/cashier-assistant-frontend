@@ -77,14 +77,12 @@ export default function DashboardLayout(props) {
 
       {/* Main content */}
       <div
-        class={`flex-1 flex flex-col transition-all duration-300 rounded-xl overflow-hidden ${
-          sidebarOpen() ? "md:ml-64" : "md:ml-20"
+        class={`flex-1 flex transition-all duration-300 overflow-hidden shadow-md rounded-xl bg-white ${
+          sidebarOpen() ? "md:ml-66" : "md:ml-22"
         }`}
       >
         {/* Page content */}
-        <main class="flex-1 overflow-y-auto px-0 md:px-6 py-0 pt-0 md:pt-0">
-          {props.children}
-        </main>
+        <main class="flex-1 overflow-y-auto">{props.children}</main>
       </div>
     </div>
   );

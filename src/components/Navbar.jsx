@@ -110,7 +110,7 @@ export default function Navbar({
       <div
         class={`${
           sidebarOpen() ? "w-64" : "w-20"
-        } transition-all duration-300 hidden md:flex flex-col fixed inset-y-2 left-2 bg-white text-gray-800 border border-gray-200 shadow-sm rounded-xl overflow-hidden`}
+        } transition-all duration-300 hidden md:flex flex-col fixed inset-y-2 left-2 bg-white text-gray-800 border border-gray-200 shadow-md rounded-xl overflow-hidden`}
       >
         {/* Logo */}
         <div class="px-4 py-5 flex items-center justify-center border-b border-gray-200">
@@ -211,7 +211,7 @@ export default function Navbar({
           sidebarOpen() ? "md:ml-64" : "md:ml-20"
         } transition-all duration-300`}
       >
-        <div class="px-2 py-2 md:px-4 md:py-3 flex justify-between items-center bg-white md:bg-transparent rounded-xl md:rounded-none shadow-sm md:shadow-none mb-2 md:mb-0">
+        <div class="px-2 py-2 md:px-4 md:py-3 flex justify-between items-center bg-white md:bg-transparent rounded-xl md:rounded-none shadow-md md:shadow-none mb-2 md:mb-0">
           {/* Mobile menu button */}
           <div class="md:hidden">
             <button
