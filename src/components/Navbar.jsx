@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "@solidjs/router";
-import { createSignal, onMount, onCleanup, Show } from "solid-js";
+import { createSignal, onMount, onCleanup, Show, For } from "solid-js";
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -129,15 +129,17 @@ export default function Navbar({
 
         {/* Navigation items */}
         <nav class="px-2 py-4 flex-grow">
-          {menuItems.map((item) => (
-            <a
-              href={item.href}
-              class={isActive(item.href) ? "nav-item-active" : "nav-item"}
-            >
-              <item.icon class="w-6 h-6 mr-3" />
-              <span class={sidebarOpen() ? "" : "hidden"}>{item.label}</span>
-            </a>
-          ))}
+          <For each={menuItems}>
+            {(item) => (
+              <a
+                href={item.href}
+                class={isActive(item.href) ? "nav-item-active" : "nav-item"}
+              >
+                <item.icon class="w-6 h-6 mr-3" />
+                <span class={sidebarOpen() ? "" : "hidden"}>{item.label}</span>
+              </a>
+            )}
+          </For>
         </nav>
 
         {/* Toggle sidebar button */}
@@ -161,14 +163,14 @@ export default function Navbar({
           mobileMenuOpen() ? "opacity-50" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMobileMenuOpen(false)}
-      ></div>
+      />
       <div
         class={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-30 md:hidden p-2 transform transition-transform duration-300 ease-in-out ${
           mobileMenuOpen() ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Mobile Logo */}
-        <div class="px-8 py-5 flex items-center justify-end border-b border-gray-200">
+        <div class="px-5 py-5 flex items-center border-b border-gray-200">
           <div class="flex items-center">
             <img
               src={logoImage}
@@ -177,42 +179,46 @@ export default function Navbar({
             />
             <h1 class="text-xl font-bold">{appName}</h1>
           </div>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            class="ml-auto p-2 rounded-md text-gray-700 hover:bg-gray-100 transition-transform duration-200 hover:scale-110"
+          >
+            <FiX class="w-6 h-6 transition-transform duration-300 hover:rotate-90" />
+          </button>
         </div>
 
         {/* Mobile Navigation */}
         <nav class="px-2 py-4">
-          {menuItems.map((item) => (
-            <a
-              onClick={() => handleNavigation(item.href)}
-              class={`${
-                isActive(item.href) ? "nav-item-active" : "nav-item"
-              } block w-full flex`}
-            >
-              <item.icon class="w-6 h-6 mr-3" />
-              <span>{item.label}</span>
-            </a>
-          ))}
+          <For each={menuItems}>
+            {(item) => (
+              <a
+                onClick={() => handleNavigation(item.href)}
+                class={`${
+                  isActive(item.href) ? "nav-item-active" : "nav-item"
+                } block w-full flex`}
+              >
+                <item.icon class="w-6 h-6 mr-3" />
+                <span>{item.label}</span>
+              </a>
+            )}
+          </For>
         </nav>
       </div>
 
       {/* Header */}
       <header
-        class={`pt-2 md:pt-0 ${
+        class={`md:pt-0 ${
           sidebarOpen() ? "md:ml-64" : "md:ml-20"
         } transition-all duration-300`}
       >
-        <div class="px-2 py-2 md:px-4 md:py-3 flex justify-between items-center bg-white md:bg-transparent rounded-xl md:rounded-none shadow-sm md:shadow-none mb-4 md:mb-0">
+        <div class="px-2 py-2 md:px-4 md:py-3 flex justify-between items-center bg-white md:bg-transparent rounded-xl md:rounded-none shadow-sm md:shadow-none mb-2 md:mb-0">
           {/* Mobile menu button */}
-          <div class="md:hidden z-30">
+          <div class="md:hidden">
             <button
               onClick={toggleMobileMenu}
               class="p-2 rounded-md bg-white shadow text-gray-700 hover:bg-gray-100"
             >
-              {mobileMenuOpen() ? (
-                <FiX class="w-6 h-6" />
-              ) : (
-                <FiMenu class="w-6 h-6" />
-              )}
+              <FiMenu class="w-6 h-6" />
             </button>
           </div>
 

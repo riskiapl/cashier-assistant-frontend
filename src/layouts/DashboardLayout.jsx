@@ -1,6 +1,6 @@
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../stores/authStore";
-import { onMount, createSignal, createEffect } from "solid-js";
+import { onMount, createSignal } from "solid-js";
 import { alert } from "@lib/alert";
 import Navbar from "../components/Navbar";
 import { FiHome, FiBook, FiCreditCard } from "solid-icons/fi";
@@ -77,7 +77,7 @@ export default function DashboardLayout(props) {
 
       {/* Main content */}
       <div
-        class={`flex-1 flex flex-col transition-all duration-300 rounded-xl overflow-hidden md:px-0 px-2 ${
+        class={`flex-1 flex flex-col transition-all duration-300 rounded-xl overflow-hidden ${
           sidebarOpen() ? "md:ml-64" : "md:ml-20"
         }`}
       >
