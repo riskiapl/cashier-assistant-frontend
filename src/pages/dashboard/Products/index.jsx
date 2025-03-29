@@ -82,32 +82,34 @@ const Products = () => {
   };
 
   return (
-    <div class="p-5 max-w-[1200px] mx-auto">
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-primary-500">Products</h1>
-        <div class="flex gap-3 items-center">
+    <div>
+      <div class="p-3 sticky top-0 bg-white z-10 md:flex items-center md:justify-between space-y-4 md:space-y-0 border-b">
+        <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 md:ml-4 text-align-center">
+          Products
+        </h1>
+        <div class="flex w-full sm:w-auto gap-3 items-stretch sm:items-center">
           <input
             type="text"
             placeholder="Search products..."
             onInput={(e) => setSearchQuery(e.target.value)}
             value={searchQuery()}
-            class="px-3 py-2 border border-gray-300 rounded-md min-w-[250px] focus:outline-none focus:shadow-md focus:shadow-primary-100 transition-shadow"
+            class="px-3 py-2 border border-gray-300 rounded-md w-full sm:min-w-[250px] focus:outline-none focus:shadow-md focus:shadow-primary-100 transition-shadow"
           />
           <button
-            class="bg-primary-500 text-white px-4 py-2.5 rounded-md cursor-pointer hover:bg-primary-600 transition-colors flex items-center gap-2"
+            class="bg-primary-500 text-white px-4 py-2.5 rounded-md cursor-pointer hover:bg-primary-600 transition-colors flex items-center justify-center gap-2"
             onClick={handleAddProduct}
           >
             <span class="i-carbon-add text-lg"></span>
-            Add New Product
+            <span class="whitespace-nowrap">Add Product</span>
           </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 p-3">
         <For each={filteredProducts()}>
           {(product) => (
             <div class="border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-200 bg-white flex flex-col">
-              <div class="h-[200px] overflow-hidden">
+              <div class="h-[150px] sm:h-[200px] overflow-hidden">
                 <img
                   src={product.image}
                   alt={product.name}
@@ -115,30 +117,32 @@ const Products = () => {
                   loading="lazy"
                 />
               </div>
-              <div class="p-4 flex-grow flex flex-col">
-                <h3 class="font-bold text-lg text-primary-600 mb-2">
+              <div class="p-3 sm:p-4 flex-grow flex flex-col">
+                <h3 class="font-bold text-base sm:text-lg text-primary-600 mb-2">
                   {product.name}
                 </h3>
-                <div class="flex justify-between mb-3">
-                  <p class="font-bold text-red-600">
+                <div class="flex justify-between mb-2 sm:mb-3">
+                  <p class="font-bold text-red-600 text-sm sm:text-base">
                     Rp {product.price.toLocaleString()}
                   </p>
-                  <p class="text-gray-600">Stock: {product.stock}</p>
+                  <p class="text-gray-600 text-sm sm:text-base">
+                    Stock: {product.stock}
+                  </p>
                 </div>
                 <div class="flex justify-between mt-auto gap-2">
                   <button
-                    class="bg-primary-500 text-white px-3 py-1.5 rounded-md cursor-pointer hover:bg-primary-600 transition-colors flex-grow flex items-center justify-center gap-1"
+                    class="bg-primary-500 text-white px-2 sm:px-3 py-1.5 rounded-md cursor-pointer hover:bg-primary-600 transition-colors flex-grow flex items-center justify-center gap-1"
                     onClick={() => handleEditProduct(product)}
                   >
                     <span class="i-carbon-edit text-sm"></span>
-                    Edit
+                    <span class="text-sm sm:text-base">Edit</span>
                   </button>
                   <button
-                    class="bg-red-500 text-white px-3 py-1.5 rounded-md cursor-pointer hover:bg-red-600 transition-colors flex-grow flex items-center justify-center gap-1"
+                    class="bg-red-500 text-white px-2 sm:px-3 py-1.5 rounded-md cursor-pointer hover:bg-red-600 transition-colors flex-grow flex items-center justify-center gap-1"
                     onClick={() => handleDeleteProduct(product.id)}
                   >
                     <span class="i-carbon-trash-can text-sm"></span>
-                    Delete
+                    <span class="text-sm sm:text-base">Delete</span>
                   </button>
                 </div>
               </div>

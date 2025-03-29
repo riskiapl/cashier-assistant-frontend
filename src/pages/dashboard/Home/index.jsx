@@ -41,38 +41,36 @@ const Home = () => {
 
   return (
     <div>
-      <div class="sticky z-10 bg-white p-3 border-b top-0">
-        <div class="flex flex-col sm:flex-row justify-between sm:items-center space-y-4 sm:space-y-0">
-          <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 md:ml-4 text-align-center">
-            Summary
-          </h1>
-          <div class="flex flex-row items-start gap-2">
-            <Select
-              wrapperClass="w-full sm:w-36"
-              label="Time Range"
-              options={options().timeRanges}
-              initialValue={filters.timeRange}
-              onChange={(value) => setFilters("timeRange", value)}
-            />
+      <div class="flex flex-col sm:flex-row justify-between sm:items-center space-y-4 sm:space-y-0 sticky z-10 bg-white p-3 border-b top-0">
+        <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 md:ml-4 text-align-center">
+          Summary
+        </h1>
+        <div class="flex flex-row items-start gap-2">
+          <Select
+            wrapperClass="w-full sm:w-36"
+            label="Time Range"
+            options={options().timeRanges}
+            initialValue={filters.timeRange}
+            onChange={(value) => setFilters("timeRange", value)}
+          />
 
-            {filters.timeRange === "Monthly" && (
-              <Select
-                wrapperClass="w-full sm:w-40"
-                label="Month"
-                options={options().months}
-                initialValue={filters.month}
-                onChange={(value) => setFilters("month", value)}
-              />
-            )}
-
+          {filters.timeRange === "Monthly" && (
             <Select
-              wrapperClass="w-full sm:w-36"
-              label="Year"
-              options={options().years}
-              initialValue={filters.year}
-              onChange={(value) => setFilters("year", Number(value))}
+              wrapperClass="w-full sm:w-40"
+              label="Month"
+              options={options().months}
+              initialValue={filters.month}
+              onChange={(value) => setFilters("month", value)}
             />
-          </div>
+          )}
+
+          <Select
+            wrapperClass="w-full sm:w-36"
+            label="Year"
+            options={options().years}
+            initialValue={filters.year}
+            onChange={(value) => setFilters("year", Number(value))}
+          />
         </div>
       </div>
 
