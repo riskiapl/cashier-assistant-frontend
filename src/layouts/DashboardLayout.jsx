@@ -224,7 +224,7 @@ export default function DashboardLayout(props) {
         </header>
 
         {/* Page content */}
-        <main class="flex-1 overflow-y-auto p-6">{props.children}</main>
+        <main class="flex-1 overflow-y-auto px-6 py-0">{props.children}</main>
       </div>
     </div>
   );
