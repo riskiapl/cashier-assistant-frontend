@@ -1,4 +1,4 @@
-import { onMount } from "solid-js";
+import { onMount, createEffect } from "solid-js";
 import {
   Chart,
   CategoryScale,
@@ -13,7 +13,7 @@ import {
 } from "chart.js";
 import { Line, Bar, Doughnut } from "solid-chartjs";
 import Header from "@components/Header";
-import Select from "@components/Select";
+import Select, { getProps } from "@components/Select";
 import Card from "@components/Card";
 import {
   salesData,
@@ -41,6 +41,22 @@ const Home = () => {
     );
   });
 
+  createEffect(() => {
+    // Update chart data based on filters
+    const year = filters.year;
+    const month = filters.month;
+    const timeRange = filters.timeRange?.value;
+
+    // Example: Fetch new data based on the selected filters
+    // This is where you would typically make an API call to fetch new data
+    // For demonstration, we are just logging the selected filters
+    console.log(`Fetching data for ${timeRange} of ${month}/${year}`);
+  });
+
+  createEffect(() => {
+    console.log(options(), "masuk options");
+  });
+
   return (
     <div>
       <Header title="Summary">
@@ -48,18 +64,18 @@ const Home = () => {
           <Select
             wrapperClass="w-full sm:w-36"
             label="Time Range"
-            options={options().timeRanges}
             initialValue={filters.timeRange}
             onChange={(value) => setFilters("timeRange", value)}
+            {...getProps(options().timeRanges)}
           />
 
-          {filters.timeRange === "Monthly" && (
+          {filters.timeRange?.value === "monthly" && (
             <Select
               wrapperClass="w-full sm:w-40"
               label="Month"
-              options={options().months}
               initialValue={filters.month}
               onChange={(value) => setFilters("month", value)}
+              {...getProps(options().months)}
             />
           )}
 

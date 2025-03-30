@@ -1,5 +1,6 @@
-import { Select } from "@thisbeyond/solid-select";
+import { Select, createOptions } from "@thisbeyond/solid-select";
 import "@thisbeyond/solid-select/style.css";
+import "@styles/select.css";
 
 const SolidSelect = (props) => {
   // Default styling - can be overridden via props
@@ -33,3 +34,11 @@ const SolidSelect = (props) => {
 };
 
 export default SolidSelect;
+
+export const getProps = (options) => {
+  const props = createOptions(options, {
+    key: "label",
+  });
+
+  return props;
+};

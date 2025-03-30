@@ -4,20 +4,23 @@ import { createSignal } from "solid-js";
 // Options that don't need to be reactive but need to be accessed
 const YEARS = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
 const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  { label: "January", value: 1 },
+  { label: "February", value: 2 },
+  { label: "March", value: 3 },
+  { label: "April", value: 4 },
+  { label: "May", value: 5 },
+  { label: "June", value: 6 },
+  { label: "July", value: 7 },
+  { label: "August", value: 8 },
+  { label: "September", value: 9 },
+  { label: "October", value: 10 },
+  { label: "November", value: 11 },
+  { label: "December", value: 12 },
 ];
-const TIME_RANGES = ["Monthly", "Yearly"];
+const TIME_RANGES = [
+  { label: "Monthly", value: "monthly" },
+  { label: "Yearly", value: "yearly" },
+];
 
 // Chart options - don't need to be reactive
 const lineOptions = {
@@ -42,20 +45,7 @@ const doughnutOptions = {
 };
 
 const initialSalesData = {
-  labels: [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ],
+  labels: MONTHS.map((month) => month.label.slice(0, 3)),
   datasets: [
     {
       label: "Sales",
@@ -71,20 +61,7 @@ const initialSalesData = {
 };
 
 const initialPurchasesData = {
-  labels: [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ],
+  labels: MONTHS.map((month) => month.label.slice(0, 3)),
   datasets: [
     {
       label: "Purchases",
@@ -133,7 +110,7 @@ const [options] = createSignal({
 const [filters, setFilters] = createStore({
   year: new Date().getFullYear(),
   month: new Date().getMonth() + 1,
-  timeRange: TIME_RANGES[0],
+  timeRange: { label: "Monthly", value: "monthly" },
 });
 
 export {
