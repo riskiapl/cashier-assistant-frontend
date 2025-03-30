@@ -16,7 +16,7 @@ const Products = () => {
     },
     {
       id: 2,
-      name: "spaghetti",
+      name: "Spaghetti",
       price: 25000,
       stock: 15,
       image: "https://picsum.photos/600/400",
