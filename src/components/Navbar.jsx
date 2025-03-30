@@ -32,7 +32,7 @@ export default function Navbar({
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen());
     // Store sidebar state in localStorage to persist across page refreshes
-    localStorage.setItem("sidebarOpen", !sidebarOpen());
+    localStorage.setItem("sidebarOpen", sidebarOpen());
   };
 
   const toggleMobileMenu = () => {
@@ -89,6 +89,7 @@ export default function Navbar({
   const handleResize = () => {
     if (window.innerWidth <= 768) {
       setSidebarOpen(false);
+      localStorage.setItem("sidebarOpen", false);
     }
   };
 
@@ -183,7 +184,7 @@ export default function Navbar({
             <h1 class="text-xl font-bold">{appName}</h1>
           </div>
           <button
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={() => toggleMobileMenu()}
             class="ml-auto p-2 rounded-md text-gray-700 hover:bg-gray-100 transition-transform duration-200 hover:scale-110"
           >
             <FiX class="w-6 h-6 transition-transform duration-300 hover:rotate-90" />
@@ -244,7 +245,7 @@ export default function Navbar({
             <div class="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen())}
-                class="flex items-center space-x-1 md:space-x-2 md:bg-gray-100 md:hover:bg-gray-200 md:py-2 px-2 md:px-3 rounded-md"
+                class="flex items-center space-x-1 md:space-x-2 md:hover:bg-gray-200 md:py-2 px-2 md:px-3 rounded-md"
               >
                 <div class="w-7 h-7 md:w-8 md:h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs md:text-sm">
                   {user?.username?.charAt(0) || "U"}
@@ -255,35 +256,45 @@ export default function Navbar({
                     {user?.status || "Cashier"}
                   </p>
                 </div>
-                <FiChevronDown class="w-3 h-3 md:w-4 md:h-4 hidden md:block" />
+                <FiChevronDown
+                  class={`w-3 h-3 md:w-4 md:h-4 hidden md:block transform transition-transform duration-300 ${
+                    dropdownOpen() ? "rotate-180" : "rotate-0"
+                  }`}
+                />
               </button>
 
-              <Show when={dropdownOpen()}>
-                <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
-                  <a
-                    href="/profile"
-                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-500"
-                  >
-                    <FiUser class="w-4 h-4 mr-2" />
-                    Profile
-                  </a>
-                  <a
-                    href="/settings"
-                    class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-500"
-                  >
-                    <FiSettings class="w-4 h-4 mr-2" />
-                    Settings
-                  </a>
-                  <div class="border-t border-gray-100"></div>
-                  <button
-                    onClick={handleLogout}
-                    class="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                  >
-                    <FiLogOut class="w-4 h-4 mr-2" />
-                    Logout
-                  </button>
-                </div>
-              </Show>
+              <div
+                class={`absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 origin-top-right transform transition-all duration-200 ease-in-out ${
+                  dropdownOpen()
+                    ? "opacity-100 scale-100"
+                    : "opacity-0 scale-95 pointer-events-none"
+                }`}
+              >
+                <a
+                  href="/profile"
+                  class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-500"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <FiUser class="w-4 h-4 mr-2" />
+                  Profile
+                </a>
+                <a
+                  href="/settings"
+                  class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-500"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <FiSettings class="w-4 h-4 mr-2" />
+                  Settings
+                </a>
+                <div class="border-t border-gray-100"></div>
+                <button
+                  onClick={handleLogout}
+                  class="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                >
+                  <FiLogOut class="w-4 h-4 mr-2" />
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
         </div>

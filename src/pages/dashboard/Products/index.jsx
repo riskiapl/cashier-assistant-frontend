@@ -1,6 +1,8 @@
 import { createSignal, For } from "solid-js";
 import { createStore } from "solid-js/store";
 import ProductModal from "./ModalInput";
+import Header from "@components/Header";
+import Card from "@components/Card";
 
 const Products = () => {
   // State for products data
@@ -83,10 +85,7 @@ const Products = () => {
 
   return (
     <div>
-      <div class="p-3 sticky top-0 bg-white z-10 md:flex items-center md:justify-between space-y-4 md:space-y-0 border-b">
-        <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 md:ml-4 text-align-center">
-          Products
-        </h1>
+      <Header title="Products">
         <div class="flex w-full sm:w-auto gap-3 items-stretch sm:items-center">
           <input
             type="text"
@@ -103,12 +102,12 @@ const Products = () => {
             <span class="whitespace-nowrap">Add Product</span>
           </button>
         </div>
-      </div>
+      </Header>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 p-3">
         <For each={filteredProducts()}>
           {(product) => (
-            <div class="border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-200 bg-white flex flex-col">
+            <Card class="bg-gray-50">
               <div class="h-[150px] sm:h-[200px] overflow-hidden">
                 <img
                   src={product.image}
@@ -146,7 +145,7 @@ const Products = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </Card>
           )}
         </For>
       </div>

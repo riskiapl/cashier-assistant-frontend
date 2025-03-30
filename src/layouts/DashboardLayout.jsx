@@ -2,7 +2,7 @@ import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../stores/authStore";
 import { onMount, createSignal } from "solid-js";
 import { alert } from "@lib/alert";
-import Navbar from "../components/Navbar";
+import Navbar from "@components/Navbar";
 import { FiHome, FiBook, FiCreditCard } from "solid-icons/fi";
 
 export default function DashboardLayout(props) {

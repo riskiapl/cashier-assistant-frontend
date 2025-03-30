@@ -1,4 +1,4 @@
-import { onMount, createEffect } from "solid-js";
+import { onMount } from "solid-js";
 import {
   Chart,
   CategoryScale,
@@ -12,7 +12,9 @@ import {
   ArcElement,
 } from "chart.js";
 import { Line, Bar, Doughnut } from "solid-chartjs";
+import Header from "@components/Header";
 import Select from "@components/Select";
+import Card from "@components/Card";
 import {
   salesData,
   purchasesData,
@@ -41,10 +43,7 @@ const Home = () => {
 
   return (
     <div>
-      <div class="flex flex-col sm:flex-row justify-between sm:items-center space-y-4 sm:space-y-0 sticky z-10 bg-white p-3 border-b top-0">
-        <h1 class="text-xl sm:text-2xl font-semibold text-gray-900 md:ml-4 text-align-center">
-          Summary
-        </h1>
+      <Header title="Summary">
         <div class="flex flex-row items-start gap-2">
           <Select
             wrapperClass="w-full sm:w-36"
@@ -72,11 +71,11 @@ const Home = () => {
             onChange={(value) => setFilters("year", Number(value))}
           />
         </div>
-      </div>
+      </Header>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 p-3">
         {/* Sales Chart */}
-        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg shadow-sm">
+        <Card class="p-3 bg-gray-50">
           <h2 class="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4">
             Sales
           </h2>
@@ -90,10 +89,10 @@ const Home = () => {
               }}
             />
           </div>
-        </div>
+        </Card>
 
         {/* Purchases Chart */}
-        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg shadow-sm">
+        <Card class="p-3 bg-gray-50">
           <h2 class="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4">
             Purchases
           </h2>
@@ -107,10 +106,10 @@ const Home = () => {
               }}
             />
           </div>
-        </div>
+        </Card>
 
         {/* Income Chart */}
-        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg shadow-sm">
+        <Card class="p-3 bg-gray-50">
           <h2 class="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4">
             Income Distribution
           </h2>
@@ -126,10 +125,10 @@ const Home = () => {
               />
             </div>
           </div>
-        </div>
+        </Card>
 
         {/* Expenses Chart */}
-        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg shadow-sm">
+        <Card class="p-3 bg-gray-50">
           <h2 class="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4">
             Expense Distribution
           </h2>
@@ -145,7 +144,7 @@ const Home = () => {
               />
             </div>
           </div>
-        </div>
+        </Card>
       </div>
 
       <div class="p-3">
