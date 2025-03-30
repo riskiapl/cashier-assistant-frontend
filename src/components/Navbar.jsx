@@ -199,7 +199,7 @@ export default function Navbar({
                 onClick={() => handleNavigation(item.href)}
                 class={`${
                   isActive(item.href) ? "nav-item-active" : "nav-item"
-                } block w-full flex`}
+                } w-full flex`}
               >
                 <item.icon class="w-6 h-6 mr-3" />
                 <span>{item.label}</span>
