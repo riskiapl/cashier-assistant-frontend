@@ -2,7 +2,7 @@ import { Route } from "@solidjs/router";
 import { lazy } from "solid-js";
 import { DashboardLayout } from "@layouts";
 import NotFound from "@pages/404";
-import { PageRoute } from "@components/PageRoute.";
+import PageRoute from "@components/PageRoute.";
 import Suspense from "@components/Suspense";
 
 const Home = lazy(() => import("@pages/dashboard/Home"));

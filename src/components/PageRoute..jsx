@@ -1,7 +1,7 @@
 import { Route } from "@solidjs/router";
 import { createEffect } from "solid-js";
 
-export function PageRoute(props) {
+export default function PageRoute(props) {
   const { path, title, component } = props;
 
   const RouteComponent = (routeProps) => {

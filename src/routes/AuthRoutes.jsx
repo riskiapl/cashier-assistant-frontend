@@ -1,7 +1,7 @@
 import { Route } from "@solidjs/router";
 import { lazy } from "solid-js";
 import { AuthLayout } from "@layouts";
-import { PageRoute } from "@components/PageRoute.";
+import PageRoute from "@components/PageRoute.";
 import Suspense from "@components/Suspense";
 
 const Login = lazy(() => import("@pages/auth/Login"));
