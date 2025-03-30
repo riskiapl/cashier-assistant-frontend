@@ -27,7 +27,7 @@ export default function DashboardLayout(props) {
   // Define menu items for the navbar
   const menuItems = [
     {
-      label: "Dashboard",
+      label: "Home",
       href: "/",
       icon: FiHome,
     },

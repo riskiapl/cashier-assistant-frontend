@@ -55,12 +55,15 @@ export default function Navbar({
   const getCurrentPageTitle = () => {
     const path = location.pathname;
 
-    // Check menuItems for matching path
-    const matchedItem = menuItems.find((item) => path.startsWith(item.href));
-    if (matchedItem) return matchedItem.label;
+    // Check for exact match in menuItems first
+    const exactMatch = menuItems.find((item) => item.href === path);
+    if (exactMatch) return exactMatch.label;
 
-    if (path.startsWith("/profile")) return "Profile";
-    if (path.startsWith("/settings")) return "Settings";
+    // Then check for partial match
+    const partialMatch = menuItems.find(
+      (item) => item.href !== "/" && path.startsWith(item.href)
+    );
+    if (partialMatch) return partialMatch.label;
 
     // Default case: capitalize first letter of path segment
     const segment = path.split("/").filter(Boolean)[0];
