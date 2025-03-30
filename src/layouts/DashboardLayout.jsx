@@ -64,7 +64,10 @@ export default function DashboardLayout(props) {
   });
 
   return (
-    <div class="h-screen flex overflow-hidden bg-gray-100 p-2 flex-col">
+    <div
+      class="flex overflow-hidden bg-gray-100 p-2 flex-col"
+      style={{ height: "100dvh" }}
+    >
       {/* Navbar component */}
       <Navbar
         user={user}

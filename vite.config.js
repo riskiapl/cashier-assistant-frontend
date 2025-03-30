@@ -1,15 +1,55 @@
 import { defineConfig, loadEnv } from "vite";
 import solidPlugin from "vite-plugin-solid";
-import devtools from "solid-devtools/vite";
+// import devtools from "solid-devtools/vite";
 import UnoCSS from "unocss/vite";
+import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const isDev = mode === "development";
 
   return {
-    plugins: [UnoCSS(), devtools({ autoname: true }), solidPlugin()],
+    plugins: [
+      UnoCSS(),
+      // devtools({ autoname: true }),
+      solidPlugin(),
+      VitePWA({
+        registerType: "autoUpdate",
+        includeAssets: [
+          "favicon.ico",
+          "apple-touch-icon.png",
+          "masked-icon.svg",
+        ],
+        manifest: {
+          name: "Cashierly",
+          short_name: "Cashierly",
+          description: "Cashier Assistant Application",
+          theme_color: "#ffffff",
+          icons: [
+            {
+              src: "pwa-192x192.png",
+              sizes: "192x192",
+              type: "image/png",
+            },
+            {
+              src: "pwa-512x512.png",
+              sizes: "512x512",
+              type: "image/png",
+            },
+            {
+              src: "pwa-512x512.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "any maskable",
+            },
+          ],
+        },
+        devOptions: {
+          enabled: true,
+        },
+      }),
+    ],
     server: {
       port: 3000,
       proxy: isDev
