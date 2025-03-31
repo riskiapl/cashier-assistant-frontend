@@ -22,9 +22,8 @@ api.interceptors.request.use(
     config.headers["Accept-Language"] =
       localStorage.getItem("language") || "en";
 
-    const auth = localStorage.getItem("auth");
-    if (auth) {
-      const { token } = JSON.parse(auth);
+    const token = localStorage.getItem("token");
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
