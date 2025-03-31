@@ -81,3 +81,40 @@ export const resetPasswordSchema = v.pipe(
     ["confirmPassword"]
   )
 );
+
+export const profileUpdateSchema = v.object({
+  name: v.pipe(v.string(), v.nonEmpty("Name is required")),
+  email: v.pipe(
+    v.string(),
+    v.nonEmpty("Email is required"),
+    v.email("Please enter a valid email address")
+  ),
+  phoneNumber: v.optional(v.string()),
+  address: v.optional(v.string()),
+});
+
+export const changePasswordSchema = v.pipe(
+  v.object({
+    currentPassword: v.pipe(
+      v.string(),
+      v.nonEmpty("Current password is required")
+    ),
+    newPassword: v.pipe(
+      v.string(),
+      v.nonEmpty("New password is required"),
+      v.minLength(8, "Password must be at least 8 characters")
+    ),
+    confirmPassword: v.pipe(
+      v.string(),
+      v.nonEmpty("Please confirm your password")
+    ),
+  }),
+  v.forward(
+    v.partialCheck(
+      [["newPassword"], ["confirmPassword"]],
+      (input) => input.newPassword === input.confirmPassword,
+      "Passwords do not match."
+    ),
+    ["confirmPassword"]
+  )
+);
