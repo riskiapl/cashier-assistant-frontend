@@ -1,17 +1,23 @@
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../stores/authStore";
-import { onMount, createSignal } from "solid-js";
+import { onMount, createSignal, createEffect } from "solid-js";
+import { useTransContext } from "@mbarzda/solid-i18next";
 import { alert } from "@lib/alert";
 import Navbar from "@components/Navbar";
 import { FiHome, FiBook, FiCreditCard } from "solid-icons/fi";
 
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
+  const [t, { changeLanguage, getI18next }] = useTransContext();
   const {
     logout,
     isAuthenticated,
     auth: { user },
   } = useAuth();
+
+  // Language state management moved from Navbar
+  const [currentLang, setCurrentLang] = createSignal(getI18next().language);
+  const [langDropdownOpen, setLangDropdownOpen] = createSignal(false);
 
   // Initialize sidebarOpen state from localStorage or default to true for larger screens
   const initialSidebarState = () => {
@@ -25,39 +31,55 @@ export default function DashboardLayout(props) {
   const [sidebarOpen, setSidebarOpen] = createSignal(initialSidebarState());
 
   // Define menu items for the navbar
-  const menuItems = [
-    {
-      label: "Home",
-      href: "/",
-      icon: FiHome,
-    },
-    {
-      label: "Products",
-      href: "/products",
-      icon: FiBook,
-    },
-    {
-      label: "Transactions",
-      href: "/transactions",
-      icon: FiCreditCard,
-    },
-  ];
+  const [menuItems, setMenuItems] = createSignal([]);
+
+  // Language selection function moved from Navbar
+  const selectLanguage = (lang) => {
+    changeLanguage(lang);
+    setCurrentLang(lang);
+    setLangDropdownOpen(false);
+  };
+
+  // Update menu items when language changes
+  createEffect(() => {
+    const lang = currentLang(); // Add dependency on currentLang
+    setMenuItems([
+      {
+        label: t("dashboard.menu.home"),
+        href: "/",
+        icon: FiHome,
+      },
+      {
+        label: t("dashboard.menu.products"),
+        href: "/products",
+        icon: FiBook,
+      },
+      {
+        label: t("dashboard.menu.transactions"),
+        href: "/transactions",
+        icon: FiCreditCard,
+      },
+    ]);
+  });
 
   const handleLogout = async () => {
     const confirmed = await alert.confirm({
-      title: "Logout",
-      text: "Are you sure you want to logout?",
-      confirmText: "Yes, logout",
+      title: t("dashboard.logout.title"),
+      text: t("dashboard.logout.confirmText"),
+      confirmText: t("dashboard.logout.confirmButton"),
     });
 
     if (confirmed) {
       logout();
-      alert.success("Logged out successfully");
+      alert.success(t("dashboard.logout.successMessage"));
       navigate("/auth/login");
     }
   };
 
   onMount(() => {
+    // Update currentLang signal to match i18next's current language
+    setCurrentLang(getI18next().language);
+
     if (!isAuthenticated()) {
       navigate("/auth/login", { replace: true });
     }
@@ -68,7 +90,7 @@ export default function DashboardLayout(props) {
       class="flex overflow-hidden bg-gray-100 p-2 flex-col"
       style={{ height: "100dvh" }}
     >
-      {/* Navbar component */}
+      {/* Navbar component - pass language state */}
       <Navbar
         user={user}
         logout={handleLogout}
@@ -76,6 +98,11 @@ export default function DashboardLayout(props) {
         appName="Cashierly"
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
+        // Language props
+        currentLang={currentLang}
+        selectLanguage={selectLanguage}
+        langDropdownOpen={langDropdownOpen}
+        setLangDropdownOpen={setLangDropdownOpen}
       />
 
       {/* Main content */}

@@ -75,5 +75,63 @@
     "validation": "Terjadi kesalahan validasi",
     "serverError": "Terjadi kesalahan server. Silakan coba lagi nanti",
     "unexpectedError": "Terjadi kesalahan yang tidak terduga"
+  },
+  "navbar": {
+    "pages": "Halaman",
+    "language": "Bahasa",
+    "profile": "Profil",
+    "settings": "Pengaturan",
+    "logout": "Keluar"
+  },
+  "profile": {
+    "title": "Pengaturan Profil",
+    "changePhoto": "Ubah Foto",
+    "fullName": "Nama Lengkap",
+    "fullNamePlaceholder": "Nama Lengkap",
+    "email": "Alamat Email",
+    "emailPlaceholder": "Alamat Email",
+    "phone": "Nomor Telepon",
+    "phonePlaceholder": "Nomor Telepon",
+    "address": "Alamat",
+    "addressPlaceholder": "Alamat Anda",
+    "updating": "Memperbarui...",
+    "updateProfile": "Perbarui Profil",
+    "security": {
+      "title": "Pengaturan Keamanan",
+      "currentPassword": "Kata Sandi Saat Ini",
+      "currentPasswordPlaceholder": "Masukkan kata sandi saat ini",
+      "newPassword": "Kata Sandi Baru",
+      "newPasswordPlaceholder": "Masukkan kata sandi baru",
+      "confirmPassword": "Konfirmasi Kata Sandi Baru",
+      "confirmPasswordPlaceholder": "Konfirmasi kata sandi baru",
+      "changePassword": "Ubah Kata Sandi"
+    },
+    "dangerZone": {
+      "title": "Zona Bahaya",
+      "warning": "Setelah Anda menghapus akun, tidak ada jalan kembali. Harap pastikan.",
+      "deleteAccount": "Hapus Akun",
+      "processing": "Memproses...",
+      "confirmDelete": "Apakah Anda yakin?",
+      "confirmDeleteText": "Anda tidak akan dapat mengembalikan ini. Semua data Anda akan dihapus secara permanen.",
+      "confirmButtonText": "Ya, hapus akun saya!",
+      "cancelButtonText": "Batal",
+      "deletedTitle": "Dihapus!",
+      "deletedText": "Akun Anda telah dihapus.",
+      "errorTitle": "Kesalahan!",
+      "errorText": "Terjadi masalah saat menghapus akun Anda."
+    }
+  },
+  "dashboard": {
+    "menu": {
+      "home": "Beranda",
+      "products": "Produk",
+      "transactions": "Transaksi"
+    },
+    "logout": {
+      "title": "Keluar",
+      "confirmText": "Apakah Anda yakin ingin keluar?",
+      "confirmButton": "Ya, keluar",
+      "successMessage": "Berhasil keluar"
+    }
   }
 }

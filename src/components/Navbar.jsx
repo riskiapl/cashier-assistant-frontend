@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "@solidjs/router";
 import { createSignal, onMount, onCleanup, Show, For } from "solid-js";
+import { useTransContext } from "@mbarzda/solid-i18next";
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -11,6 +12,7 @@ import {
   FiMenu,
   FiX,
 } from "solid-icons/fi";
+import LanguageDropdown from "./LanguageDropdown";
 
 // Import the logo
 import logoImage from "@assets/logo_only_color_cashierly.png";
@@ -22,12 +24,18 @@ export default function Navbar({
   appName = "Cashierly",
   sidebarOpen,
   setSidebarOpen,
+  currentLang,
+  selectLanguage,
+  langDropdownOpen,
+  setLangDropdownOpen,
 }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [t] = useTransContext(); // Only need translation function
   const [dropdownOpen, setDropdownOpen] = createSignal(false);
   const [mobileMenuOpen, setMobileMenuOpen] = createSignal(false);
   let dropdownRef;
+  let langDropdownRef;
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen());
@@ -56,11 +64,11 @@ export default function Navbar({
     const path = location.pathname;
 
     // Check for exact match in menuItems first
-    const exactMatch = menuItems.find((item) => item.href === path);
+    const exactMatch = menuItems().find((item) => item.href === path);
     if (exactMatch) return exactMatch.label;
 
     // Then check for partial match
-    const partialMatch = menuItems.find(
+    const partialMatch = menuItems().find(
       (item) => item.href !== "/" && path.startsWith(item.href)
     );
     if (partialMatch) return partialMatch.label;
@@ -72,10 +80,13 @@ export default function Navbar({
       : "Dashboard";
   };
 
-  // Handle click outside dropdown
+  // Handle click outside dropdowns
   const handleClickOutside = (event) => {
     if (dropdownRef && !dropdownRef.contains(event.target)) {
       setDropdownOpen(false);
+    }
+    if (langDropdownRef && !langDropdownRef.contains(event.target)) {
+      setLangDropdownOpen(false);
     }
   };
 
@@ -133,7 +144,7 @@ export default function Navbar({
 
         {/* Navigation items */}
         <nav class="px-2 py-4 flex-grow">
-          <For each={menuItems}>
+          <For each={menuItems()}>
             {(item) => (
               <a
                 href={item.href}
@@ -171,7 +182,7 @@ export default function Navbar({
       <div
         class={`fixed inset-y-0 left-0 w-64 bg-white shadow-lg z-30 md:hidden p-2 transform transition-transform duration-300 ease-in-out ${
           mobileMenuOpen() ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } flex flex-col`}
       >
         {/* Mobile Logo */}
         <div class="px-5 py-5 flex items-center border-b border-gray-200">
@@ -192,8 +203,8 @@ export default function Navbar({
         </div>
 
         {/* Mobile Navigation */}
-        <nav class="px-2 py-4">
-          <For each={menuItems}>
+        <nav class="px-2 py-4 flex-grow">
+          <For each={menuItems()}>
             {(item) => (
               <a
                 onClick={() => handleNavigation(item.href)}
@@ -227,14 +238,26 @@ export default function Navbar({
           </div>
 
           <h1 class="text-lg font-semibold text-gray-800 ml-8 md:ml-4 truncate">
-            <span class="text-primary-200 hidden md:inline">Pages</span>
+            <span class="text-primary-200 hidden md:inline">
+              {t("navbar.pages")}
+            </span>
             <span class="hidden md:inline">{" / "}</span>
             {getCurrentPageTitle()}
           </h1>
 
-          <div class="flex items-center space-x-2 md:space-x-4">
+          <div class="flex items-center space-x-2">
+            {/* Language dropdown - Desktop */}
+            <LanguageDropdown
+              currentLang={currentLang}
+              selectLanguage={selectLanguage}
+              dropdownOpen={langDropdownOpen}
+              setDropdownOpen={setLangDropdownOpen}
+              isMobile={false}
+              ref={langDropdownRef}
+            />
+
             {/* Notification button */}
-            <button class="p-1 md:p-2 rounded-full text-gray-600 hover:bg-gray-100 relative">
+            <button class="p-1 md:p-2 rounded-md text-gray-600 md:hover:bg-gray-200 relative">
               <FiBell class="w-5 h-5 md:w-6 md:h-6" />
               <span class="absolute top-0 right-0 bg-red-500 text-white rounded-full w-3 h-3 md:w-4 md:h-4 text-xs flex items-center justify-center">
                 3
@@ -278,7 +301,7 @@ export default function Navbar({
                   onClick={() => setDropdownOpen(false)}
                 >
                   <FiUser class="w-4 h-4 mr-2" />
-                  Profile
+                  {t("navbar.profile")}
                 </a>
                 <a
                   href="/settings"
@@ -286,7 +309,7 @@ export default function Navbar({
                   onClick={() => setDropdownOpen(false)}
                 >
                   <FiSettings class="w-4 h-4 mr-2" />
-                  Settings
+                  {t("navbar.settings")}
                 </a>
                 <div class="border-t border-gray-100"></div>
                 <button
@@ -294,7 +317,7 @@ export default function Navbar({
                   class="w-full text-left flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                 >
                   <FiLogOut class="w-4 h-4 mr-2" />
-                  Logout
+                  {t("navbar.logout")}
                 </button>
               </div>
             </div>

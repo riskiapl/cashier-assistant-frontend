@@ -75,5 +75,63 @@
     "validation": "Validation error occurred",
     "serverError": "Server error occurred. Please try again later",
     "unexpectedError": "An unexpected error occurred"
+  },
+  "navbar": {
+    "pages": "Pages",
+    "language": "Language",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "changePhoto": "Change Photo",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Full Name",
+    "email": "Email Address",
+    "emailPlaceholder": "Email Address",
+    "phone": "Phone Number",
+    "phonePlaceholder": "Phone Number",
+    "address": "Address",
+    "addressPlaceholder": "Your address",
+    "updating": "Updating...",
+    "updateProfile": "Update Profile",
+    "security": {
+      "title": "Security Settings",
+      "currentPassword": "Current Password",
+      "currentPasswordPlaceholder": "Enter current password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "changePassword": "Change Password"
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "warning": "Once you delete your account, there is no going back. Please be certain.",
+      "deleteAccount": "Delete Account",
+      "processing": "Processing...",
+      "confirmDelete": "Are you sure?",
+      "confirmDeleteText": "You won't be able to revert this. All your data will be permanently deleted.",
+      "confirmButtonText": "Yes, delete my account!",
+      "cancelButtonText": "Cancel",
+      "deletedTitle": "Deleted!",
+      "deletedText": "Your account has been deleted.",
+      "errorTitle": "Error!",
+      "errorText": "There was a problem deleting your account."
+    }
+  },
+  "dashboard": {
+    "menu": {
+      "home": "Home",
+      "products": "Products",
+      "transactions": "Transactions"
+    },
+    "logout": {
+      "title": "Logout",
+      "confirmText": "Are you sure you want to logout?",
+      "confirmButton": "Yes, logout",
+      "successMessage": "Logged out successfully"
+    }
   }
 }

@@ -11,11 +11,6 @@ export const memberService = {
     return response.data;
   },
 
-  async createMember(payload) {
-    const response = await api.post("/members", payload);
-    return response.data;
-  },
-
   async updateMember(id, payload) {
     const response = await api.put(`/members/${id}`, payload);
     return response.data;

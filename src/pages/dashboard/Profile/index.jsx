@@ -1,4 +1,5 @@
 import { createEffect, createSignal, onMount } from "solid-js";
+import { useTransContext } from "@mbarzda/solid-i18next";
 import {
   FiUser,
   FiMail,
@@ -13,15 +14,16 @@ import Input from "@components/Input";
 import Swal from "sweetalert2";
 import { memberService } from "@services/memberService";
 import { auth } from "@stores/authStore";
+import { alert } from "@lib/alert";
 
 const Profile = () => {
+  const [t] = useTransContext();
   const [userData, setUserData] = createSignal(null);
   const [loading, setLoading] = createSignal(false);
   const [deleteLoading, setDeleteLoading] = createSignal(false);
 
   onMount(async () => {
     const response = await memberService.getMember(auth.user.id);
-    console.log(response, "response");
     setUserData(response.data);
   });
 
@@ -31,20 +33,20 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(e.target, "masuk submit");
+    const formData = new FormData(e.target);
+    const values = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      phoneNumber: formData.get("phoneNumber"),
+      address: formData.get("address"),
+    };
+    console.log(values, auth.user.id, "masuk submit");
 
-    // setLoading(true);
-    // try {
-    //   // Replace with actual API call
-    //   // await axios.put('/api/user/profile', values);
-    //   console.log("Updated profile data:", values);
-    //   setUserData((prev) => ({ ...prev, ...values }));
-    //   // Success notification would be here
-    // } catch (error) {
-    //   // Error notification would be here
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    const response = await memberService.updateMember(auth.user.id, values);
+    console.log(response, "masuk response");
+    alert.success(response.message || "Update Success");
+    setLoading(false);
   };
 
   const handleAvatarChange = (e) => {
@@ -60,14 +62,14 @@ const Profile = () => {
 
   const handleDeleteAccount = async () => {
     const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this. All your data will be permanently deleted.",
+      title: t("profile.dangerZone.confirmDelete"),
+      text: t("profile.dangerZone.confirmDeleteText"),
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete my account!",
-      cancelButtonText: "Cancel",
+      confirmButtonText: t("profile.dangerZone.confirmButtonText"),
+      cancelButtonText: t("profile.dangerZone.cancelButtonText"),
     });
 
     if (result.isConfirmed) {
@@ -76,15 +78,19 @@ const Profile = () => {
         // Replace with actual API call
         // await axios.delete('/api/user/account');
 
-        Swal.fire("Deleted!", "Your account has been deleted.", "success");
+        Swal.fire(
+          t("profile.dangerZone.deletedTitle"),
+          t("profile.dangerZone.deletedText"),
+          "success"
+        );
         console.log("Account deleted");
         // Redirect to logout or home page would be here
         // window.location.href = '/logout';
       } catch (error) {
         console.error("Failed to delete account", error);
         Swal.fire(
-          "Error!",
-          "There was a problem deleting your account.",
+          t("profile.dangerZone.errorTitle"),
+          t("profile.dangerZone.errorText"),
           "error"
         );
       } finally {
@@ -95,7 +101,7 @@ const Profile = () => {
 
   return (
     <div>
-      <Header title="Profile Settings" />
+      <Header title={t("profile.title")} />
       {userData() ? (
         <div class="p-3 flex flex-col gap-3">
           <Card class="p-3 bg-gray-50">
@@ -115,7 +121,7 @@ const Profile = () => {
 
                 <label class="cursor-pointer flex items-center gap-2 border border-gray-300 rounded-md px-3 py-2 hover:bg-gray-50">
                   <FiUpload />
-                  <span>Change Photo</span>
+                  <span>{t("profile.changePhoto")}</span>
                   <input
                     type="file"
                     class="hidden"
@@ -136,38 +142,38 @@ const Profile = () => {
                 <form onSubmit={handleSubmit} class="space-y-4">
                   <Input
                     name="name"
-                    label="Full Name"
+                    label={t("profile.fullName")}
                     icon={<FiUser />}
                     value={userData().name}
-                    placeholder="Full Name"
+                    placeholder={t("profile.fullNamePlaceholder")}
                     required
                   />
 
                   <Input
                     name="email"
                     type="email"
-                    label="Email Address"
+                    label={t("profile.email")}
                     icon={<FiMail />}
                     value={userData().email}
-                    placeholder="Email Address"
+                    placeholder={t("profile.emailPlaceholder")}
                     required
                   />
 
                   <Input
-                    name="phone"
-                    label="Phone Number"
+                    name="phoneNumber"
+                    label={t("profile.phone")}
                     icon={<FiPhone />}
                     value={userData().phoneNumber}
-                    placeholder="Phone Number"
+                    placeholder={t("profile.phonePlaceholder")}
                   />
 
                   <Input
                     name="address"
-                    label="Address"
+                    label={t("profile.address")}
                     textarea
                     rows={3}
                     value={userData().address}
-                    placeholder="Your address"
+                    placeholder={t("profile.addressPlaceholder")}
                   />
 
                   <button
@@ -175,7 +181,9 @@ const Profile = () => {
                     class="bg-primary-500 hover:bg-primary-400 text-white py-2 px-4 rounded-md flex items-center justify-center"
                     disabled={loading()}
                   >
-                    {loading() ? "Updating..." : "Update Profile"}
+                    {loading()
+                      ? t("profile.updating")
+                      : t("profile.updateProfile")}
                   </button>
                 </form>
               </div>
@@ -183,45 +191,48 @@ const Profile = () => {
           </Card>
 
           <Card class="p-3 bg-gray-50">
-            <h2 class="text-xl font-semibold mb-4">Security Settings</h2>
+            <h2 class="text-xl font-semibold mb-4">
+              {t("profile.security.title")}
+            </h2>
             <form class="space-y-4">
               <Input
                 type="password"
                 name="currentPassword"
-                label="Current Password"
+                label={t("profile.security.currentPassword")}
                 icon={<FiLock />}
-                placeholder="Enter current password"
+                placeholder={t("profile.security.currentPasswordPlaceholder")}
               />
 
               <Input
                 type="password"
                 name="newPassword"
-                label="New Password"
+                label={t("profile.security.newPassword")}
                 icon={<FiLock />}
-                placeholder="Enter new password"
+                placeholder={t("profile.security.newPasswordPlaceholder")}
               />
 
               <Input
                 type="password"
                 name="confirmPassword"
-                label="Confirm New Password"
+                label={t("profile.security.confirmPassword")}
                 icon={<FiLock />}
-                placeholder="Confirm new password"
+                placeholder={t("profile.security.confirmPasswordPlaceholder")}
               />
 
               <button
                 type="button"
                 class="bg-primary-500 hover:bg-primary-400 text-white py-2 px-4 rounded-md"
               >
-                Change Password
+                {t("profile.security.changePassword")}
               </button>
             </form>
 
             <div class="mt-8 pt-6 border-t border-gray-200">
-              <h3 class="text-lg font-medium text-red-600 mb-3">Danger Zone</h3>
+              <h3 class="text-lg font-medium text-red-600 mb-3">
+                {t("profile.dangerZone.title")}
+              </h3>
               <p class="text-gray-600 mb-4">
-                Once you delete your account, there is no going back. Please be
-                certain.
+                {t("profile.dangerZone.warning")}
               </p>
               <button
                 type="button"
@@ -230,7 +241,9 @@ const Profile = () => {
                 disabled={deleteLoading()}
               >
                 <FiTrash2 />
-                {deleteLoading() ? "Processing..." : "Delete Account"}
+                {deleteLoading()
+                  ? t("profile.dangerZone.processing")
+                  : t("profile.dangerZone.deleteAccount")}
               </button>
             </div>
           </Card>
