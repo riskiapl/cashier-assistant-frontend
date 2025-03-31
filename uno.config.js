@@ -13,9 +13,6 @@ export default defineConfig({
     }),
   ],
 
-  // Handle slow css load
-  preflights: true,
-
   // Custom theme
   theme: {
     colors: {

@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
         extractors: [
           {
             extractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
-            extensions: ["html", "tsx", "ts"],
+            extensions: ["html", "tsx", "ts", "jsx", "js"],
           },
         ],
       }),
