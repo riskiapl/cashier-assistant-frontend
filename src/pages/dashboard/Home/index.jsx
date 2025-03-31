@@ -41,22 +41,6 @@ const Home = () => {
     );
   });
 
-  createEffect(() => {
-    // Update chart data based on filters
-    const year = filters.year;
-    const month = filters.month;
-    const timeRange = filters.timeRange?.value;
-
-    // Example: Fetch new data based on the selected filters
-    // This is where you would typically make an API call to fetch new data
-    // For demonstration, we are just logging the selected filters
-    console.log(`Fetching data for ${timeRange} of ${month}/${year}`);
-  });
-
-  createEffect(() => {
-    console.log(options(), "masuk options");
-  });
-
   return (
     <div>
       <Header title="Summary">
@@ -82,9 +66,9 @@ const Home = () => {
           <Select
             wrapperClass="w-full sm:w-36"
             label="Year"
-            options={options().years}
             initialValue={filters.year}
-            onChange={(value) => setFilters("year", Number(value))}
+            onChange={(value) => setFilters("year", value)}
+            {...getProps(options().years)}
           />
         </div>
       </Header>
@@ -96,14 +80,7 @@ const Home = () => {
             Sales
           </h2>
           <div class="h-48 sm:h-64 w-full">
-            <Line
-              data={salesData()}
-              options={{
-                ...options().lineOptions,
-                maintainAspectRatio: false,
-                responsive: true,
-              }}
-            />
+            <Line data={salesData()} options={options().lineOptions} />
           </div>
         </Card>
 
@@ -113,14 +90,7 @@ const Home = () => {
             Purchases
           </h2>
           <div class="h-48 sm:h-64 w-full">
-            <Bar
-              data={purchasesData()}
-              options={{
-                ...options().lineOptions,
-                maintainAspectRatio: false,
-                responsive: true,
-              }}
-            />
+            <Bar data={purchasesData()} options={options().lineOptions} />
           </div>
         </Card>
 
@@ -133,11 +103,7 @@ const Home = () => {
             <div style="width: 90%; height: 100%; max-width: 300px;">
               <Doughnut
                 data={incomeData()}
-                options={{
-                  ...options().doughnutOptions,
-                  maintainAspectRatio: false,
-                  responsive: true,
-                }}
+                options={options().doughnutOptions}
               />
             </div>
           </div>
@@ -152,11 +118,7 @@ const Home = () => {
             <div style="width: 90%; height: 100%; max-width: 300px;">
               <Doughnut
                 data={expenseData()}
-                options={{
-                  ...options().doughnutOptions,
-                  maintainAspectRatio: false,
-                  responsive: true,
-                }}
+                options={options().doughnutOptions}
               />
             </div>
           </div>

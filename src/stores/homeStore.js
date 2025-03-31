@@ -2,7 +2,10 @@ import { createStore } from "solid-js/store";
 import { createSignal } from "solid-js";
 
 // Options that don't need to be reactive but need to be accessed
-const YEARS = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+const YEARS = Array.from({ length: 5 }, (_, i) => ({
+  label: new Date().getFullYear() - i,
+  value: new Date().getFullYear() - i,
+}));
 const MONTHS = [
   { label: "January", value: 1 },
   { label: "February", value: 2 },
@@ -25,7 +28,7 @@ const TIME_RANGES = [
 // Chart options - don't need to be reactive
 const lineOptions = {
   responsive: true,
-  maintainAspectRatio: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: { display: false },
     title: { display: false },
@@ -108,8 +111,11 @@ const [options] = createSignal({
   doughnutOptions,
 });
 const [filters, setFilters] = createStore({
-  year: new Date().getFullYear(),
-  month: new Date().getMonth() + 1,
+  year: { label: new Date().getFullYear(), value: new Date().getFullYear() },
+  month: {
+    label: new Date().toLocaleString("id-ID", { month: "long" }),
+    value: new Date().getMonth() + 1,
+  },
   timeRange: { label: "Monthly", value: "monthly" },
 });
 

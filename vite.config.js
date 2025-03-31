@@ -11,7 +11,15 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      UnoCSS(),
+      UnoCSS({
+        // Handle slow css load
+        extractors: [
+          {
+            extractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
+            extensions: ["html", "tsx", "ts"],
+          },
+        ],
+      }),
       devtools({ autoname: true }),
       solidPlugin(),
       VitePWA({
