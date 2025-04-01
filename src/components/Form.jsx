@@ -7,13 +7,6 @@ const Form = (props) => {
   const [errors, setErrors] = createStore({});
   const [loading, setLoading] = createSignal(props.loading || false);
 
-  // Update form data when initialData changes
-  createEffect(() => {
-    if (props.initialData) {
-      setFormData(props.initialData);
-    }
-  });
-
   // Update loading state when props.loading changes
   createEffect(() => {
     setLoading(props.loading || false);

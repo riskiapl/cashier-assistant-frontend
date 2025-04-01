@@ -104,7 +104,8 @@
       "newPasswordPlaceholder": "Enter new password",
       "confirmPassword": "Confirm New Password",
       "confirmPasswordPlaceholder": "Confirm new password",
-      "changePassword": "Change Password"
+      "changePassword": "Change Password",
+      "changingPassword": "Changing Password..."
     },
     "dangerZone": {
       "title": "Danger Zone",

@@ -13,8 +13,9 @@ import Card from "@components/Card";
 import Form from "@components/Form";
 import Swal from "sweetalert2";
 import { memberService } from "@services/memberService";
-import { auth, setAuth } from "@stores/authStore";
+import { auth, setAuth, useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
+import { useNavigate } from "@solidjs/router";
 
 const Profile = () => {
   const [t] = useTransContext();
@@ -22,6 +23,7 @@ const Profile = () => {
   const [loading, setLoading] = createSignal(false);
   const [passwordLoading, setPasswordLoading] = createSignal(false);
   const [deleteLoading, setDeleteLoading] = createSignal(false);
+  const navigate = useNavigate();
 
   onMount(async () => {
     const response = await memberService.getMember(auth.user.id);
@@ -34,6 +36,25 @@ const Profile = () => {
       localStorage.setItem("user", JSON.stringify(userData()));
     }
   });
+
+  const handleUpdate = async (data) => {
+    if (data.currentPassword) {
+      setPasswordLoading(true);
+    } else {
+      setLoading(true);
+    }
+    try {
+      const response = await memberService.updateMember(auth.user.id, data);
+      setUserData(response.data);
+      alert.success(response.message || "Profile updated successfully");
+    } finally {
+      if (data.currentPassword) {
+        setPasswordLoading(false);
+      } else {
+        setLoading(false);
+      }
+    }
+  };
 
   // Profile form config
   const profileFormConfig = () => ({
@@ -88,25 +109,14 @@ const Profile = () => {
 
       return errors;
     },
-    onSubmit: async (data) => {
-      setLoading(true);
-      try {
-        const response = await memberService.updateMember(auth.user.id, data);
-        setUserData(response.data);
-        alert.success(response.message || "Profile updated successfully");
-      } catch (error) {
-        alert.error(error.message || "Failed to update profile");
-      } finally {
-        setLoading(false);
-      }
-    },
+    onSubmit: handleUpdate,
     loading: loading(),
     submitText: t("profile.updateProfile"),
     loadingText: t("profile.updating"),
   });
 
   // Password form config
-  const passwordFormConfig = {
+  const passwordFormConfig = () => ({
     initialData: {
       currentPassword: "",
       newPassword: "",
@@ -159,22 +169,11 @@ const Profile = () => {
 
       return errors;
     },
-    onSubmit: async (data) => {
-      setPasswordLoading(true);
-      try {
-        // Replace with actual API call
-        console.log("Password change values:", data);
-        alert.success("Password changed successfully");
-      } catch (error) {
-        alert.error(error.message || "Failed to change password");
-      } finally {
-        setPasswordLoading(false);
-      }
-    },
+    onSubmit: handleUpdate,
     loading: passwordLoading(),
     submitText: t("profile.security.changePassword"),
     loadingText: t("profile.security.changingPassword"),
-  };
+  });
 
   const handleAvatarChange = (e) => {
     // const file = e.target.files[0];
@@ -202,24 +201,10 @@ const Profile = () => {
     if (result.isConfirmed) {
       setDeleteLoading(true);
       try {
-        // Replace with actual API call
-        // await axios.delete('/api/user/account');
-
-        Swal.fire(
-          t("profile.dangerZone.deletedTitle"),
-          t("profile.dangerZone.deletedText"),
-          "success"
-        );
-        console.log("Account deleted");
-        // Redirect to logout or home page would be here
-        // window.location.href = '/logout';
-      } catch (error) {
-        console.error("Failed to delete account", error);
-        Swal.fire(
-          t("profile.dangerZone.errorTitle"),
-          t("profile.dangerZone.errorText"),
-          "error"
-        );
+        const response = await memberService.deleteMember(auth.user.id);
+        alert.success(response.message || "Account deleted successfully");
+        useAuth().logout();
+        navigate("/auth/login", { replace: true });
       } finally {
         setDeleteLoading(false);
       }
@@ -275,7 +260,7 @@ const Profile = () => {
             <h2 class="text-xl font-semibold mb-4">
               {t("profile.security.title")}
             </h2>
-            <Form {...passwordFormConfig} />
+            <Form {...passwordFormConfig()} />
 
             <div class="mt-8 pt-6 border-t border-gray-200">
               <h3 class="text-lg font-medium text-red-600 mb-3">

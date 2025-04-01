@@ -104,7 +104,8 @@
       "newPasswordPlaceholder": "Masukkan kata sandi baru",
       "confirmPassword": "Konfirmasi Kata Sandi Baru",
       "confirmPasswordPlaceholder": "Konfirmasi kata sandi baru",
-      "changePassword": "Ubah Kata Sandi"
+      "changePassword": "Ubah Kata Sandi",
+      "changingPassword": "Mengubah Kata Sandi..."
     },
     "dangerZone": {
       "title": "Zona Bahaya",

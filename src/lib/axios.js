@@ -63,7 +63,7 @@ api.interceptors.response.use(
 
       alert.error(errorMsg);
     } else if (error.response?.status === 403) {
-      alert.error(i18n.t("axios.forbidden"));
+      alert.error(error.response?.data?.error || i18n.t("axios.forbidden"));
     } else if (error.response?.status === 404) {
       alert.error(error.response?.data?.error || i18n.t("axios.notFound"));
     } else if (error.response?.status === 409) {
@@ -71,7 +71,7 @@ api.interceptors.response.use(
     } else if (error.response?.status === 422) {
       alert.error(error.response?.data?.error || i18n.t("axios.validation"));
     } else if (error.response?.status >= 500) {
-      alert.error(i18n.t("axios.serverError"));
+      alert.error(error.response?.data?.error || i18n.t("axios.serverError"));
     } else {
       alert.error(i18n.t("axios.unexpectedError"));
     }
