@@ -10,16 +10,11 @@ import {
 } from "solid-icons/fi";
 import Header from "@components/Header";
 import Card from "@components/Card";
-import Input from "@components/Input";
+import Form from "@components/Form";
 import Swal from "sweetalert2";
 import { memberService } from "@services/memberService";
 import { auth, setAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
-import { createForm, valiForm } from "@modular-forms/solid";
-import {
-  profileUpdateSchema,
-  changePasswordSchema,
-} from "@utils/validationSchema";
 
 const Profile = () => {
   const [t] = useTransContext();
@@ -27,17 +22,6 @@ const Profile = () => {
   const [loading, setLoading] = createSignal(false);
   const [passwordLoading, setPasswordLoading] = createSignal(false);
   const [deleteLoading, setDeleteLoading] = createSignal(false);
-
-  // Create forms with Valibot validation
-  const [_, { Form: ProfileForm, Field: ProfileField }] = createForm({
-    validate: valiForm(profileUpdateSchema),
-    initialValues: userData,
-  });
-
-  const [passwordForm, { Form: PasswordForm, Field: PasswordField }] =
-    createForm({
-      validate: valiForm(changePasswordSchema),
-    });
 
   onMount(async () => {
     const response = await memberService.getMember(auth.user.id);
@@ -51,35 +35,145 @@ const Profile = () => {
     }
   });
 
-  const handleProfileSubmit = async (values) => {
-    setLoading(true);
-    try {
-      const response = await memberService.updateMember(auth.user.id, values);
-      setUserData(response.data);
-      alert.success(response.message || "Profile updated successfully");
-    } catch (error) {
-      alert.error(error.message || "Failed to update profile");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Profile form config
+  const profileFormConfig = () => ({
+    initialData: {
+      name: userData()?.name || "",
+      email: userData()?.email || "",
+      phoneNumber: userData()?.phoneNumber || "",
+      address: userData()?.address || "",
+    },
+    fields: [
+      {
+        name: "name",
+        label: t("profile.fullName"),
+        icon: <FiUser />,
+        placeholder: t("profile.fullNamePlaceholder"),
+        required: true,
+      },
+      {
+        name: "email",
+        label: t("profile.email"),
+        type: "email",
+        icon: <FiMail />,
+        placeholder: t("profile.emailPlaceholder"),
+        required: true,
+      },
+      {
+        name: "phoneNumber",
+        label: t("profile.phone"),
+        icon: <FiPhone />,
+        placeholder: t("profile.phonePlaceholder"),
+      },
+      {
+        name: "address",
+        label: t("profile.address"),
+        textarea: true,
+        rows: 3,
+        placeholder: t("profile.addressPlaceholder"),
+      },
+    ],
+    validate: (data) => {
+      const errors = {};
 
-  const handlePasswordSubmit = async (values) => {
-    setPasswordLoading(true);
-    try {
-      // Replace with actual API call
-      // const response = await memberService.changePassword(auth.user.id, values);
-      // alert.success(response.message || "Password changed successfully");
-      console.log("Password change values:", values);
-      alert.success("Password changed successfully");
+      if (!data.name?.trim()) {
+        errors.name = "Name is required";
+      }
 
-      // Reset form after successful submission
-      passwordForm.reset();
-    } catch (error) {
-      alert.error(error.message || "Failed to change password");
-    } finally {
-      setPasswordLoading(false);
-    }
+      if (!data.email?.trim()) {
+        errors.email = "Email is required";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+        errors.email = "Please enter a valid email address";
+      }
+
+      return errors;
+    },
+    onSubmit: async (data) => {
+      setLoading(true);
+      try {
+        const response = await memberService.updateMember(auth.user.id, data);
+        setUserData(response.data);
+        alert.success(response.message || "Profile updated successfully");
+      } catch (error) {
+        alert.error(error.message || "Failed to update profile");
+      } finally {
+        setLoading(false);
+      }
+    },
+    loading: loading(),
+    submitText: t("profile.updateProfile"),
+    loadingText: t("profile.updating"),
+  });
+
+  // Password form config
+  const passwordFormConfig = {
+    initialData: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    fields: [
+      {
+        name: "currentPassword",
+        label: t("profile.security.currentPassword"),
+        type: "password",
+        icon: <FiLock />,
+        placeholder: t("profile.security.currentPasswordPlaceholder"),
+        required: true,
+      },
+      {
+        name: "newPassword",
+        label: t("profile.security.newPassword"),
+        type: "password",
+        icon: <FiLock />,
+        placeholder: t("profile.security.newPasswordPlaceholder"),
+        required: true,
+      },
+      {
+        name: "confirmPassword",
+        label: t("profile.security.confirmPassword"),
+        type: "password",
+        icon: <FiLock />,
+        placeholder: t("profile.security.confirmPasswordPlaceholder"),
+        required: true,
+      },
+    ],
+    validate: (data) => {
+      const errors = {};
+
+      if (!data.currentPassword) {
+        errors.currentPassword = "Current password is required";
+      }
+
+      if (!data.newPassword) {
+        errors.newPassword = "New password is required";
+      } else if (data.newPassword.length < 8) {
+        errors.newPassword = "Password must be at least 8 characters";
+      }
+
+      if (!data.confirmPassword) {
+        errors.confirmPassword = "Please confirm your password";
+      } else if (data.newPassword !== data.confirmPassword) {
+        errors.confirmPassword = "Passwords do not match";
+      }
+
+      return errors;
+    },
+    onSubmit: async (data) => {
+      setPasswordLoading(true);
+      try {
+        // Replace with actual API call
+        console.log("Password change values:", data);
+        alert.success("Password changed successfully");
+      } catch (error) {
+        alert.error(error.message || "Failed to change password");
+      } finally {
+        setPasswordLoading(false);
+      }
+    },
+    loading: passwordLoading(),
+    submitText: t("profile.security.changePassword"),
+    loadingText: t("profile.security.changingPassword"),
   };
 
   const handleAvatarChange = (e) => {
@@ -172,82 +266,7 @@ const Profile = () => {
               </div>
 
               <div class="md:col-span-2">
-                <ProfileForm
-                  onSubmit={handleProfileSubmit}
-                  class="space-y-4"
-                  initialValues={{
-                    name: userData().name || "",
-                    email: userData().email || "",
-                    phoneNumber: userData().phoneNumber || "",
-                    address: userData().address || "",
-                  }}
-                >
-                  <ProfileField name="name">
-                    {(field, props) => (
-                      <Input
-                        {...props}
-                        value={field.value}
-                        error={field.error}
-                        label={t("profile.fullName")}
-                        icon={<FiUser />}
-                        placeholder={t("profile.fullNamePlaceholder")}
-                        required
-                      />
-                    )}
-                  </ProfileField>
-
-                  <ProfileField name="email">
-                    {(field, props) => (
-                      <Input
-                        {...props}
-                        value={field.value}
-                        error={field.error}
-                        label={t("profile.email")}
-                        type="email"
-                        icon={<FiMail />}
-                        placeholder={t("profile.emailPlaceholder")}
-                        required
-                      />
-                    )}
-                  </ProfileField>
-
-                  <ProfileField name="phoneNumber">
-                    {(field, props) => (
-                      <Input
-                        {...props}
-                        value={field.value}
-                        error={field.error}
-                        label={t("profile.phone")}
-                        icon={<FiPhone />}
-                        placeholder={t("profile.phonePlaceholder")}
-                      />
-                    )}
-                  </ProfileField>
-
-                  <ProfileField name="address">
-                    {(field, props) => (
-                      <Input
-                        {...props}
-                        value={field.value}
-                        error={field.error}
-                        label={t("profile.address")}
-                        textarea
-                        rows={3}
-                        placeholder={t("profile.addressPlaceholder")}
-                      />
-                    )}
-                  </ProfileField>
-
-                  <button
-                    type="submit"
-                    class="bg-primary-500 hover:bg-primary-400 text-white py-2 px-4 rounded-md flex items-center justify-center"
-                    disabled={loading()}
-                  >
-                    {loading()
-                      ? t("profile.updating")
-                      : t("profile.updateProfile")}
-                  </button>
-                </ProfileForm>
+                <Form {...profileFormConfig()} />
               </div>
             </div>
           </Card>
@@ -256,66 +275,7 @@ const Profile = () => {
             <h2 class="text-xl font-semibold mb-4">
               {t("profile.security.title")}
             </h2>
-            <PasswordForm onSubmit={handlePasswordSubmit} class="space-y-4">
-              <PasswordField name="currentPassword">
-                {(field, props) => (
-                  <Input
-                    {...props}
-                    value={field.value}
-                    error={field.error}
-                    label={t("profile.security.currentPassword")}
-                    type="password"
-                    icon={<FiLock />}
-                    placeholder={t(
-                      "profile.security.currentPasswordPlaceholder"
-                    )}
-                    required
-                  />
-                )}
-              </PasswordField>
-
-              <PasswordField name="newPassword">
-                {(field, props) => (
-                  <Input
-                    {...props}
-                    value={field.value}
-                    error={field.error}
-                    label={t("profile.security.newPassword")}
-                    type="password"
-                    icon={<FiLock />}
-                    placeholder={t("profile.security.newPasswordPlaceholder")}
-                    required
-                  />
-                )}
-              </PasswordField>
-
-              <PasswordField name="confirmPassword">
-                {(field, props) => (
-                  <Input
-                    {...props}
-                    value={field.value}
-                    error={field.error}
-                    label={t("profile.security.confirmPassword")}
-                    type="password"
-                    icon={<FiLock />}
-                    placeholder={t(
-                      "profile.security.confirmPasswordPlaceholder"
-                    )}
-                    required
-                  />
-                )}
-              </PasswordField>
-
-              <button
-                type="submit"
-                class="bg-primary-500 hover:bg-primary-400 text-white py-2 px-4 rounded-md"
-                disabled={passwordLoading()}
-              >
-                {passwordLoading()
-                  ? t("profile.security.changingPassword")
-                  : t("profile.security.changePassword")}
-              </button>
-            </PasswordForm>
+            <Form {...passwordFormConfig} />
 
             <div class="mt-8 pt-6 border-t border-gray-200">
               <h3 class="text-lg font-medium text-red-600 mb-3">
