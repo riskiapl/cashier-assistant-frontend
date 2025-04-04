@@ -16,6 +16,8 @@ import { memberService } from "@services/memberService";
 import { auth, setAuth, useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import { useNavigate } from "@solidjs/router";
+import ImageUploadDialog from "@zentered/solid-image-crop";
+import imageCompression from "browser-image-compression";
 
 const Profile = () => {
   const [t] = useTransContext();
@@ -23,6 +25,8 @@ const Profile = () => {
   const [loading, setLoading] = createSignal(false);
   const [passwordLoading, setPasswordLoading] = createSignal(false);
   const [deleteLoading, setDeleteLoading] = createSignal(false);
+  const [showCropModal, setShowCropModal] = createSignal(false);
+  const [avatarLoading, setAvatarLoading] = createSignal(false);
   const navigate = useNavigate();
 
   onMount(async () => {
@@ -98,13 +102,15 @@ const Profile = () => {
       const errors = {};
 
       if (!data.name?.trim()) {
-        errors.name = "Name is required";
+        errors.name = t("profile.name_required");
+      } else if (data.name.trim().length > 25) {
+        errors.name = t("profile.name_exceeds");
       }
 
       if (!data.email?.trim()) {
-        errors.email = "Email is required";
+        errors.email = t("profile.email_required");
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-        errors.email = "Please enter a valid email address";
+        errors.email = t("profile.email_invalid");
       }
 
       return errors;
@@ -175,16 +181,52 @@ const Profile = () => {
     loadingText: t("profile.security.changingPassword"),
   });
 
-  const handleAvatarChange = (e) => {
-    // const file = e.target.files[0];
-    // if (file) {
-    //   const reader = new FileReader();
-    //   reader.onload = (e) => {
-    //     setUserData((prev) => ({ ...prev, avatar: e.target.result }));
-    //   };
-    //   reader.readAsDataURL(file);
-    // }
+  const handleAvatarChange = () => {
+    setShowCropModal(true);
   };
+
+  const closeModal = () => {
+    setShowCropModal(false);
+  };
+
+  async function saveImage(croppedImage) {
+    setAvatarLoading(true);
+    console.log(croppedImage);
+    console.log("masuk image");
+    try {
+      // Convert base64 to blob
+      const base64Response = await fetch(croppedImage.croppedImage);
+      const blob = await base64Response.blob();
+
+      // Compress the image
+      const compressedFile = await imageCompression(blob, {
+        maxSizeMB: 1, // Max file size in MB
+        maxWidthOrHeight: 400, // Max width/height
+        useWebWorker: true,
+      });
+
+      // Convert compressed blob to file with proper name
+      const compressedImageFile = new File(
+        [compressedFile],
+        `${auth.user.id}_avatar.jpg`,
+        { type: "image/jpeg" }
+      );
+
+      // Create FormData to send to the backend
+      const formData = new FormData();
+      formData.append("avatar", compressedImageFile);
+
+      // Upload to server
+      const response = await memberService.updateAvatar(auth.user.id, formData);
+
+      // Update local user data
+      setUserData(response.data);
+      alert.success(response.message || "Avatar updated successfully");
+    } finally {
+      setAvatarLoading(false);
+      closeModal();
+    }
+  }
 
   const handleDeleteAccount = async () => {
     const result = await Swal.fire({
@@ -231,16 +273,14 @@ const Profile = () => {
                   )}
                 </div>
 
-                <label class="cursor-pointer flex items-center gap-2 border border-gray-300 rounded-md px-3 py-2 hover:bg-gray-50">
+                <button
+                  type="button"
+                  onClick={handleAvatarChange}
+                  class="cursor-pointer flex items-center gap-2 border border-gray-300 rounded-md px-3 py-2 hover:bg-gray-50"
+                >
                   <FiUpload />
                   <span>{t("profile.changePhoto")}</span>
-                  <input
-                    type="file"
-                    class="hidden"
-                    accept="image/*"
-                    onChange={handleAvatarChange}
-                  />
-                </label>
+                </button>
 
                 <div class="mt-7 text-center">
                   <h3 class="text-lg font-medium">
@@ -325,6 +365,18 @@ const Profile = () => {
           </Card>
         </div>
       )}
+
+      {/* Image Upload Dialog */}
+      <ImageUploadDialog
+        title={t("profile.changePhoto")}
+        isOpen={showCropModal}
+        closeModal={closeModal}
+        openModal={() => setShowCropModal(true)}
+        saveImage={saveImage}
+        loading={avatarLoading()}
+        defaultRatio="1:1"
+        hideRatioSelect={true}
+      />
     </div>
   );
 };

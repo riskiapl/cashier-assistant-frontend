@@ -270,9 +270,17 @@ export default function Navbar({
                 onClick={() => setDropdownOpen(!dropdownOpen())}
                 class="flex items-center space-x-1 md:space-x-2 md:hover:bg-gray-200 md:py-2 px-2 md:px-3 rounded-md"
               >
-                <div class="w-7 h-7 md:w-8 md:h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs md:text-sm">
-                  {(user?.name || user?.username)?.charAt(0) || "U"}
-                </div>
+                {user?.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user?.name || user?.username || "User"}
+                    class="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <div class="w-7 h-7 md:w-8 md:h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-xs md:text-sm">
+                    {(user?.name || user?.username)?.charAt(0) || "U"}
+                  </div>
+                )}
                 <div class="text-xs md:text-sm text-left hidden md:block">
                   <p class="font-medium">
                     {user?.name || user?.username || "User"}

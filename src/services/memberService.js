@@ -20,4 +20,13 @@ export const memberService = {
     const response = await api.delete(`/members/${id}`);
     return response.data;
   },
+
+  async updateAvatar(id, payload) {
+    const response = await api.put(`/members/avatar/${id}`, payload, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
 };

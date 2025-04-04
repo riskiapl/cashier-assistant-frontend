@@ -120,7 +120,11 @@
       "deletedText": "Akun Anda telah dihapus.",
       "errorTitle": "Kesalahan!",
       "errorText": "Terjadi masalah saat menghapus akun Anda."
-    }
+    },
+    "name_required": "Nama lengkap diperlukan",
+    "name_exceeds": "Nama lengkap tidak boleh lebih dari 25 karakter",
+    "email_required": "Email diperlukan",
+    "email_invalid": "Email tidak valid"
   },
   "dashboard": {
     "menu": {

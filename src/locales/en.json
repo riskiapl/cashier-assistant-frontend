@@ -120,7 +120,11 @@
       "deletedText": "Your account has been deleted.",
       "errorTitle": "Error!",
       "errorText": "There was a problem deleting your account."
-    }
+    },
+    "name_required": "Full name is required",
+    "name_exceeds": "Full name must not exceed 25 characters",
+    "email_required": "Email is required",
+    "email_invalid": "Email is invalid"
   },
   "dashboard": {
     "menu": {
