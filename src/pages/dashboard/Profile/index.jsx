@@ -7,6 +7,7 @@ import {
   FiUpload,
   FiLock,
   FiTrash2,
+  FiX,
 } from "solid-icons/fi";
 import Header from "@components/Header";
 import Card from "@components/Card";
@@ -27,6 +28,7 @@ const Profile = () => {
   const [deleteLoading, setDeleteLoading] = createSignal(false);
   const [showCropModal, setShowCropModal] = createSignal(false);
   const [avatarLoading, setAvatarLoading] = createSignal(false);
+  const [showImagePreview, setShowImagePreview] = createSignal(false);
   const navigate = useNavigate();
 
   onMount(async () => {
@@ -181,6 +183,12 @@ const Profile = () => {
     setShowCropModal(false);
   };
 
+  const handleAvatarClick = () => {
+    if (userData().avatar) {
+      setShowImagePreview(true);
+    }
+  };
+
   async function saveImage(croppedImage) {
     setAvatarLoading(true);
     try {
@@ -256,7 +264,8 @@ const Profile = () => {
                     <img
                       src={userData().avatar}
                       alt="Profile"
-                      class="w-full h-full object-cover"
+                      class="w-full h-full object-cover cursor-pointer"
+                      onClick={handleAvatarClick}
                     />
                   ) : (
                     <FiUser class="text-gray-400 text-4xl" />
@@ -367,6 +376,31 @@ const Profile = () => {
         defaultRatio="1:1"
         hideRatioSelect={true}
       />
+
+      {/* Image Preview Modal */}
+      {showImagePreview() && (
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+          onClick={() => setShowImagePreview(false)}
+        >
+          <div class="relative max-w-4xl max-h-[90vh] overflow-hidden">
+            <button
+              class="absolute top-3 right-3 bg-white rounded-full p-1 text-gray-800 hover:bg-gray-200"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowImagePreview(false);
+              }}
+            >
+              <FiX size={5} />
+            </button>
+            <img
+              src={userData().avatar}
+              alt="Profile Preview"
+              class="max-h-[85vh] max-w-full object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
