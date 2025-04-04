@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "description": "",
   "type": "module",
+  "private": true,
   "scripts": {
-    "start": "vite",
-    "dev": "vite",
+    "start": "vite --host",
+    "dev": "vite --host",
     "build": "vite build",
     "serve": "vite preview"
   },
@@ -19,12 +20,20 @@
     "solid-devtools": "^0.33.0",
     "unocss": "^66.0.0",
     "vite": "^6.0.0",
+    "vite-plugin-pwa": "^1.0.0",
     "vite-plugin-solid": "^2.11.1"
   },
   "dependencies": {
+    "@mbarzda/solid-i18next": "^1.4.1",
     "@modular-forms/solid": "^0.25.1",
     "@solidjs/router": "^0.15.3",
+    "@thisbeyond/solid-select": "^0.15.0",
+    "@zentered/solid-image-crop": "https://github.com/riskiapl/solid-image-crop.git",
     "axios": "^1.7.9",
+    "browser-image-compression": "^2.0.2",
+    "chart.js": "^4.4.8",
+    "i18next": "^24.2.3",
+    "solid-chartjs": "^1.3.11",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.9.3",
     "sweetalert2": "^11.17.2",

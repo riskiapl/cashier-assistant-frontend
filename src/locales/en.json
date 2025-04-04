@@ -1,0 +1,142 @@
+{
+  "greeting": "Hello, {{name}}!",
+  "changeLang": "Change Language",
+  "login": {
+    "title": "Sign In",
+    "username": "Username or Email",
+    "usernamePlaceholder": "Enter your username or email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up here",
+    "successMessage": "Login successful"
+  },
+  "register": {
+    "createAccount": "Create Account",
+    "joinUs": "Join us today and get started",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "username": "Username",
+    "usernamePlaceholder": "Choose a username",
+    "password": "Password",
+    "passwordPlaceholder": "Create a password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "createAccountButton": "Create Account",
+    "creatingAccount": "Creating Account...",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInHere": "Sign in here",
+    "chooseDifferentUsername": "Please choose a different username"
+  },
+  "resetPassword": {
+    "title": "Forgot Password",
+    "resetTitle": "Reset Password",
+    "checkEmail": "Check your email",
+    "emailSent": "We've sent password reset instructions to your email address.",
+    "returnToLogin": "Return to login",
+    "enterEmailInfo": "Enter your email and we'll send you a link to reset your password.",
+    "enterPasswordInfo": "Enter your new password below.",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "newPassword": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your new password",
+    "resetButton": "Reset Password",
+    "updateButton": "Update Password",
+    "sending": "Sending...",
+    "rememberPassword": "Remember your password?",
+    "signInHere": "Sign in here"
+  },
+  "otp": {
+    "title": "Verify OTP",
+    "enterCode": "Enter the code sent to email",
+    "otpCode": "OTP Code",
+    "otpExpires": "OTP expires in: {{minutes}}:{{seconds}}",
+    "otpExpired": "OTP expired. Please request a new one.",
+    "verifying": "Verifying...",
+    "verify": "Verify OTP",
+    "getNewOtp": "Get new OTP",
+    "didntReceive": "Didn't receive the code?",
+    "resendOtp": "Resend OTP",
+    "backToLogin": "Back to login"
+  },
+  "axios": {
+    "networkError": "Network error. Please check your internet connection or the API server might be down.",
+    "badRequest": "Bad request",
+    "unauthorized": "Authentication failed. Please login again.",
+    "sessionExpired": "Your session has expired. Please login again",
+    "forbidden": "You don't have permission to access this resource",
+    "notFound": "Resource not found",
+    "conflict": "Conflict occurred. The request couldn't be completed due to a conflict with the current state of the resource",
+    "validation": "Validation error occurred",
+    "serverError": "Server error occurred. Please try again later",
+    "unexpectedError": "An unexpected error occurred"
+  },
+  "navbar": {
+    "pages": "Pages",
+    "language": "Language",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "profile": {
+    "title": "Profile Settings",
+    "changePhoto": "Change Photo",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "Full Name",
+    "email": "Email Address",
+    "emailPlaceholder": "Email Address",
+    "phone": "Phone Number",
+    "phonePlaceholder": "Phone Number",
+    "address": "Address",
+    "addressPlaceholder": "Your address",
+    "updating": "Updating...",
+    "updateProfile": "Update Profile",
+    "security": {
+      "title": "Security Settings",
+      "currentPassword": "Current Password",
+      "currentPasswordPlaceholder": "Enter current password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "changePassword": "Change Password",
+      "changingPassword": "Changing Password..."
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "warning": "Once you delete your account, there is no going back. Please be certain.",
+      "deleteAccount": "Delete Account",
+      "processing": "Processing...",
+      "confirmDelete": "Are you sure?",
+      "confirmDeleteText": "You won't be able to revert this. All your data will be permanently deleted.",
+      "confirmButtonText": "Yes, delete my account!",
+      "cancelButtonText": "Cancel",
+      "deletedTitle": "Deleted!",
+      "deletedText": "Your account has been deleted.",
+      "errorTitle": "Error!",
+      "errorText": "There was a problem deleting your account."
+    },
+    "name_required": "Full name is required",
+    "name_exceeds": "Full name must not exceed 25 characters",
+    "email_required": "Email is required",
+    "email_invalid": "Email is invalid"
+  },
+  "dashboard": {
+    "menu": {
+      "home": "Home",
+      "products": "Products",
+      "transactions": "Transactions"
+    },
+    "logout": {
+      "title": "Logout",
+      "confirmText": "Are you sure you want to logout?",
+      "confirmButton": "Yes, logout",
+      "successMessage": "Logged out successfully"
+    }
+  }
+}

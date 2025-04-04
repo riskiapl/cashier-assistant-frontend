@@ -1,0 +1,142 @@
+{
+  "greeting": "Halo, {{name}}!",
+  "changeLang": "Ganti Bahasa",
+  "login": {
+    "title": "Masuk",
+    "username": "Username atau Email",
+    "usernamePlaceholder": "Masukkan username atau email anda",
+    "password": "Kata Sandi",
+    "passwordPlaceholder": "Masukkan kata sandi anda",
+    "forgotPassword": "Lupa kata sandi?",
+    "signIn": "Masuk",
+    "signingIn": "Sedang masuk...",
+    "noAccount": "Belum punya akun?",
+    "signUp": "Daftar di sini",
+    "successMessage": "Login berhasil"
+  },
+  "register": {
+    "createAccount": "Buat Akun",
+    "joinUs": "Bergabunglah dengan kami dan mulai",
+    "email": "Email",
+    "emailPlaceholder": "Masukkan email anda",
+    "username": "Username",
+    "usernamePlaceholder": "Pilih username anda",
+    "password": "Kata Sandi",
+    "passwordPlaceholder": "Buat kata sandi",
+    "confirmPassword": "Konfirmasi Kata Sandi",
+    "confirmPasswordPlaceholder": "Konfirmasi kata sandi anda",
+    "createAccountButton": "Buat Akun",
+    "creatingAccount": "Membuat Akun...",
+    "alreadyHaveAccount": "Sudah memiliki akun?",
+    "signInHere": "Masuk di sini",
+    "chooseDifferentUsername": "Silakan pilih username yang berbeda"
+  },
+  "resetPassword": {
+    "title": "Lupa Kata Sandi",
+    "resetTitle": "Atur Ulang Kata Sandi",
+    "checkEmail": "Periksa email anda",
+    "emailSent": "Kami telah mengirimkan instruksi pengaturan ulang kata sandi ke alamat email anda.",
+    "returnToLogin": "Kembali ke halaman masuk",
+    "enterEmailInfo": "Masukkan email anda dan kami akan mengirimkan tautan untuk mengatur ulang kata sandi anda.",
+    "enterPasswordInfo": "Masukkan kata sandi baru anda di bawah ini.",
+    "email": "Email",
+    "emailPlaceholder": "Masukkan email anda",
+    "newPassword": "Kata Sandi Baru",
+    "newPasswordPlaceholder": "Masukkan kata sandi baru anda",
+    "confirmPassword": "Konfirmasi Kata Sandi",
+    "confirmPasswordPlaceholder": "Konfirmasi kata sandi baru anda",
+    "resetButton": "Atur Ulang Kata Sandi",
+    "updateButton": "Perbarui Kata Sandi",
+    "sending": "Mengirim...",
+    "rememberPassword": "Ingat kata sandi anda?",
+    "signInHere": "Masuk di sini"
+  },
+  "otp": {
+    "title": "Verifikasi OTP",
+    "enterCode": "Masukkan kode yang dikirim ke email",
+    "otpCode": "Kode OTP",
+    "otpExpires": "OTP berakhir dalam: {{minutes}}:{{seconds}}",
+    "otpExpired": "OTP sudah berakhir. Silakan minta kode baru.",
+    "verifying": "Memverifikasi...",
+    "verify": "Verifikasi OTP",
+    "getNewOtp": "Dapatkan OTP baru",
+    "didntReceive": "Tidak menerima kode?",
+    "resendOtp": "Kirim ulang OTP",
+    "backToLogin": "Kembali ke halaman masuk"
+  },
+  "axios": {
+    "networkError": "Kesalahan jaringan. Silakan periksa koneksi internet Anda atau server API mungkin sedang tidak aktif.",
+    "badRequest": "Permintaan tidak valid",
+    "unauthorized": "Otentikasi gagal. Silakan login kembali.",
+    "sessionExpired": "Sesi Anda telah berakhir. Silakan login kembali",
+    "forbidden": "Anda tidak memiliki izin untuk mengakses sumber daya ini",
+    "notFound": "Sumber daya tidak ditemukan",
+    "conflict": "Terjadi konflik. Permintaan tidak dapat diselesaikan karena konflik dengan keadaan saat ini dari sumber daya",
+    "validation": "Terjadi kesalahan validasi",
+    "serverError": "Terjadi kesalahan server. Silakan coba lagi nanti",
+    "unexpectedError": "Terjadi kesalahan yang tidak terduga"
+  },
+  "navbar": {
+    "pages": "Halaman",
+    "language": "Bahasa",
+    "profile": "Profil",
+    "settings": "Pengaturan",
+    "logout": "Keluar"
+  },
+  "profile": {
+    "title": "Pengaturan Profil",
+    "changePhoto": "Ubah Foto",
+    "fullName": "Nama Lengkap",
+    "fullNamePlaceholder": "Nama Lengkap",
+    "email": "Alamat Email",
+    "emailPlaceholder": "Alamat Email",
+    "phone": "Nomor Telepon",
+    "phonePlaceholder": "Nomor Telepon",
+    "address": "Alamat",
+    "addressPlaceholder": "Alamat Anda",
+    "updating": "Memperbarui...",
+    "updateProfile": "Perbarui Profil",
+    "security": {
+      "title": "Pengaturan Keamanan",
+      "currentPassword": "Kata Sandi Saat Ini",
+      "currentPasswordPlaceholder": "Masukkan kata sandi saat ini",
+      "newPassword": "Kata Sandi Baru",
+      "newPasswordPlaceholder": "Masukkan kata sandi baru",
+      "confirmPassword": "Konfirmasi Kata Sandi Baru",
+      "confirmPasswordPlaceholder": "Konfirmasi kata sandi baru",
+      "changePassword": "Ubah Kata Sandi",
+      "changingPassword": "Mengubah Kata Sandi..."
+    },
+    "dangerZone": {
+      "title": "Zona Bahaya",
+      "warning": "Setelah Anda menghapus akun, tidak ada jalan kembali. Harap pastikan.",
+      "deleteAccount": "Hapus Akun",
+      "processing": "Memproses...",
+      "confirmDelete": "Apakah Anda yakin?",
+      "confirmDeleteText": "Anda tidak akan dapat mengembalikan ini. Semua data Anda akan dihapus secara permanen.",
+      "confirmButtonText": "Ya, hapus akun saya!",
+      "cancelButtonText": "Batal",
+      "deletedTitle": "Dihapus!",
+      "deletedText": "Akun Anda telah dihapus.",
+      "errorTitle": "Kesalahan!",
+      "errorText": "Terjadi masalah saat menghapus akun Anda."
+    },
+    "name_required": "Nama lengkap diperlukan",
+    "name_exceeds": "Nama lengkap tidak boleh lebih dari 25 karakter",
+    "email_required": "Email diperlukan",
+    "email_invalid": "Email tidak valid"
+  },
+  "dashboard": {
+    "menu": {
+      "home": "Beranda",
+      "products": "Produk",
+      "transactions": "Transaksi"
+    },
+    "logout": {
+      "title": "Keluar",
+      "confirmText": "Apakah Anda yakin ingin keluar?",
+      "confirmButton": "Ya, keluar",
+      "successMessage": "Berhasil keluar"
+    }
+  }
+}

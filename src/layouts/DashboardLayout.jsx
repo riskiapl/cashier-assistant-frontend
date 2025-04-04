@@ -1,52 +1,119 @@
 import { useNavigate } from "@solidjs/router";
 import { useAuth } from "../stores/authStore";
-import { onMount } from "solid-js";
+import { onMount, createSignal, createEffect } from "solid-js";
+import { useTransContext } from "@mbarzda/solid-i18next";
 import { alert } from "@lib/alert";
+import Navbar from "@components/Navbar";
+import { FiHome, FiBook, FiCreditCard } from "solid-icons/fi";
 
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
-  const { logout, isAuthenticated } = useAuth();
+  const [t, { changeLanguage, getI18next }] = useTransContext();
+  const {
+    logout,
+    isAuthenticated,
+    auth: { user },
+  } = useAuth();
+
+  // Language state management moved from Navbar
+  const [currentLang, setCurrentLang] = createSignal(getI18next().language);
+  const [langDropdownOpen, setLangDropdownOpen] = createSignal(false);
+
+  // Initialize sidebarOpen state from localStorage or default to true for larger screens
+  const initialSidebarState = () => {
+    const savedState = localStorage.getItem("sidebarOpen");
+    if (savedState !== null) {
+      return savedState === "true";
+    }
+    return window.innerWidth > 768;
+  };
+
+  const [sidebarOpen, setSidebarOpen] = createSignal(initialSidebarState());
+
+  // Define menu items for the navbar
+  const [menuItems, setMenuItems] = createSignal([]);
+
+  // Language selection function moved from Navbar
+  const selectLanguage = (lang) => {
+    changeLanguage(lang);
+    setCurrentLang(lang);
+    setLangDropdownOpen(false);
+  };
+
+  // Update menu items when language changes
+  createEffect(() => {
+    const lang = currentLang(); // Add dependency on currentLang
+    setMenuItems([
+      {
+        label: t("dashboard.menu.home"),
+        href: "/",
+        icon: FiHome,
+      },
+      {
+        label: t("dashboard.menu.products"),
+        href: "/products",
+        icon: FiBook,
+      },
+      {
+        label: t("dashboard.menu.transactions"),
+        href: "/transactions",
+        icon: FiCreditCard,
+      },
+    ]);
+  });
 
   const handleLogout = async () => {
     const confirmed = await alert.confirm({
-      title: "Logout",
-      text: "Are you sure you want to logout?",
-      confirmText: "Yes, logout",
+      title: t("dashboard.logout.title"),
+      text: t("dashboard.logout.confirmText"),
+      confirmText: t("dashboard.logout.confirmButton"),
     });
 
     if (confirmed) {
       logout();
-      alert.success("Logged out successfully");
+      alert.success(t("dashboard.logout.successMessage"));
       navigate("/auth/login");
     }
   };
 
   onMount(() => {
+    // Update currentLang signal to match i18next's current language
+    setCurrentLang(getI18next().language);
+
     if (!isAuthenticated()) {
       navigate("/auth/login", { replace: true });
     }
   });
 
   return (
-    <div class="h-screen bg-gray-50">
-      <nav class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div class="flex justify-between h-16">
-            <div class="flex-shrink-0 flex items-center">
-              <h1 class="text-xl font-bold">Dashboard</h1>
-            </div>
-            <button
-              onClick={handleLogout}
-              class="ml-4 px-4 py-2 text-sm text-red-600 hover:text-red-700"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </nav>
-      <main class="h-[calc(100vh-4rem)] max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {props.children}
-      </main>
+    <div
+      class="flex overflow-hidden bg-gray-100 p-2 flex-col"
+      style={{ height: "100dvh" }}
+    >
+      {/* Navbar component - pass language state */}
+      <Navbar
+        user={user}
+        logout={handleLogout}
+        menuItems={menuItems}
+        appName="Cashierly"
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        // Language props
+        currentLang={currentLang}
+        selectLanguage={selectLanguage}
+        langDropdownOpen={langDropdownOpen}
+        setLangDropdownOpen={setLangDropdownOpen}
+      />
+
+      {/* Main content */}
+      <div
+        class={`flex-1 flex transition-all duration-300 overflow-hidden shadow-md rounded-xl bg-white ${
+          sidebarOpen() ? "md:ml-66" : "md:ml-22"
+        }`}
+      >
+        {/* Page content */}
+        <main class="flex-1 overflow-y-auto">{props.children}</main>
+      </div>
     </div>
   );
 }

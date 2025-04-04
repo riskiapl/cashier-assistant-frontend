@@ -41,14 +41,14 @@ export function ProgressBar() {
   return (
     <div>
       <div
-        class="fixed top-0 left-0 h-1 bg-primary-500 transition-all duration-300 z-50"
+        class="fixed top-0 left-0 h-1 bg-blue-500 transition-all duration-300 z-50"
         style={{
           width: `${progress()}%`,
           display: loading() ? "block" : "none",
         }}
       />
       <div
-        class="fixed top-4 right-4 w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full animate-spin z-50"
+        class="fixed top-4 right-4 w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin z-50"
         style={{ display: loading() ? "block" : "none" }}
       />
     </div>

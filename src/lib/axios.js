@@ -2,6 +2,7 @@ import axios from "axios";
 import config from "@config/api";
 import { alert } from "./alert";
 import { startProgress, completeProgress } from "@components/ProgressBar";
+import i18n from "../i18n";
 
 const api = axios.create({
   baseURL: config.apiUrl,
@@ -17,9 +18,12 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     startProgress();
-    const auth = localStorage.getItem("auth");
-    if (auth) {
-      const { token } = JSON.parse(auth);
+    // Set Accept-Language dynamically on each request
+    config.headers["Accept-Language"] =
+      localStorage.getItem("language") || "en";
+
+    const token = localStorage.getItem("token");
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -39,21 +43,19 @@ api.interceptors.response.use(
   (error) => {
     completeProgress();
     if (!error.response && error.message === "Network Error") {
-      alert.error(
-        "Network error. Please check your internet connection or the API server might be down."
-      );
+      alert.error(i18n.t("axios.networkError"));
       return Promise.reject(error);
     }
     if (error.response?.status === 400) {
-      alert.error(error.response?.data?.error || "Bad request");
+      alert.error(error.response?.data?.error || i18n.t("axios.badRequest"));
     } else if (error.response?.status === 401) {
       // Handle unauthorized
       const isLoginPage = window.location.pathname === "/auth/login";
       const errorMsg =
         error.response?.data?.error ||
         (isLoginPage
-          ? "Authentication failed. Please login again."
-          : "Your session has expired. Please login again");
+          ? i18n.t("axios.unauthorized")
+          : i18n.t("axios.sessionExpired"));
 
       if (!isLoginPage) {
         window.location.href = "/auth/login";
@@ -61,20 +63,17 @@ api.interceptors.response.use(
 
       alert.error(errorMsg);
     } else if (error.response?.status === 403) {
-      alert.error("You don't have permission to access this resource");
+      alert.error(error.response?.data?.error || i18n.t("axios.forbidden"));
     } else if (error.response?.status === 404) {
-      alert.error(error.response?.data?.error || "Resource not found");
+      alert.error(error.response?.data?.error || i18n.t("axios.notFound"));
     } else if (error.response?.status === 409) {
-      alert.error(
-        error.response?.data?.error ||
-          "Conflict occurred. The request couldn't be completed due to a conflict with the current state of the resource"
-      );
+      alert.error(error.response?.data?.error || i18n.t("axios.conflict"));
     } else if (error.response?.status === 422) {
-      alert.error(error.response?.data?.error || "Validation error occurred");
+      alert.error(error.response?.data?.error || i18n.t("axios.validation"));
     } else if (error.response?.status >= 500) {
-      alert.error("Server error occurred. Please try again later");
+      alert.error(error.response?.data?.error || i18n.t("axios.serverError"));
     } else {
-      alert.error("An unexpected error occurred");
+      alert.error(i18n.t("axios.unexpectedError"));
     }
     return Promise.reject(error);
   }

@@ -10,14 +10,16 @@ import { debounce } from "@utils/debounce";
 // Import solid-icons
 import { IoCheckmarkCircleSharp, IoCloseCircleSharp } from "solid-icons/io";
 import Spinner from "@components/Spinner";
+import { useTransContext, Trans } from "@mbarzda/solid-i18next";
 
 const Register = () => {
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const { register } = useAuth();
+  const [t] = useTransContext();
 
   // Create form with Valibot validation
-  const [registerForm, { Form, Field }] = createForm({
+  const [_, { Form, Field }] = createForm({
     validate: valiForm(registerSchema),
   });
 
@@ -67,7 +69,7 @@ const Register = () => {
   const handleSubmit = async (values) => {
     // Check if username is already taken
     if (usernameStatus().available === false) {
-      alert.warning("Please choose a different username");
+      alert.warning(messages.chooseDifferentUsername);
       return;
     }
 
@@ -102,8 +104,12 @@ const Register = () => {
   return (
     <div class="max-w-md w-full space-y-8">
       <div class="text-center">
-        <h1 class={titleClass}>Create Account</h1>
-        <p class="text-gray-600">Join us today and get started</p>
+        <h1 class={titleClass}>
+          <Trans key="register.createAccount" />
+        </h1>
+        <p class="text-gray-600">
+          <Trans key="register.joinUs" />
+        </p>
       </div>
 
       <Form onSubmit={handleSubmit} class={formContainerClass}>
@@ -114,9 +120,9 @@ const Register = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label="Email"
+                label={<Trans key="register.email" />}
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t("register.emailPlaceholder")}
               />
             )}
           </Field>
@@ -130,9 +136,9 @@ const Register = () => {
                       {...props}
                       value={field.value}
                       error={field.error}
-                      label="Username"
+                      label={<Trans key="register.username" />}
                       type="text"
-                      placeholder="Choose a username"
+                      placeholder={t("register.usernamePlaceholder")}
                       onInput={(e) => {
                         props.onInput(e);
                         handleUsernameInput(e);
@@ -163,9 +169,9 @@ const Register = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label="Password"
+                label={<Trans key="register.password" />}
                 type="password"
-                placeholder="Create a password"
+                placeholder={t("register.passwordPlaceholder")}
               />
             )}
           </Field>
@@ -176,9 +182,9 @@ const Register = () => {
                 {...props}
                 value={field.value}
                 error={field.error}
-                label="Confirm Password"
+                label={<Trans key="register.confirmPassword" />}
                 type="password"
-                placeholder="Confirm your password"
+                placeholder={t("register.confirmPasswordPlaceholder")}
               />
             )}
           </Field>
@@ -191,15 +197,19 @@ const Register = () => {
         >
           <div class="flex items-center gap-2">
             {loading() && <Spinner />}
-            {loading() ? "Creating Account..." : "Create Account"}
+            {loading() ? (
+              <Trans key="register.creatingAccount" />
+            ) : (
+              <Trans key="register.createAccountButton" />
+            )}
           </div>
         </button>
 
         <div class="text-center mt-4">
           <p class="text-sm text-gray-600">
-            Already have an account?{" "}
+            <Trans key="register.alreadyHaveAccount" />{" "}
             <a href="/auth/login" class={linkClass}>
-              Sign in here
+              <Trans key="register.signInHere" />
             </a>
           </p>
         </div>
@@ -223,11 +233,7 @@ const submitButtonClass = [
   "w-full flex justify-center",
   "py-3 px-4 rounded-xl",
   "shadow-sm text-sm font-medium",
-  "text-white bg-blue-600",
-  "hover:bg-blue-700",
-  "focus:outline-none focus:ring-2",
-  "focus:ring-offset-2 focus:ring-blue-500",
-  "transition-colors",
+  "text-white btn-primary",
 ].join(" ");
 
 const linkClass = ["font-medium", "text-blue-600", "hover:text-blue-500"].join(
