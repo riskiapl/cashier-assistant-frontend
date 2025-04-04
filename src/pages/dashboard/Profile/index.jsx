@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onMount } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import { useTransContext } from "@mbarzda/solid-i18next";
 import {
   FiUser,
@@ -14,7 +14,7 @@ import Card from "@components/Card";
 import Form from "@components/Form";
 import Swal from "sweetalert2";
 import { memberService } from "@services/memberService";
-import { auth, setAuth, useAuth } from "@stores/authStore";
+import { auth, useAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import { useNavigate } from "@solidjs/router";
 import ImageUploadDialog from "@zentered/solid-image-crop";
