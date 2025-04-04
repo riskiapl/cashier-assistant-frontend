@@ -30,15 +30,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   onMount(async () => {
-    const response = await memberService.getMember(auth.user.id);
-    setUserData(response.data);
-  });
-
-  createEffect(() => {
-    if (userData()) {
-      setAuth("user", userData());
-      localStorage.setItem("user", JSON.stringify(userData()));
-    }
+    setUserData(auth.user);
   });
 
   const handleUpdate = async (data) => {
@@ -191,8 +183,6 @@ const Profile = () => {
 
   async function saveImage(croppedImage) {
     setAvatarLoading(true);
-    console.log(croppedImage);
-    console.log("masuk image");
     try {
       // Convert base64 to blob
       const base64Response = await fetch(croppedImage.croppedImage);

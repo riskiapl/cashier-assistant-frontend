@@ -1,10 +1,11 @@
 import { useNavigate } from "@solidjs/router";
-import { useAuth } from "../stores/authStore";
+import { useAuth, setAuth, auth } from "@stores/authStore";
 import { onMount, createSignal, createEffect } from "solid-js";
 import { useTransContext } from "@mbarzda/solid-i18next";
 import { alert } from "@lib/alert";
 import Navbar from "@components/Navbar";
 import { FiHome, FiBook, FiCreditCard } from "solid-icons/fi";
+import { memberService } from "@services/memberService";
 
 export default function DashboardLayout(props) {
   const navigate = useNavigate();
@@ -42,7 +43,6 @@ export default function DashboardLayout(props) {
 
   // Update menu items when language changes
   createEffect(() => {
-    const lang = currentLang(); // Add dependency on currentLang
     setMenuItems([
       {
         label: t("dashboard.menu.home"),
@@ -76,12 +76,21 @@ export default function DashboardLayout(props) {
     }
   };
 
-  onMount(() => {
+  onMount(async () => {
     // Update currentLang signal to match i18next's current language
     setCurrentLang(getI18next().language);
 
     if (!isAuthenticated()) {
       navigate("/auth/login", { replace: true });
+    }
+
+    try {
+      const response = await memberService.getMember(auth.user.id);
+      if (response.data) {
+        setAuth("user", response.data);
+        localStorage.setItem("user", JSON.stringify(response.data));
+      }
+    } finally {
     }
   });
 

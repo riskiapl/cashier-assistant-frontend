@@ -1603,19 +1603,9 @@
     tinyglobby "^0.2.10"
     unplugin-utils "^0.2.4"
 
-"@zentered/solid-image-crop@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@zentered/solid-image-crop/-/solid-image-crop-1.1.1.tgz#d4c344bd18ba56aba0845c5503566c7f00785409"
-  integrity sha512-CBffLMl5DOHS5HZ/Nq239MZb31OqDcTE17xcrd2y0SX4lO6ygHTK+WSfE1N7ZGszoe/ba/aEEnlEAER6xfiWEA==
-  dependencies:
-    cropperjs "^1.6.2"
-    solid-headless "^0.13.1"
-    solid-heroicons "^3.2.4"
-    solid-js ">=1.6.0"
-
 "@zentered/solid-image-crop@https://github.com/riskiapl/solid-image-crop.git":
   version "0.0.1"
-  resolved "https://github.com/riskiapl/solid-image-crop.git#a41a79adf980660dcd987890464aa175d55c1db0"
+  resolved "https://github.com/riskiapl/solid-image-crop.git#7ed8d118cf903b34cdf8c08dee670a384594f89f"
   dependencies:
     cropperjs "^1.6.2"
     solid-headless "^0.13.1"
@@ -2354,13 +2344,6 @@ get-symbol-description@^1.1.0:
     es-errors "^1.3.0"
     get-intrinsic "^1.2.6"
 
-git@^0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/git/-/git-0.1.5.tgz#9ef62df93f851c27542143bf52d1c68b1017ca15"
-  integrity sha512-N+bfOrXyKMU/fQtCj6D/U9MQOEN0DAA8TLHSLdUQRSWBOkeRvsjJHdrdkvcq05xO7GSDKWc3nDEGoTZ4DfCCSg==
-  dependencies:
-    mime "1.2.9"
-
 glob-parent@~5.1.2:
   version "5.1.2"
   resolved "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz"
@@ -2853,11 +2836,6 @@ mime-types@^2.1.12:
   integrity sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==
   dependencies:
     mime-db "1.52.0"
-
-mime@1.2.9:
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/mime/-/mime-1.2.9.tgz#009cd40867bd35de521b3b966f04e2f8d4d13d09"
-  integrity sha512-WiLgbHTIq5AYUvU/Luli4mZ1bUcHpGNHyCsbl+KPMg4zt+XUDpQehWjuBjdLaEvDTinvKj/FgfQt3fPoT7j08g==
 
 minimatch@^3.1.1, minimatch@^3.1.2:
   version "3.1.2"
@@ -3379,7 +3357,7 @@ solid-icons@^1.1.0:
   resolved "https://registry.npmjs.org/solid-icons/-/solid-icons-1.1.0.tgz"
   integrity sha512-IesTfr/F1ElVwH2E1110s2RPXH4pujKfSs+koT8rwuTAdleO5s26lNSpqJV7D1+QHooJj18mcOiz2PIKs0ic+A==
 
-solid-js@>=1.6.0, solid-js@^1.7.6, solid-js@^1.8.22, solid-js@^1.9.3:
+solid-js@^1.7.6, solid-js@^1.8.22, solid-js@^1.9.3:
   version "1.9.5"
   resolved "https://registry.npmjs.org/solid-js/-/solid-js-1.9.5.tgz"
   integrity sha512-ogI3DaFcyn6UhYhrgcyRAMbu/buBJitYQASZz5WzfQVPP10RD2AbCoRZ517psnezrasyCbWzIxZ6kVqet768xw==
