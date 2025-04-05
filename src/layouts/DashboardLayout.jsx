@@ -96,7 +96,7 @@ export default function DashboardLayout(props) {
 
   return (
     <div
-      class="flex overflow-hidden bg-gray-100 p-2 flex-col"
+      class="flex overflow-hidden bg-gray-100 dark:bg-gray-900 p-2 flex-col transition-colors duration-300"
       style={{ height: "100dvh" }}
     >
       {/* Navbar component - pass language state */}
@@ -116,7 +116,7 @@ export default function DashboardLayout(props) {
 
       {/* Main content */}
       <div
-        class={`flex-1 flex transition-all duration-300 overflow-hidden shadow-md rounded-xl bg-white ${
+        class={`flex-1 flex transition-all duration-300 overflow-hidden shadow-md rounded-xl bg-white dark:bg-gray-800 dark:text-gray-200 ${
           sidebarOpen() ? "md:ml-66" : "md:ml-22"
         }`}
       >

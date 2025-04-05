@@ -36,6 +36,8 @@ export default defineConfig({
       lg: "1024px",
       xl: "1280px",
     },
+    // Dark mode configuration
+    darkMode: "class", // Use class strategy for dark mode
   },
 
   // Custom shortcuts
@@ -44,12 +46,22 @@ export default defineConfig({
     "btn-primary":
       "text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors",
     "nav-item":
-      "flex items-center px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-md mb-3 border-l-4 border-transparent transition-colors duration-150",
+      "flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-700 hover:text-primary-500 rounded-md mb-3 border-l-4 border-transparent transition-colors duration-300",
     "nav-item-active":
-      "flex items-center px-4 py-2 text-white bg-primary-500 rounded-md mb-3 border-l-4 border-primary-500 transition-colors duration-150",
-    // ... tambahkan shortcuts lainnya
+      "flex items-center px-4 py-2 text-white bg-primary-500 rounded-md mb-3 border-l-4 border-primary-500 transition-colors duration-300",
+    // Dark mode shortcuts
+    "dark-toggle":
+      "p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors",
   },
 
   // Safelist - selalu include class-class ini
-  safelist: ["btn", "btn-primary", "nav-item", "nav-item-active"],
+  safelist: [
+    "btn",
+    "btn-primary",
+    "nav-item",
+    "nav-item-active",
+    "dark",
+    "light",
+    "dark-toggle",
+  ],
 });

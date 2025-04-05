@@ -14,13 +14,13 @@ const LanguageDropdown = (props) => {
     <div class={"relative block"} ref={props.ref}>
       <button
         onClick={() => props.setDropdownOpen(!props.dropdownOpen())}
-        class="flex items-center md:hover:bg-gray-200 p-1 md:p-2 rounded-md text-gray-600"
+        class="flex items-center md:hover:bg-gray-200 md:dark:hover:bg-gray-700 p-1 md:p-2 rounded-md text-gray-600 dark:text-gray-300 transition-colors"
       >
         <span class="flag-emoji text-xl">{getCurrentLanguage().flag}</span>
       </button>
 
       <div
-        class={`absolute right-0 top-full mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-20 origin-top-right transform transition-all duration-200 ease-in-out ${
+        class={`absolute right-0 top-full mt-2 w-32 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-20 origin-top-right transform transition-all duration-300 ease-in-out ${
           props.dropdownOpen()
             ? "opacity-100 scale-100"
             : "opacity-0 scale-95 pointer-events-none"
@@ -30,7 +30,7 @@ const LanguageDropdown = (props) => {
           {(lang) => (
             <button
               onClick={() => props.selectLanguage(lang.code)}
-              class="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-500"
+              class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-gray-700 hover:text-primary-500"
             >
               <span class="mr-2 flag-emoji">{lang.flag}</span> {lang.name}
             </button>

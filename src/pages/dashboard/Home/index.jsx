@@ -1,4 +1,4 @@
-import { onMount, createEffect } from "solid-js";
+import { onMount, createEffect, createMemo } from "solid-js";
 import {
   Chart,
   CategoryScale,
@@ -15,6 +15,8 @@ import { Line, Bar, Doughnut } from "solid-chartjs";
 import Header from "@components/Header";
 import Select, { getProps } from "@components/Select";
 import Card from "@components/Card";
+import { useDarkMode } from "@context/DarkModeContext";
+import { useTransContext } from "@mbarzda/solid-i18next";
 import {
   salesData,
   purchasesData,
@@ -26,6 +28,9 @@ import {
 } from "@stores/homeStore";
 
 const Home = () => {
+  const { isDarkMode } = useDarkMode();
+  const [t] = useTransContext(); // Get translation function
+
   // Register ChartJS components on mount
   onMount(() => {
     Chart.register(
@@ -41,13 +46,63 @@ const Home = () => {
     );
   });
 
+  // Adjust chart options based on dark mode
+  const chartOptions = createMemo(() => {
+    const darkMode = isDarkMode();
+    const textColor = darkMode ? "#e5e7eb" : "#1f2937";
+    const gridColor = darkMode
+      ? "rgba(255, 255, 255, 0.1)"
+      : "rgba(0, 0, 0, 0.1)";
+
+    return {
+      ...options(),
+      lineOptions: {
+        ...options().lineOptions,
+        scales: {
+          ...options().lineOptions.scales,
+          x: {
+            ...options().lineOptions.scales.x,
+            grid: { color: gridColor },
+            ticks: { color: textColor },
+          },
+          y: {
+            ...options().lineOptions.scales.y,
+            grid: { color: gridColor },
+            ticks: { color: textColor },
+          },
+        },
+        plugins: {
+          ...options().lineOptions.plugins,
+          legend: {
+            ...options().lineOptions.plugins?.legend,
+            labels: {
+              color: textColor,
+            },
+          },
+        },
+      },
+      doughnutOptions: {
+        ...options().doughnutOptions,
+        plugins: {
+          ...options().doughnutOptions.plugins,
+          legend: {
+            ...options().doughnutOptions.plugins?.legend,
+            labels: {
+              color: textColor,
+            },
+          },
+        },
+      },
+    };
+  });
+
   return (
     <div>
-      <Header title="Summary">
+      <Header title={() => t("dashboard.home.summary")}>
         <div class="flex flex-row items-start gap-2">
           <Select
             wrapperClass="w-full sm:w-36"
-            label="Time Range"
+            label={t("dashboard.home.timeRange")}
             initialValue={filters.timeRange}
             onChange={(value) => setFilters("timeRange", value)}
             {...getProps(options().timeRanges)}
@@ -56,7 +111,7 @@ const Home = () => {
           {filters.timeRange?.value === "monthly" && (
             <Select
               wrapperClass="w-full sm:w-40"
-              label="Month"
+              label={t("dashboard.home.month")}
               initialValue={filters.month}
               onChange={(value) => setFilters("month", value)}
               {...getProps(options().months)}
@@ -65,7 +120,7 @@ const Home = () => {
 
           <Select
             wrapperClass="w-full sm:w-36"
-            label="Year"
+            label={t("dashboard.home.year")}
             initialValue={filters.year}
             onChange={(value) => setFilters("year", value)}
             {...getProps(options().years)}
@@ -75,50 +130,50 @@ const Home = () => {
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 p-3">
         {/* Sales Chart */}
-        <Card class="p-3 bg-gray-50">
-          <h2 class="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4">
-            Sales
+        <Card class="p-3 bg-gray-50 dark:bg-gray-700">
+          <h2 class="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200 mb-2 sm:mb-4">
+            {t("dashboard.home.sales")}
           </h2>
           <div class="h-48 sm:h-64 w-full">
-            <Line data={salesData()} options={options().lineOptions} />
+            <Line data={salesData()} options={chartOptions().lineOptions} />
           </div>
         </Card>
 
         {/* Purchases Chart */}
-        <Card class="p-3 bg-gray-50">
-          <h2 class="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4">
-            Purchases
+        <Card class="p-3 bg-gray-50 dark:bg-gray-700">
+          <h2 class="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200 mb-2 sm:mb-4">
+            {t("dashboard.home.purchases")}
           </h2>
           <div class="h-48 sm:h-64 w-full">
-            <Bar data={purchasesData()} options={options().lineOptions} />
+            <Bar data={purchasesData()} options={chartOptions().lineOptions} />
           </div>
         </Card>
 
         {/* Income Chart */}
-        <Card class="p-3 bg-gray-50">
-          <h2 class="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4">
-            Income Distribution
+        <Card class="p-3 bg-gray-50 dark:bg-gray-700">
+          <h2 class="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200 mb-2 sm:mb-4">
+            {t("dashboard.home.incomeDistribution")}
           </h2>
           <div class="h-48 sm:h-64 flex items-center justify-center">
             <div style="width: 90%; height: 100%; max-width: 300px;">
               <Doughnut
                 data={incomeData()}
-                options={options().doughnutOptions}
+                options={chartOptions().doughnutOptions}
               />
             </div>
           </div>
         </Card>
 
         {/* Expenses Chart */}
-        <Card class="p-3 bg-gray-50">
-          <h2 class="text-base sm:text-lg font-medium text-gray-800 mb-2 sm:mb-4">
-            Expense Distribution
+        <Card class="p-3 bg-gray-50 dark:bg-gray-700">
+          <h2 class="text-base sm:text-lg font-medium text-gray-800 dark:text-gray-200 mb-2 sm:mb-4">
+            {t("dashboard.home.expenseDistribution")}
           </h2>
           <div class="h-48 sm:h-64 flex items-center justify-center">
             <div style="width: 90%; height: 100%; max-width: 300px;">
               <Doughnut
                 data={expenseData()}
-                options={options().doughnutOptions}
+                options={chartOptions().doughnutOptions}
               />
             </div>
           </div>
@@ -126,10 +181,10 @@ const Home = () => {
       </div>
 
       <div class="p-3">
-        <div class="bg-blue-50 p-3 sm:p-4 rounded-lg">
-          <p class="text-xs sm:text-sm text-blue-700">
-            <strong>Note:</strong> This dashboard currently displays sample
-            data. Connect to your API to see actual business metrics.
+        <div class="bg-blue-50 dark:bg-blue-900 p-3 sm:p-4 rounded-lg">
+          <p class="text-xs sm:text-sm text-blue-700 dark:text-blue-300">
+            <strong>{t("dashboard.home.note")}:</strong>{" "}
+            {t("dashboard.home.noteContent")}
           </p>
         </div>
       </div>

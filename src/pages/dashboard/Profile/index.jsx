@@ -19,6 +19,7 @@ import { alert } from "@lib/alert";
 import { useNavigate } from "@solidjs/router";
 import ImageUploadDialog from "@zentered/solid-image-crop";
 import imageCompression from "browser-image-compression";
+import { useDarkMode } from "@context/DarkModeContext";
 
 const Profile = () => {
   const [t] = useTransContext();
@@ -30,6 +31,7 @@ const Profile = () => {
   const [avatarLoading, setAvatarLoading] = createSignal(false);
   const [showImagePreview, setShowImagePreview] = createSignal(false);
   const navigate = useNavigate();
+  const { isDarkMode } = useDarkMode();
 
   onMount(async () => {
     setUserData(auth.user);
@@ -255,13 +257,13 @@ const Profile = () => {
 
   return (
     <div>
-      <Header title={t("profile.title")} />
+      <Header title={() => t("profile.title")} />
       {userData() ? (
         <div class="p-3 flex flex-col gap-3">
-          <Card class="p-3 bg-gray-50">
+          <Card class="p-3 bg-gray-50 dark:bg-gray-800">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div class="flex flex-col items-center p-5">
-                <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-100 mb-5 flex items-center justify-center">
+                <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700 mb-5 flex items-center justify-center">
                   {userData().avatar ? (
                     <img
                       src={userData().avatar}
@@ -277,17 +279,21 @@ const Profile = () => {
                 <button
                   type="button"
                   onClick={handleAvatarChange}
-                  class="cursor-pointer flex items-center gap-2 border border-gray-300 rounded-md px-3 py-2 hover:bg-gray-50"
+                  class="cursor-pointer flex items-center gap-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md px-3 py-2"
                 >
                   <FiUpload />
-                  <span>{t("profile.changePhoto")}</span>
+                  <span class="dark:text-gray-200">
+                    {t("profile.changePhoto")}
+                  </span>
                 </button>
 
                 <div class="mt-7 text-center">
-                  <h3 class="text-lg font-medium">
+                  <h3 class="text-lg font-medium dark:text-gray-200">
                     {userData().name || userData().username}
                   </h3>
-                  <p class="text-gray-500">{userData().email}</p>
+                  <p class="text-gray-500 dark:text-gray-400">
+                    {userData().email}
+                  </p>
                 </div>
               </div>
 
@@ -297,17 +303,17 @@ const Profile = () => {
             </div>
           </Card>
 
-          <Card class="p-3 bg-gray-50">
-            <h2 class="text-xl font-semibold mb-4">
+          <Card class="p-3 bg-gray-50 dark:bg-gray-800">
+            <h2 class="text-xl font-semibold mb-4 dark:text-gray-200">
               {t("profile.security.title")}
             </h2>
             <Form {...passwordFormConfig()} />
 
-            <div class="mt-8 pt-6 border-t border-gray-200">
+            <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
               <h3 class="text-lg font-medium text-red-600 mb-3">
                 {t("profile.dangerZone.title")}
               </h3>
-              <p class="text-gray-600 mb-4">
+              <p class="text-gray-600 dark:text-gray-400 mb-4">
                 {t("profile.dangerZone.warning")}
               </p>
               <button
@@ -326,41 +332,41 @@ const Profile = () => {
         </div>
       ) : (
         <div class="p-3 flex flex-col gap-3">
-          <Card class="p-3 bg-gray-50">
+          <Card class="p-3 bg-gray-50 dark:bg-gray-800">
             <div class="animate-pulse">
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Avatar section skeleton */}
                 <div class="flex flex-col items-center p-5">
-                  <div class="w-32 h-32 rounded-full bg-gray-300 mb-5"></div>
-                  <div class="w-32 h-8 bg-gray-300 rounded-md"></div>
+                  <div class="w-32 h-32 rounded-full bg-gray-300 dark:bg-gray-700 mb-5"></div>
+                  <div class="w-32 h-8 bg-gray-300 dark:bg-gray-700 rounded-md"></div>
                   <div class="mt-7 text-center">
-                    <div class="w-24 h-5 bg-gray-300 rounded mx-auto"></div>
-                    <div class="w-40 h-4 bg-gray-300 rounded mx-auto mt-2"></div>
+                    <div class="w-24 h-5 bg-gray-300 dark:bg-gray-700 rounded mx-auto"></div>
+                    <div class="w-40 h-4 bg-gray-300 dark:bg-gray-700 rounded mx-auto mt-2"></div>
                   </div>
                 </div>
 
                 {/* Form skeleton */}
                 <div class="md:col-span-2">
                   <div class="space-y-4">
-                    <div class="h-12 bg-gray-300 rounded"></div>
-                    <div class="h-12 bg-gray-300 rounded"></div>
-                    <div class="h-12 bg-gray-300 rounded"></div>
-                    <div class="h-24 bg-gray-300 rounded"></div>
-                    <div class="w-32 h-10 bg-gray-300 rounded"></div>
+                    <div class="h-12 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                    <div class="h-12 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                    <div class="h-12 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                    <div class="h-24 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                    <div class="w-32 h-10 bg-gray-300 dark:bg-gray-700 rounded"></div>
                   </div>
                 </div>
               </div>
             </div>
           </Card>
 
-          <Card class="p-3 bg-gray-50">
+          <Card class="p-3 bg-gray-50 dark:bg-gray-800">
             <div class="animate-pulse">
-              <div class="h-6 w-40 bg-gray-300 rounded mb-4"></div>
+              <div class="h-6 w-40 bg-gray-300 dark:bg-gray-700 rounded mb-4"></div>
               <div class="space-y-4">
-                <div class="h-12 bg-gray-300 rounded"></div>
-                <div class="h-12 bg-gray-300 rounded"></div>
-                <div class="h-12 bg-gray-300 rounded"></div>
-                <div class="w-32 h-10 bg-gray-300 rounded"></div>
+                <div class="h-12 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                <div class="h-12 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                <div class="h-12 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                <div class="w-32 h-10 bg-gray-300 dark:bg-gray-700 rounded"></div>
               </div>
             </div>
           </Card>
@@ -382,12 +388,12 @@ const Profile = () => {
       {/* Image Preview Modal */}
       {showImagePreview() && (
         <div
-          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 dark:bg-black dark:bg-opacity-90"
           onClick={() => setShowImagePreview(false)}
         >
           <div class="relative max-w-4xl max-h-[90vh] overflow-hidden">
             <button
-              class="absolute top-3 right-3 bg-white rounded-full p-1 text-gray-800 hover:bg-gray-200"
+              class="absolute top-3 right-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full p-1"
               onClick={(e) => {
                 e.stopPropagation();
                 setShowImagePreview(false);

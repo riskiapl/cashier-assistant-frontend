@@ -1,11 +1,13 @@
 import { createSignal, createEffect } from "solid-js";
 import { createStore } from "solid-js/store";
 import Input from "./Input";
+import { useDarkMode } from "@context/DarkModeContext";
 
 const Form = (props) => {
   const [formData, setFormData] = createStore(props.initialData || {});
   const [errors, setErrors] = createStore({});
   const [loading, setLoading] = createSignal(props.loading || false);
+  const { isDarkMode } = useDarkMode();
 
   // Update loading state when props.loading changes
   createEffect(() => {
@@ -80,7 +82,7 @@ const Form = (props) => {
           type="submit"
           class={
             props.submitButtonClass ||
-            "bg-primary-500 hover:bg-primary-400 text-white py-2 px-4 rounded-md"
+            "bg-primary-500 hover:bg-primary-400 dark:bg-primary-600 dark:hover:bg-primary-500 text-white py-2 px-4 rounded-md"
           }
           disabled={loading()}
         >
