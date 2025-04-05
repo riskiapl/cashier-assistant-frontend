@@ -17,14 +17,16 @@ export default defineConfig({
   theme: {
     colors: {
       primary: {
-        50: "#f0f0f0", // lighter shade
-        100: "#cccccc", // light shade
-        200: "#939393", // very light gray
-        300: "#666666", // darker gray
-        400: "#3d3d3d", // even darker gray
-        500: "#262626", // main color
-        600: "#1a1a1a", // darker shade for hover effects
-        // ... tambahkan warna custom lainnya
+        50: "#eff6ff", // lightest blue
+        100: "#dbeafe", // lighter blue
+        200: "#bfdbfe", // light blue
+        300: "#93c5fd", // medium light blue
+        400: "#60a5fa", // medium blue
+        500: "#3b82f6", // main blue
+        600: "#2563eb", // darker blue for hover effects
+        700: "#1d4ed8", // dark blue
+        800: "#1e40af", // very dark blue
+        900: "#1e3a8a", // deepest blue
       },
     },
     // Custom breakpoints
