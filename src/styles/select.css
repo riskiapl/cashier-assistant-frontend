@@ -2,3 +2,63 @@
   height: 100%;
   width: unset;
 }
+
+/* Custom styles for solid-select */
+
+/* Dark mode overrides for selected items */
+.dark .solid-select-container .solid-select-option.selected {
+  background-color: rgba(79, 70, 229, 0.1) !important;
+  color: white !important;
+}
+
+.dark .solid-select-container .solid-select-list {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .solid-select-container .solid-select-option:hover {
+  background-color: #4b5563 !important;
+  color: white !important;
+}
+
+.dark .solid-select-container .solid-select-control {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+/* Style the value container in dark mode */
+.dark .solid-select-container .solid-select-value-container {
+  color: #e5e7eb !important;
+}
+
+/* Style the placeholder in dark mode */
+.dark .solid-select-container .solid-select-placeholder {
+  color: #9ca3af !important;
+}
+
+/* Style the dropdown indicators in dark mode */
+.dark .solid-select-container .solid-select-dropdown-indicator {
+  color: #9ca3af !important;
+}
+
+/* Style for multi-select items in dark mode */
+.dark .solid-select-container .solid-select-multi-value {
+  background-color: #4b5563 !important;
+  color: #e5e7eb !important;
+}
+
+.dark .solid-select-container .solid-select-multi-value-remove {
+  color: #e5e7eb !important;
+}
+
+.dark .solid-select-container .solid-select-multi-value-remove:hover {
+  background-color: #6b7280 !important;
+  color: #f3f4f6 !important;
+}
+
+/* Dark mode styling untuk option yang lagi ke-highlight / focused */
+.dark .solid-select-container .solid-select-option[data-focused="true"] {
+  background-color: #4b5563; /* tailwind: bg-gray-700 */
+  color: #ffffff;
+}

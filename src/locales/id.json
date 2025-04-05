@@ -81,7 +81,9 @@
     "language": "Bahasa",
     "profile": "Profil",
     "settings": "Pengaturan",
-    "logout": "Keluar"
+    "logout": "Keluar",
+    "lightMode": "Mode Terang",
+    "darkMode": "Mode Gelap"
   },
   "profile": {
     "title": "Pengaturan Profil",
@@ -131,6 +133,18 @@
       "home": "Beranda",
       "products": "Produk",
       "transactions": "Transaksi"
+    },
+    "home": {
+      "summary": "Ringkasan",
+      "timeRange": "Rentang Waktu",
+      "month": "Bulan",
+      "year": "Tahun",
+      "sales": "Penjualan",
+      "purchases": "Pembelian",
+      "incomeDistribution": "Distribusi Pendapatan",
+      "expenseDistribution": "Distribusi Pengeluaran",
+      "note": "Catatan",
+      "noteContent": "Dashboard ini saat ini menampilkan data contoh. Hubungkan ke API Anda untuk melihat metrik bisnis yang sebenarnya."
     },
     "logout": {
       "title": "Keluar",

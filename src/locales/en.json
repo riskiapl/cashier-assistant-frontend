@@ -81,7 +81,9 @@
     "language": "Language",
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode"
   },
   "profile": {
     "title": "Profile Settings",
@@ -131,6 +133,18 @@
       "home": "Home",
       "products": "Products",
       "transactions": "Transactions"
+    },
+    "home": {
+      "summary": "Summary",
+      "timeRange": "Time Range",
+      "month": "Month",
+      "year": "Year",
+      "sales": "Sales",
+      "purchases": "Purchases",
+      "incomeDistribution": "Income Distribution",
+      "expenseDistribution": "Expense Distribution",
+      "note": "Note",
+      "noteContent": "This dashboard currently displays sample data. Connect to your API to see actual business metrics."
     },
     "logout": {
       "title": "Logout",

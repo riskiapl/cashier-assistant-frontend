@@ -18,3 +18,40 @@ code {
   font-family: "Noto Color Emoji", "Segoe UI Emoji", "Apple Color Emoji",
     "Noto Color Emoji", sans-serif;
 }
+
+/* Scrollbar Styling */
+/* Width and height for all scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track - the background of the scrollbar */
+::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+/* Thumb - the draggable scrolling element */
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+/* Thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}

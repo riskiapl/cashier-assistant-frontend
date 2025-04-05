@@ -18,7 +18,7 @@ const Input = (props) => {
   return (
     <div class="space-y-2">
       {local.label && (
-        <label class="block text-sm font-medium text-gray-700">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
           {local.label}
           {local.required && <span class="text-red-500 ml-1">*</span>}
         </label>
@@ -28,7 +28,7 @@ const Input = (props) => {
         <textarea
           value={local.value || ""}
           rows={local.rows || 3}
-          class={`w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-none bg-transparent ${
+          class={`w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-blue-500 dark:focus:ring-blue-400 bg-transparent dark:bg-gray-700 dark:text-gray-200 resize-none ${
             local.class || ""
           } ${local.error ? "border-red-500" : ""}`}
           onInput={local.onInput}
@@ -38,7 +38,7 @@ const Input = (props) => {
         />
       ) : (
         <div
-          class={`flex items-center border border-gray-300 rounded-md px-3 py-2 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500 ${
+          class={`flex items-center border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus-within:ring-1 focus-within:border-blue-500 dark:focus-within:border-blue-400 focus-within:ring-blue-500 dark:focus-within:ring-blue-400 dark:bg-gray-700 ${
             local.error ? "border-red-500" : ""
           }`}
         >
@@ -46,7 +46,7 @@ const Input = (props) => {
           <input
             type={local.type || "text"}
             value={local.value || ""}
-            class={`flex-1 border-none focus:outline-none bg-transparent ${
+            class={`flex-1 border-none focus:outline-none bg-transparent dark:bg-gray-700 dark:text-gray-200 ${
               local.class || ""
             }`}
             onInput={local.onInput}

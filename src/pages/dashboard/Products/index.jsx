@@ -3,8 +3,11 @@ import { createStore } from "solid-js/store";
 import ProductModal from "./ModalInput";
 import Header from "@components/Header";
 import Card from "@components/Card";
+import { useDarkMode } from "@context/DarkModeContext";
 
 const Products = () => {
+  const { isDarkMode } = useDarkMode();
+
   // State for products data
   const [products, setProducts] = createStore([
     {
@@ -92,7 +95,11 @@ const Products = () => {
             placeholder="Search products..."
             onInput={(e) => setSearchQuery(e.target.value)}
             value={searchQuery()}
-            class="px-3 py-2 border border-gray-300 rounded-md w-full sm:min-w-[250px] focus:outline-none focus:shadow-md focus:shadow-primary-100 transition-shadow"
+            class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md w-full sm:min-w-[250px] 
+            focus:outline-none focus:border-primary-500 dark:focus:border-primary-400
+            focus:ring-1 focus:ring-primary-500 dark:focus:ring-primary-400
+            hover:border-primary-300 dark:hover:border-primary-500 
+            transition-colors bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200"
           />
           <button
             class="bg-primary-500 text-white px-4 py-2.5 rounded-md cursor-pointer hover:bg-primary-600 transition-colors flex items-center justify-center gap-2"
@@ -107,7 +114,7 @@ const Products = () => {
       <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 p-3">
         <For each={filteredProducts()}>
           {(product) => (
-            <Card class="bg-gray-50">
+            <Card class="bg-gray-50 dark:bg-gray-700">
               <div class="h-[150px] sm:h-[200px] overflow-hidden">
                 <img
                   src={product.image}
@@ -117,14 +124,14 @@ const Products = () => {
                 />
               </div>
               <div class="p-3 sm:p-4 flex-grow flex flex-col">
-                <h3 class="font-bold text-base sm:text-lg text-primary-600 mb-2">
+                <h3 class="font-bold text-base sm:text-lg text-primary-600 dark:text-primary-400 mb-2">
                   {product.name}
                 </h3>
                 <div class="flex justify-between mb-2 sm:mb-3">
-                  <p class="font-bold text-red-600 text-sm sm:text-base">
+                  <p class="font-bold text-red-600 dark:text-red-400 text-sm sm:text-base">
                     Rp {product.price.toLocaleString()}
                   </p>
-                  <p class="text-gray-600 text-sm sm:text-base">
+                  <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
                     Stock: {product.stock}
                   </p>
                 </div>
