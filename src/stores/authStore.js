@@ -19,8 +19,12 @@ function useAuth() {
 
   const logout = () => {
     const language = localStorage.getItem("language");
+    const darkMode = localStorage.getItem("darkMode");
+    const sidebarOpen = localStorage.getItem("sidebarOpen");
     localStorage.clear();
     localStorage.setItem("language", language || "en");
+    localStorage.setItem("darkMode", darkMode || "false");
+    localStorage.setItem("sidebarOpen", sidebarOpen || "true");
     setAuth({ user: null, token: null });
   };
 
