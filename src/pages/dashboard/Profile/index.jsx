@@ -14,7 +14,7 @@ import Card from "@components/Card";
 import Form from "@components/Form";
 import Swal from "sweetalert2";
 import { memberService } from "@services/memberService";
-import { auth, useAuth } from "@stores/authStore";
+import { auth, useAuth, setAuth } from "@stores/authStore";
 import { alert } from "@lib/alert";
 import { useNavigate } from "@solidjs/router";
 import ImageUploadDialog from "@zentered/solid-image-crop";
@@ -219,6 +219,8 @@ const Profile = () => {
 
       // Update local user data
       setUserData(response.data);
+      setAuth("user", response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
       alert.success(response.message || "Avatar updated successfully");
     } finally {
       setAvatarLoading(false);
