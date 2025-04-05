@@ -176,7 +176,9 @@ export default function Navbar({
               {isDarkMode() ? (
                 <div class="flex items-center">
                   <FiSun class="w-5 h-5" />
-                  <span class={`ml-3 ${sidebarOpen() ? "" : "hidden"}`}>
+                  <span
+                    class={`ml-3 text-nowrap ${sidebarOpen() ? "" : "hidden"}`}
+                  >
                     {t("navbar.lightMode")}
                   </span>
                 </div>
