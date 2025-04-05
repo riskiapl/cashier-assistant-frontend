@@ -42,7 +42,7 @@ export default defineConfig({
   shortcuts: {
     btn: "py-2 px-4 font-semibold rounded-lg shadow-md",
     "btn-primary":
-      "text-white bg-primary-500 hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors",
+      "text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors",
     "nav-item":
       "flex items-center px-4 py-2 text-gray-700 hover:bg-primary-50 hover:text-primary-500 rounded-md mb-3 border-l-4 border-transparent transition-colors duration-150",
     "nav-item-active":
