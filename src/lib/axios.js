@@ -3,6 +3,7 @@ import config from "@config/api";
 import { alert } from "./alert";
 import { startProgress, completeProgress } from "@components/ProgressBar";
 import i18n from "../i18n";
+import { useAuth } from "@stores/authStore";
 
 const api = axios.create({
   baseURL: config.apiUrl,
@@ -13,6 +14,7 @@ const api = axios.create({
   },
   timeout: 30000,
 });
+const { logout } = useAuth();
 
 // Request interceptor for adding auth token
 api.interceptors.request.use(
@@ -58,6 +60,7 @@ api.interceptors.response.use(
           : i18n.t("axios.sessionExpired"));
 
       if (!isLoginPage) {
+        logout();
         window.location.href = "/auth/login";
       }
 
