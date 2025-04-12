@@ -9,12 +9,14 @@ import Spinner from "@components/Spinner";
 import logoCashierly from "@assets/logo_cashierly.png";
 import { useTransContext, Trans } from "@mbarzda/solid-i18next";
 import { alert } from "@lib/alert";
+import { useDarkMode } from "@context/DarkModeContext";
 
 const Login = () => {
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const [t] = useTransContext();
+  const { isDarkMode } = useDarkMode();
 
   // Create form with Valibot validation
   const [_, { Form, Field }] = createForm({
@@ -42,7 +44,7 @@ const Login = () => {
         <img src={logoCashierly} alt="Cashierly Logo" class="mx-auto h-48" />
       </div>
 
-      <Form onSubmit={handleSubmit} class={formContainerClass}>
+      <Form onSubmit={handleSubmit} class={formContainerClass(isDarkMode())}>
         <div class="space-y-5">
           <Field name="userormail">
             {(field, props) => (
@@ -92,7 +94,11 @@ const Login = () => {
         </button>
 
         <div class="text-center mt-4">
-          <p class="text-sm text-gray-600">
+          <p
+            class={`text-sm ${
+              isDarkMode() ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
             <Trans key="login.noAccount" />{" "}
             <a href="/auth/register" class={linkClass}>
               <Trans key="login.signUp" />
@@ -106,11 +112,13 @@ const Login = () => {
 
 export default Login;
 
-const formContainerClass = [
-  "mt-4 space-y-6",
-  "bg-white p-8",
-  "rounded-2xl shadow-lg",
-].join(" ");
+const formContainerClass = (isDark) =>
+  [
+    "mt-4 space-y-6",
+    isDark ? "bg-gray-800 text-white" : "bg-white",
+    "p-8",
+    "rounded-2xl shadow-lg",
+  ].join(" ");
 
 const submitButtonClass = [
   "w-full flex justify-center",

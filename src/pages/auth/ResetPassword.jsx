@@ -11,6 +11,7 @@ import {
 } from "@utils/validationSchema";
 import { alert } from "@lib/alert";
 import { useTransContext, Trans } from "@mbarzda/solid-i18next";
+import { useDarkMode } from "@context/DarkModeContext";
 
 const ResetPassword = () => {
   const [loading, setLoading] = createSignal(false);
@@ -20,6 +21,7 @@ const ResetPassword = () => {
   const [token, setToken] = createSignal(null);
   const navigate = useNavigate();
   const [t] = useTransContext();
+  const { isDarkMode } = useDarkMode();
 
   // Check query params for change layout
   const [searchParams] = useSearchParams();
@@ -76,11 +78,15 @@ const ResetPassword = () => {
       </div>
 
       {success() ? (
-        <div class={formContainerClass}>
-          <h2 class={titleClass}>
+        <div class={formContainerClass(isDarkMode())}>
+          <h2 class={titleClass(isDarkMode())}>
             <Trans key="resetPassword.checkEmail" />
           </h2>
-          <p class="text-center text-gray-600 mb-4">
+          <p
+            class={`text-center ${
+              isDarkMode() ? "text-gray-300" : "text-gray-600"
+            } mb-4`}
+          >
             <Trans key="resetPassword.emailSent" />
           </p>
           <button
@@ -91,15 +97,19 @@ const ResetPassword = () => {
           </button>
         </div>
       ) : (
-        <Form onSubmit={handleSubmit} class={formContainerClass}>
-          <h2 class={titleClass}>
+        <Form onSubmit={handleSubmit} class={formContainerClass(isDarkMode())}>
+          <h2 class={titleClass(isDarkMode())}>
             {layout() === "email" ? (
               <Trans key="resetPassword.title" />
             ) : (
               <Trans key="resetPassword.resetTitle" />
             )}
           </h2>
-          <p class="text-center text-gray-600 mb-4">
+          <p
+            class={`text-center ${
+              isDarkMode() ? "text-gray-300" : "text-gray-600"
+            } mb-4`}
+          >
             {layout() === "email" ? (
               <Trans key="resetPassword.enterEmailInfo" />
             ) : (
@@ -169,7 +179,11 @@ const ResetPassword = () => {
           </button>
 
           <div class="text-center mt-4">
-            <p class="text-sm text-gray-600">
+            <p
+              class={`text-sm ${
+                isDarkMode() ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               <Trans key="resetPassword.rememberPassword" />{" "}
               <a href="/auth/login" class={linkClass}>
                 <Trans key="resetPassword.signInHere" />
@@ -184,13 +198,18 @@ const ResetPassword = () => {
 
 export default ResetPassword;
 
-const titleClass = "text-2xl font-bold text-gray-900 text-center";
+const titleClass = (isDark) =>
+  `text-2xl font-bold ${
+    isDark ? "text-gray-100" : "text-gray-900"
+  } text-center`;
 
-const formContainerClass = [
-  "mt-4 space-y-6",
-  "bg-white p-8",
-  "rounded-2xl shadow-lg",
-].join(" ");
+const formContainerClass = (isDark) =>
+  [
+    "mt-4 space-y-6",
+    isDark ? "bg-gray-800 text-white" : "bg-white",
+    "p-8",
+    "rounded-2xl shadow-lg",
+  ].join(" ");
 
 const submitButtonClass = [
   "w-full flex justify-center",

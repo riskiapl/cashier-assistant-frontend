@@ -11,12 +11,14 @@ import { debounce } from "@utils/debounce";
 import { IoCheckmarkCircleSharp, IoCloseCircleSharp } from "solid-icons/io";
 import Spinner from "@components/Spinner";
 import { useTransContext, Trans } from "@mbarzda/solid-i18next";
+import { useDarkMode } from "@context/DarkModeContext";
 
 const Register = () => {
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const { register } = useAuth();
   const [t] = useTransContext();
+  const { isDarkMode } = useDarkMode();
 
   // Create form with Valibot validation
   const [_, { Form, Field }] = createForm({
@@ -104,15 +106,15 @@ const Register = () => {
   return (
     <div class="max-w-md w-full space-y-8">
       <div class="text-center">
-        <h1 class={titleClass}>
+        <h1 class={titleClass(isDarkMode())}>
           <Trans key="register.createAccount" />
         </h1>
-        <p class="text-gray-600">
+        <p class={`${isDarkMode() ? "text-gray-300" : "text-gray-600"}`}>
           <Trans key="register.joinUs" />
         </p>
       </div>
 
-      <Form onSubmit={handleSubmit} class={formContainerClass}>
+      <Form onSubmit={handleSubmit} class={formContainerClass(isDarkMode())}>
         <div class="space-y-5">
           <Field name="email">
             {(field, props) => (
@@ -206,7 +208,11 @@ const Register = () => {
         </button>
 
         <div class="text-center mt-4">
-          <p class="text-sm text-gray-600">
+          <p
+            class={`text-sm ${
+              isDarkMode() ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
             <Trans key="register.alreadyHaveAccount" />{" "}
             <a href="/auth/login" class={linkClass}>
               <Trans key="register.signInHere" />
@@ -221,13 +227,16 @@ const Register = () => {
 export default Register;
 
 // Add these constants at the bottom of the file
-const titleClass = "text-4xl font-extrabold text-gray-900 mb-2";
+const titleClass = (isDark) =>
+  `text-4xl font-extrabold ${isDark ? "text-gray-100" : "text-gray-900"} mb-2`;
 
-const formContainerClass = [
-  "mt-8 space-y-6",
-  "bg-white p-8",
-  "rounded-2xl shadow-lg",
-].join(" ");
+const formContainerClass = (isDark) =>
+  [
+    "mt-8 space-y-6",
+    isDark ? "bg-gray-800 text-white" : "bg-white",
+    "p-8",
+    "rounded-2xl shadow-lg",
+  ].join(" ");
 
 const submitButtonClass = [
   "w-full flex justify-center",

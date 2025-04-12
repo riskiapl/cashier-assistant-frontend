@@ -4,6 +4,7 @@ import { createForm } from "@modular-forms/solid";
 import { authService } from "@services/authService";
 import { alert } from "@lib/alert";
 import { useTransContext, Trans } from "@mbarzda/solid-i18next";
+import { useDarkMode } from "@context/DarkModeContext";
 
 const Otp = () => {
   const [loading, setLoading] = createSignal(false);
@@ -15,17 +16,16 @@ const Otp = () => {
   const [email, setEmail] = createSignal("");
   const navigate = useNavigate();
   const [t] = useTransContext();
+  const { isDarkMode } = useDarkMode();
 
   const [_, { Form }] = createForm();
 
   onMount(() => {
-    // Check if otpRequest exists in localStorage
     const otpRequest = JSON.parse(localStorage.getItem("otpRequest") || "null");
     if (otpRequest) {
       setExpiredAt(new Date(otpRequest.expired_at).getTime());
       setEmail(otpRequest.email);
     } else {
-      // No OTP request data found, redirect to login
       navigate("/auth/login", { replace: true });
     }
   });
@@ -52,7 +52,6 @@ const Otp = () => {
         }
       }, 1000);
 
-      // Clean up the interval when component unmounts
       onCleanup(() => clearInterval(interval));
     }
   });
@@ -60,23 +59,18 @@ const Otp = () => {
   const handleChange = (e, index) => {
     const value = e.target.value;
 
-    // Allow only numbers
     if (!/^\d*$/.test(value)) {
       return;
     }
 
-    // Update OTP values
     const newOtpValues = [...otpValues()];
 
-    // Get only the last entered digit if multiple characters are entered
     const lastChar = value.slice(-1);
     newOtpValues[index] = lastChar;
 
     setOtpValues(newOtpValues);
 
-    // Move focus to next input if a digit was entered
     if (lastChar && index < 5) {
-      // Use setTimeout to ensure DOM updates before focusing
       setTimeout(() => {
         const nextInput = otpInputs()[index + 1];
 
@@ -88,7 +82,6 @@ const Otp = () => {
   };
 
   const handleKeyDown = (e, index) => {
-    // Block non-numeric key inputs (except for control keys)
     if (
       !/^\d$/.test(e.key) &&
       !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
@@ -96,10 +89,8 @@ const Otp = () => {
       e.preventDefault();
     }
 
-    // Handle backspace
     if (e.key === "Backspace") {
       if (!otpValues()[index] && index > 0) {
-        // Focus previous input if current is empty
         const newOtpValues = [...otpValues()];
         newOtpValues[index - 1] = "";
         setOtpValues(newOtpValues);
@@ -111,13 +102,11 @@ const Otp = () => {
   const handleSubmit = async (e) => {
     const otp = otpValues().join("");
 
-    // If OTP is expired, call resend function instead
     if (isExpired()) {
       handleResendOtp();
       return;
     }
 
-    // Validate if OTP is complete
     if (otp.length !== 6) {
       return;
     }
@@ -125,7 +114,6 @@ const Otp = () => {
     setLoading(true);
 
     try {
-      // Call OTP verification API
       const payload = { email: email(), otp_code: otp };
       const res = await authService.verifyOtp(payload);
       alert.success(res?.success);
@@ -139,7 +127,6 @@ const Otp = () => {
   };
 
   const handleResendOtp = async () => {
-    // Call resend OTP API
     try {
       const res = await authService.resendOtp({ email: email() });
       alert.success(res.success);
@@ -156,8 +143,6 @@ const Otp = () => {
   const handleBackToLogin = async () => {
     if (email()) {
       await authService.deletePendingMember(email());
-
-      // Redirect to login page
       navigate("/auth/login", { replace: true });
       localStorage.removeItem("otpRequest");
     } else {
@@ -168,10 +153,10 @@ const Otp = () => {
   return (
     <div class="max-w-md w-full space-y-8">
       <div class={titleContainerClass}>
-        <h1 class={titleClass}>
+        <h1 class={titleClass(isDarkMode())}>
           <Trans key="otp.title" />
         </h1>
-        <p class="text-gray-600">
+        <p class={`${isDarkMode() ? "text-gray-300" : "text-gray-600"}`}>
           <Trans key="otp.enterCode" />{" "}
           {email() &&
             `${email()[0]}****${email().split("@")[0].at(-1)}@${
@@ -180,9 +165,9 @@ const Otp = () => {
         </p>
       </div>
 
-      <Form onSubmit={handleSubmit} class={formContainerClass}>
+      <Form onSubmit={handleSubmit} class={formContainerClass(isDarkMode())}>
         <div class="space-y-5">
-          <label class={labelClass}>
+          <label class={labelClass(isDarkMode())}>
             <Trans key="otp.otpCode" />
           </label>
 
@@ -195,7 +180,7 @@ const Otp = () => {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   maxLength={1}
-                  class={inputClass}
+                  class={inputClass(isDarkMode())}
                   value={otpValues()[index]}
                   onInput={(e) => handleChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
@@ -211,7 +196,6 @@ const Otp = () => {
           </div>
         </div>
 
-        {/* OTP Countdown Timer */}
         <div class={countdownContainerClass}>
           <p class={isExpired() ? countdownExpiredClass : countdownActiveClass}>
             {isExpired() ? (
@@ -242,7 +226,11 @@ const Otp = () => {
         </button>
 
         <div class="text-center mt-4">
-          <p class="text-sm text-gray-600">
+          <p
+            class={`text-sm ${
+              isDarkMode() ? "text-gray-300" : "text-gray-600"
+            }`}
+          >
             <Trans key="otp.didntReceive" />{" "}
             <button
               type="button"
@@ -266,22 +254,31 @@ export default Otp;
 
 const titleContainerClass = "text-center";
 
-const titleClass = "text-4xl font-extrabold text-gray-900 mb-2";
+const titleClass = (isDark) =>
+  `text-4xl font-extrabold ${isDark ? "text-gray-100" : "text-gray-900"} mb-2`;
 
-const formContainerClass = [
-  "mt-8 space-y-6",
-  "bg-white p-8",
-  "rounded-2xl shadow-lg",
-].join(" ");
+const formContainerClass = (isDark) =>
+  [
+    "mt-8 space-y-6",
+    isDark ? "bg-gray-800 text-white" : "bg-white",
+    "p-8",
+    "rounded-2xl shadow-lg",
+  ].join(" ");
 
-const labelClass = "block text-sm font-medium text-gray-700 mb-2";
+const labelClass = (isDark) =>
+  `block text-sm font-medium ${
+    isDark ? "text-gray-200" : "text-gray-700"
+  } mb-2`;
 
-const inputClass = [
-  "w-12 h-12",
-  "text-center text-xl font-semibold",
-  "border border-gray-300 rounded-md",
-  "focus:border-blue-500 focus:outline-none",
-].join(" ");
+const inputClass = (isDark) =>
+  [
+    "w-12 h-12",
+    "text-center text-xl font-semibold",
+    isDark ? "bg-gray-700 text-white" : "bg-white text-gray-900",
+    isDark ? "border-gray-600" : "border-gray-300",
+    "border rounded-md",
+    "focus:border-blue-500 focus:outline-none",
+  ].join(" ");
 
 const submitButtonClass = [
   "w-full flex justify-center",

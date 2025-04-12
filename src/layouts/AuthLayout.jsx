@@ -3,6 +3,7 @@ import { useNavigate } from "@solidjs/router";
 import { useAuth } from "@stores/authStore";
 import { useTransContext } from "@mbarzda/solid-i18next";
 import LanguageDropdown from "@components/LanguageDropdown";
+import { useDarkMode } from "@context/DarkModeContext";
 
 function AuthLayout(props) {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ function AuthLayout(props) {
   // Initialize currentLang from the active i18next language
   const [currentLang, setCurrentLang] = createSignal(getI18next().language);
   const [dropdownOpen, setDropdownOpen] = createSignal(false);
+  const { isDarkMode } = useDarkMode();
   let dropdownRef; // Change from object to variable for SolidJS refs
 
   const selectLanguage = (lang) => {
@@ -48,7 +50,11 @@ function AuthLayout(props) {
   });
 
   return (
-    <div class="min-h-screen bg-gray-100 flex items-center justify-center relative">
+    <div
+      class={`min-h-screen flex items-center justify-center relative ${
+        isDarkMode() ? "bg-gray-900" : "bg-gray-100"
+      }`}
+    >
       {/* Language dropdown in top right - visible on both mobile and desktop */}
       <div class="absolute top-4 right-4 z-10" ref={dropdownRef}>
         <LanguageDropdown
