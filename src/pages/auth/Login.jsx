@@ -6,7 +6,7 @@ import FormField from "@components/FormField";
 import { loginSchema } from "@utils/validationSchema";
 import { authService } from "@services/authService";
 import Spinner from "@components/Spinner";
-import logoCashierly from "@assets/logo_cashierly.png";
+import logoCashierly from "@assets/logo_only_color_cashierly.svg";
 import { useTransContext, Trans } from "@mbarzda/solid-i18next";
 import { alert } from "@lib/alert";
 import { useDarkMode } from "@context/DarkModeContext";
@@ -39,9 +39,16 @@ const Login = () => {
   };
 
   return (
-    <div class="max-w-md w-full space-y-4">
-      <div class="text-center">
+    <div class="space-y-6 flex flex-col">
+      <div class="text-center space-y-4 flex flex-col">
         <img src={logoCashierly} alt="Cashierly Logo" class="mx-auto h-48" />
+        <span
+          class={`text-4xl font-bold ${
+            isDarkMode() ? "text-white" : "text-gray-900"
+          }`}
+        >
+          Cashierly
+        </span>
       </div>
 
       <Form onSubmit={handleSubmit} class={formContainerClass(isDarkMode())}>
@@ -75,7 +82,14 @@ const Login = () => {
           <div class="flex items-center justify-between">
             <div />
             <div class="text-sm">
-              <a href="/auth/reset-password" class={linkClass}>
+              <a
+                href="/auth/reset-password"
+                class={
+                  isDarkMode()
+                    ? "font-medium text-blue-400 hover:text-blue-300"
+                    : "font-medium text-blue-600 hover:text-blue-500"
+                }
+              >
                 <Trans key="login.forgotPassword" />
               </a>
             </div>
@@ -100,7 +114,14 @@ const Login = () => {
             }`}
           >
             <Trans key="login.noAccount" />{" "}
-            <a href="/auth/register" class={linkClass}>
+            <a
+              href="/auth/register"
+              class={
+                isDarkMode()
+                  ? "font-medium text-blue-400 hover:text-blue-300"
+                  : "font-medium text-blue-600 hover:text-blue-500"
+              }
+            >
               <Trans key="login.signUp" />
             </a>
           </p>
@@ -126,7 +147,3 @@ const submitButtonClass = [
   "shadow-sm text-sm font-medium",
   "text-white btn-primary",
 ].join(" ");
-
-const linkClass = ["font-medium", "text-blue-600", "hover:text-blue-500"].join(
-  " "
-);

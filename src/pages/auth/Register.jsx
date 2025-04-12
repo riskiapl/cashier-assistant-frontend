@@ -214,7 +214,7 @@ const Register = () => {
             }`}
           >
             <Trans key="register.alreadyHaveAccount" />{" "}
-            <a href="/auth/login" class={linkClass}>
+            <a href="/auth/login" class={linkClass(isDarkMode())}>
               <Trans key="register.signInHere" />
             </a>
           </p>
@@ -245,6 +245,10 @@ const submitButtonClass = [
   "text-white btn-primary",
 ].join(" ");
 
-const linkClass = ["font-medium", "text-blue-600", "hover:text-blue-500"].join(
-  " "
-);
+const linkClass = (isDark) =>
+  [
+    "font-medium",
+    isDark
+      ? "text-blue-400 hover:text-blue-300"
+      : "text-blue-600 hover:text-blue-500",
+  ].join(" ");

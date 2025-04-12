@@ -1,5 +1,6 @@
 import { defineConfig, presetIcons, presetAttributify } from "unocss";
 import { presetWind3 } from "@unocss/preset-wind3";
+import { carbon } from "@iconify-json/carbon";
 
 export default defineConfig({
   // Presets
@@ -9,7 +10,9 @@ export default defineConfig({
     presetIcons({
       // Icon support
       scale: 1.2,
-      cdn: "https://esm.sh/",
+      collections: {
+        carbon,
+      },
     }),
   ],
 

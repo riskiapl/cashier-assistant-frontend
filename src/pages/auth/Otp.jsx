@@ -86,7 +86,45 @@ const Otp = () => {
       !/^\d$/.test(e.key) &&
       !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)
     ) {
+      // Allow Ctrl+V for paste operation
+      if (!(e.key === "v" && (e.ctrlKey || e.metaKey))) {
+        e.preventDefault();
+      }
+    }
+
+    // Handle Ctrl+V (or Cmd+V on Mac)
+    if (e.key === "v" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
+
+      // Use clipboard API to get pasted content and reuse the handlePaste function
+      navigator.clipboard
+        .readText()
+        .then((pastedText) => {
+          // Create a mock ClipboardEvent to pass to handlePaste
+          const mockPasteEvent = {
+            preventDefault: () => {},
+            clipboardData: {
+              getData: () => pastedText,
+            },
+          };
+
+          // Reuse the existing paste handler
+          handlePaste(mockPasteEvent, index);
+        })
+        .catch((err) => {
+          console.error("Failed to read clipboard contents: ", err);
+        });
+    }
+
+    // Handle arrow key navigation between inputs
+    if (e.key === "ArrowLeft" && index > 0) {
+      e.preventDefault();
+      otpInputs()[index - 1].focus();
+    }
+
+    if (e.key === "ArrowRight" && index < 5) {
+      e.preventDefault();
+      otpInputs()[index + 1].focus();
     }
 
     if (e.key === "Backspace") {
@@ -96,6 +134,28 @@ const Otp = () => {
         setOtpValues(newOtpValues);
         otpInputs()[index - 1].focus();
       }
+    }
+  };
+
+  const handlePaste = (e, index) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").trim();
+
+    // Check if pasted content is a 6-digit number
+    if (/^\d{6}$/.test(pastedData)) {
+      const digits = pastedData.split("");
+      const newOtpValues = Array(6).fill("");
+
+      digits.forEach((digit, i) => {
+        newOtpValues[i] = digit;
+      });
+
+      setOtpValues(newOtpValues);
+
+      // Focus on the last input
+      setTimeout(() => {
+        otpInputs()[5].focus();
+      }, 0);
     }
   };
 
@@ -184,6 +244,7 @@ const Otp = () => {
                   value={otpValues()[index]}
                   onInput={(e) => handleChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
+                  onPaste={(e) => handlePaste(e, index)}
                   onFocus={(e) => e.target.select()}
                   autocomplete="off"
                   ref={(el) => {
@@ -197,7 +258,13 @@ const Otp = () => {
         </div>
 
         <div class={countdownContainerClass}>
-          <p class={isExpired() ? countdownExpiredClass : countdownActiveClass}>
+          <p
+            class={
+              isExpired()
+                ? countdownExpiredClass(isDarkMode())
+                : countdownActiveClass(isDarkMode())
+            }
+          >
             {isExpired() ? (
               <Trans key="otp.otpExpired" />
             ) : (
@@ -235,14 +302,14 @@ const Otp = () => {
             <button
               type="button"
               onClick={handleResendOtp}
-              class={resendButtonClass}
+              class={resendButtonClass(isDarkMode())}
             >
               <Trans key="otp.resendOtp" />
             </button>
           </p>
         </div>
 
-        <div class={backToLoginClass} onClick={handleBackToLogin}>
+        <div class={backToLoginClass(isDarkMode())} onClick={handleBackToLogin}>
           <Trans key="otp.backToLogin" />
         </div>
       </Form>
@@ -287,32 +354,38 @@ const submitButtonClass = [
   "text-white btn-primary",
 ].join(" ");
 
-const resendButtonClass = [
-  "font-medium",
-  "text-blue-600",
-  "hover:text-blue-500",
-].join(" ");
+const resendButtonClass = (isDark) =>
+  [
+    "font-medium",
+    isDark
+      ? "text-blue-400 hover:text-blue-300"
+      : "text-blue-600 hover:text-blue-500",
+  ].join(" ");
 
-const backToLoginClass = [
-  "text-center mt-2 text-sm",
-  "font-medium text-blue-600",
-  "hover:text-blue-500 cursor-pointer",
-].join(" ");
+const backToLoginClass = (isDark) =>
+  [
+    "text-center mt-2 text-sm",
+    "font-medium",
+    isDark
+      ? "text-blue-400 hover:text-blue-300"
+      : "text-blue-600 hover:text-blue-500",
+    "cursor-pointer",
+  ].join(" ");
 
 const countdownContainerClass = ["text-center my-4"].join(" ");
 
-const countdownActiveClass = [
-  "text-sm font-medium",
-  "py-2 px-4",
-  "bg-blue-50",
-  "text-blue-700",
-  "rounded-lg",
-].join(" ");
+const countdownActiveClass = (isDark) =>
+  [
+    "text-sm font-medium",
+    "py-2 px-4",
+    isDark ? "bg-blue-900 text-blue-100" : "bg-blue-50 text-blue-700",
+    "rounded-lg",
+  ].join(" ");
 
-const countdownExpiredClass = [
-  "text-sm font-medium",
-  "py-2 px-4",
-  "bg-red-50",
-  "text-red-700",
-  "rounded-lg",
-].join(" ");
+const countdownExpiredClass = (isDark) =>
+  [
+    "text-sm font-medium",
+    "py-2 px-4",
+    isDark ? "bg-red-900 text-red-100" : "bg-red-50 text-red-700",
+    "rounded-lg",
+  ].join(" ");
