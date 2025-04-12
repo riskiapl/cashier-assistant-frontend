@@ -1,12 +1,31 @@
 import Swal from "sweetalert2";
+import { useDarkMode } from "@context/DarkModeContext";
 
-const createToast = (color) =>
-  Swal.mixin({
+// Helper function to get dark mode state
+const getDarkMode = () => {
+  try {
+    const { isDarkMode } = useDarkMode();
+    return isDarkMode();
+  } catch (e) {
+    // Fallback to check system preference if context is not available
+    return (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    );
+  }
+};
+
+const createToast = (color) => {
+  const isDark = getDarkMode();
+
+  return Swal.mixin({
     toast: true,
     position: "top-end",
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
+    background: isDark ? "#374151" : "#fff", // Dark gray in dark mode, white in light mode
+    color: isDark ? "#e5e7eb" : "#1f2937", // Light text in dark mode, dark in light mode
     didOpen: (toast) => {
       toast.querySelector(".swal2-timer-progress-bar").style.backgroundColor =
         color;
@@ -17,6 +36,7 @@ const createToast = (color) =>
       });
     },
   });
+};
 
 export const alert = {
   success: (message) => {
@@ -44,6 +64,8 @@ export const alert = {
     });
   },
   confirm: async (options = {}) => {
+    const isDark = getDarkMode();
+
     const result = await Swal.fire({
       title: options.title || "Are you sure?",
       text: options.text || "You won't be able to revert this!",
@@ -53,6 +75,8 @@ export const alert = {
       cancelButtonColor: "#d33",
       confirmButtonText: options.confirmText || "Yes",
       cancelButtonText: options.cancelText || "Cancel",
+      background: isDark ? "#374151" : "#fff",
+      color: isDark ? "#e5e7eb" : "#1f2937",
     });
     return result.isConfirmed;
   },
