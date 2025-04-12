@@ -1,17 +1,21 @@
 import Swal from "sweetalert2";
-import { useDarkMode } from "@context/DarkModeContext";
 
-// Helper function to get dark mode state
+// Helper function to get dark mode state from localStorage instead of using the hook
 const getDarkMode = () => {
   try {
-    const { isDarkMode } = useDarkMode();
-    return isDarkMode();
-  } catch (e) {
-    // Fallback to check system preference if context is not available
+    const darkModeFromStorage = localStorage.getItem("darkMode");
+    // Return true if darkMode is explicitly "true", otherwise check system preference as fallback
+    if (darkModeFromStorage === "true") return true;
+    if (darkModeFromStorage === "false") return false;
+
+    // Fallback to check system preference
     return (
       window.matchMedia &&
       window.matchMedia("(prefers-color-scheme: dark)").matches
     );
+  } catch (e) {
+    // In case of any errors, return false (light mode)
+    return false;
   }
 };
 
