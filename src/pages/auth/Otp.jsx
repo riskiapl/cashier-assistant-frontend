@@ -174,7 +174,7 @@ const Otp = () => {
     setLoading(true);
 
     try {
-      const payload = { email: email(), otp_code: otp };
+      const payload = { email: email(), otpCode: otp };
       const res = await authService.verifyOtp(payload);
       alert.success(res?.success);
       localStorage.removeItem("otpRequest");
